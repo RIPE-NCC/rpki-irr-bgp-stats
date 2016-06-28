@@ -1,0 +1,12 @@
+.cache
+.cache-main
+.cache-tests
+.classpath
+.project
+.settings/
+target
+scalastyle-output.xml
+.DS_Store
+.idea
+irrstats.iml
+tmp

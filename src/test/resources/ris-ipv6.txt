@@ -1,0 +1,50 @@
+%
+% This file was generated at Wed Apr  6 18:06:01 UTC 2016.
+% If this file is more than a day old, a more recent
+% copy is available from http://www.ris.ripe.net/dumps/riswhoisdump.IPv6.gz
+%
+% This is RIPE NCC's Routing Information Service
+% whois gateway to collected BGP Routing Tables, version2.0
+% IPv4 or IPv6 address to origin prefix match
+%
+% For more information visit http://www.ripe.net/ris/riswhois.html
+
+% 
+% Full dump of combined RIS IPv6 routing tables
+% Format:  <origin> <tab> <prefix> <tab> <seen by #rispeers>
+% 
+6752	::/0	1
+15576	::/0	1
+8943	::/0	1
+3356	::/0	1
+1916	::/0	1
+28625	::/0	1
+14840	::/0	1
+6939	2001::/32	88
+1101	2001::/32	11
+29432	2001::/32	3
+25192	2001::/32	4
+12816	2001::/32	2
+112	2001:4:112::/48	113
+2500	2001:200::/32	110
+9367	2001:200:136::/48	7
+7660	2001:200:900::/40	110
+23634	2001:200:c000::/35	111
+7660	2001:200:e000::/35	111
+7660	2001:200:e101::/48	67
+7660	2001:200:e103::/48	67
+7660	2001:200:e104::/48	67
+2914	2001:218::/32	110
+10026	2001:218:2000:5000::170/126	2
+12389	2001:218:2000:5000::200/126	1
+10026	2001:218:2000:5000::3a0/126	2
+2914	2001:218:200e:100::/56	21
+2914	2001:218:200e:200::/56	21
+2914	2001:218:200e:300::/56	21
+2914	2001:218:200e:400::/56	21
+2914	2001:218:3003:100::/56	21
+2914	2001:218:3003:200::/56	21
+2914	2001:218:3004:100::/56	21
+2914	2001:218:3004:200::/56	21
+2914	2001:218:8000::/38	109
+17832	2001:220::/35	107

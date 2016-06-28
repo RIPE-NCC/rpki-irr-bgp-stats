@@ -1,0 +1,50 @@
+%
+% This file was generated at Wed Apr  6 18:03:01 UTC 2016.
+% If this file is more than a day old, a more recent
+% copy is available from http://www.ris.ripe.net/dumps/riswhoisdump.IPv4.gz
+%
+% This is RIPE NCC's Routing Information Service
+% whois gateway to collected BGP Routing Tables, version2.0
+% IPv4 or IPv6 address to origin prefix match
+%
+% For more information visit http://www.ripe.net/ris/riswhois.html
+
+% 
+% Full dump of combined RIS IPv4 routing tables
+% Format:  <origin> <tab> <prefix> <tab> <seen by #rispeers>
+% 
+6830	0.0.0.0/0	1
+3356	0.0.0.0/0	1
+1916	0.0.0.0/0	1
+28220	0.0.0.0/0	1
+14840	0.0.0.0/0	1
+56203	1.0.4.0/24	117
+56203	1.0.5.0/24	117
+56203	1.0.6.0/24	117
+24155	1.0.38.0/24	129
+49597	1.0.48.0/20	2
+18144	1.0.64.0/18	116
+9737	1.0.128.0/17	118
+9737	1.0.128.0/18	118
+9737	1.0.128.0/19	118
+23969	1.0.128.0/24	117
+23969	1.0.129.0/24	113
+23969	1.0.131.0/24	7
+23969	1.0.139.0/24	117
+23969	1.0.142.0/24	117
+23969	1.0.144.0/20	6
+9737	1.0.160.0/19	118
+23969	1.0.160.0/21	12
+23969	1.0.168.0/21	6
+23969	1.0.176.0/20	6
+9737	1.0.192.0/18	118
+9737	1.0.192.0/19	118
+23969	1.0.192.0/21	118
+23969	1.0.208.0/22	118
+23969	1.0.212.0/23	118
+23969	1.0.214.0/24	117
+23969	1.0.216.0/21	6
+9737	1.0.224.0/19	118
+23969	1.0.224.0/20	6
+23969	1.0.240.0/20	118
+4134	1.1.8.0/24	113

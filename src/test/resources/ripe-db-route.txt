@@ -1,0 +1,1031 @@
+#
+# The contents of this file are subject to 
+# RIPE Database Terms and Conditions
+#
+# http://www.ripe.net/db/support/db-terms-conditions.pdf
+#
+
+route:          193.254.30.0/24
+descr:          Lufthansa Airplus Servicekarten GmbH
+origin:         AS12726
+mnt-by:         AS12312-MNT
+created:        2002-05-21T15:33:55Z
+last-modified:  2009-10-15T09:32:17Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          212.166.64.0/19
+descr:          Tiscali Spain
+origin:         AS12321
+mnt-by:         TISCALI-ES-MNT
+notify:         noc@ibercom.com
+notify:         david.barbarin@ibercom.com
+created:        2002-02-22T11:45:51Z
+last-modified:  2015-11-03T09:29:04Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          212.80.191.0/24
+descr:          Cable&Wireless EUROPE
+descr:          assigned internal use
+origin:         AS12541
+notify:         ipadmin@cweurope.net
+notify:         aaron.hamilton@cweurope.net
+mnt-by:         BTIGS-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2006-03-17T12:45:46Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.2.0.0/19
+descr:          Cable & Wireless Austria Netblock
+origin:         AS1273
+mnt-by:         CW-EUROPE-GSOC
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.170.96.0/19
+descr:          CLARANET-DE 8196:1 8196:100
+origin:         AS8196
+mnt-by:         CLARANETDE-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2010-06-18T15:34:22Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          212.44.224.0/19
+descr:          Internet Access and Hosting Provider
+origin:         AS8921
+mnt-by:         AS8921-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2007-02-16T10:40:16Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          212.80.176.0/29
+descr:          Cable&Wireless Europe
+descr:          Paris IT Services Office
+origin:         AS12541
+notify:         ipadmin@cweurope.net
+notify:         aaron.hamilton@cweurope.net
+mnt-by:         BTIGS-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2006-03-17T12:45:47Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.79.241.0/24
+descr:          NETSTORE-NET
+origin:         AS6899
+mnt-by:         INTERCEA-UK-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2006-03-13T12:45:02Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          62.150.0.0/16
+descr:          QualityNet Kuwait
+origin:         AS9155
+mnt-by:         QNET-NOC
+created:        1970-01-01T00:00:00Z
+last-modified:  2011-06-13T07:16:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.113.52.0/23
+descr:          BEUMER
+descr:          BEUMER
+origin:         AS702
+member-of:      AS702:RS-DE,
+                AS702:RS-DE-PI
+mnt-by:         WCOM-EMEA-RICE-MNT
+created:        2001-11-23T11:55:18Z
+last-modified:  2010-11-12T12:58:37Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          63.105.192.0/20
+descr:          ELIMNET
+origin:         AS4663
+notify:         AS4663@elim.net
+mnt-by:         AS4663-RIPE-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.154.130.0/24
+descr:          Spidernet Services Ltd.
+descr:          1 Iasonos st. Suite 301
+descr:          CY-1082, Nicosia Cyprus
+origin:         AS5425
+notify:         noc@spidernet.net
+mnt-by:         AS5425-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.154.131.0/24
+descr:          Spidernet Services Ltd.
+descr:          1 Iasonos st. Suite 301
+descr:          CY-1082, Nicosia Cyprus
+origin:         AS5425
+notify:         noc@spidernet.net
+mnt-by:         AS5425-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.154.132.0/24
+descr:          Spidernet Services Ltd.
+descr:          1 Iasonos st. Suite 301
+descr:          CY-1082, Nicosia Cyprus
+origin:         AS5425
+notify:         noc@spidernet.net
+mnt-by:         AS5425-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.154.133.0/24
+descr:          Spidernet Services Ltd.
+descr:          1 Iasonos st. Suite 301
+descr:          CY-1082, Nicosia Cyprus
+origin:         AS5425
+notify:         noc@spidernet.net
+mnt-by:         AS5425-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.154.134.0/24
+descr:          Spidernet Services Ltd.
+descr:          1 Iasonos st. Suite 301
+descr:          CY-1082, Nicosia Cyprus
+origin:         AS5425
+notify:         noc@spidernet.net
+mnt-by:         AS5425-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.154.135.0/24
+descr:          Spidernet Services Ltd.
+descr:          1 Iasonos st. Suite 301
+descr:          CY-1082, Nicosia Cyprus
+origin:         AS5425
+notify:         noc@spidernet.net
+mnt-by:         AS5425-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          192.54.43.0/24
+descr:          IX-LAN
+origin:         AS15743
+mnt-by:         AS517-MNT
+mnt-by:         IPH-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          62.38.0.0/16
+descr:          HOL
+origin:         AS3329
+mnt-lower:      AS3329-MNT
+mnt-routes:     AS3329-MNT
+mnt-by:         AS3329-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          62.68.64.0/19
+descr:          KB Impuls Hellas
+origin:         AS12653
+mnt-by:         MNT-C2N
+created:        1970-01-01T00:00:00Z
+last-modified:  2015-10-01T12:33:01Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          217.149.224.0/20
+descr:          MagWien ISP
+origin:         AS6720
+mnt-by:         MAGWIEN-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.59.154.0/24
+descr:          Windsor GmbH, Damen- und Herrenbekleidung
+origin:         AS15726
+mnt-by:         MARCANT-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2009-11-25T13:51:15Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          217.167.0.0/16
+descr:          RAIN
+descr:          Reseaux d'Acces a l'INternet
+remarks:        -------------------------------------------
+remarks:        For Hacking, Spamming or Security problems
+remarks:        send mail to abuse@orange-business.com
+remarks:        -------------------------------------------
+origin:         AS3215
+mnt-by:         RAIN-TRANSPAC
+org:            ORG-OBS3-RIPE
+created:        1970-01-01T00:00:00Z
+last-modified:  2010-11-10T17:03:45Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.122.104.0/22
+descr:          ISASERVER
+origin:         AS8221
+mnt-by:         AS8221-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          193.103.152.0/22
+descr:          Vorwerk Elektrowerke Stiftung + Co. KG
+descr:          via Deutsche Telekom AG
+origin:         AS3320
+mnt-by:         DTAG-RR
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          212.166.96.0/19
+descr:          T-Systems Austria GesmbH
+origin:         AS8387
+remarks:        for routing issues, email noc@t-systems.at
+notify:         noc@t-systems.at
+mnt-by:         AS8387-MNT
+created:        2002-04-15T13:18:08Z
+last-modified:  2003-06-16T06:31:47Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.218.96.0/19
+descr:          nevadatele.com IP address-range I
+origin:         AS8760
+notify:         ispoperations@nevadatele.com
+mnt-by:         CW-EUROPE-GSOC
+created:        1970-01-01T00:00:00Z
+last-modified:  2016-01-25T11:34:06Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          193.23.167.0/24
+descr:          MS-NBG
+origin:         AS12348
+notify:         hostmaster@odn.de
+mnt-by:         ODN-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2005-03-11T09:36:06Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          193.163.136.0/23
+descr:          Velux A/S
+origin:         AS3292
+mnt-by:         AS3292-MNT
+remarks:        +---------------------------------------+
+remarks:        | For abuse and security issues contact |
+remarks:        | csirt@csirt.dk, http://www.csirt.dk   |
+remarks:        +---------------------------------------+
+created:        2002-07-30T18:29:08Z
+last-modified:  2002-07-30T18:29:08Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.36.128.0/17
+descr:          Bouygues Telecom ISP
+origin:         AS5410
+notify:         ripe@as5410.net
+mnt-by:         BYTEL-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2009-02-11T17:16:03Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          193.108.184.0/24
+descr:          GIESECKE und DEVRIENT
+origin:         AS20572
+mnt-by:         GIESECKE-DEVRIENT-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.105.57.160/28
+descr:          SEMAGROUP
+origin:         AS1267
+mnt-by:         AS1267-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.105.57.128/27
+descr:          SEMAGROUP
+origin:         AS1267
+mnt-by:         AS1267-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          217.194.32.0/20
+descr:          Atos IT Solutions and Services GmbH
+origin:         AS20594
+mnt-by:         MOSAIC-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2011-12-08T09:58:29Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          213.152.128.0/19
+descr:          CWSVYAZ
+origin:         AS12976
+mnt-by:         CWSVYAZ-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          62.80.80.0/20
+descr:          BTCR - NET1
+origin:         AS15494
+mnt-by:         BTCZ-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          62.80.64.0/20
+descr:          BTCEE - NET
+origin:         AS15410
+mnt-by:         BTCZ-MNT
+mnt-by:         LBAN-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2003-02-25T07:33:54Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          151.39.0.0/16
+descr:          INFOSTRADA
+origin:         AS1267
+remarks:        removed cross-mnt:    AS1267-MNT
+mnt-lower:      AS1267-MNT
+mnt-routes:     AS1267-MNT
+mnt-by:         AS1267-MNT
+created:        2001-10-09T11:49:12Z
+last-modified:  2004-01-30T16:33:11Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          217.115.128.0/19
+descr:          DE-HEC-217-115-128
+origin:         AS20773
+member-of:      AS20773:RS-HOSTEUROPE
+notify:         notify@hosteurope.de
+mnt-by:         HOSTEUROPE-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2010-04-28T09:51:42Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          212.88.64.0/19
+descr:          Telenor Denmark
+origin:         AS9158
+remarks:        Sonofon Network for POP's
+notify:         ripe@ripe.sonofon.dk
+mnt-by:         SONOFON-NOC
+created:        1970-01-01T00:00:00Z
+last-modified:  2010-02-05T11:46:47Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.156.145.0/24
+descr:          SOPRA EDV Informationssysteme GmbH
+descr:          via Deutsche Telekom AG
+origin:         AS3320
+mnt-by:         DTAG-RR
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          141.85.0.0/16
+descr:          RoEduNet
+descr:          "Politehnica" University of Bucharest
+origin:         AS2614
+mnt-by:         PUB-MNT
+mnt-lower:      PUB-MNT
+notify:         pubadmin@roedu.net
+created:        2002-05-16T13:10:52Z
+last-modified:  2003-12-07T18:32:49Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.13.38.0/23
+descr:          STK RETSAT1
+origin:         AS20938
+mnt-by:         STK-RETSAT1-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          217.171.160.0/20
+descr:          MULTISERVICE
+origin:         AS20604
+mnt-by:         IT-ETRURIA-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.154.151.0/24
+descr:          Spidernet Services Ltd.
+descr:          1 Iasonos st. Suite 301
+descr:          CY-1082, Nicosia Cyprus
+origin:         AS5425
+notify:         noc@spidernet.net
+mnt-by:         AS5425-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          80.105.0.0/16
+descr:          INTERBUSINESS
+origin:         AS3269
+notify:         network@cgi.interbusiness.it
+mnt-by:         INTERB-MNT
+created:        2002-05-17T12:45:44Z
+last-modified:  2002-05-17T12:45:44Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.214.96.0/19
+descr:          PRIMUS-EU-BACKBONE-NET1
+origin:         AS5427
+notify:         ripehostmaster@primustel.co.uk
+mnt-by:         AS5427-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2003-12-23T13:46:05Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.214.32.0/19
+descr:          temporary aggregate
+origin:         AS5427
+mnt-by:         AS5427-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.181.0.0/16
+descr:          Sektornet, Danish network for the educational sector
+origin:         AS3240
+remarks:        For abuse and security issues contact
+remarks:        abuse@uni-c.dk
+mnt-by:         AS3240-MNT
+created:        2001-11-13T12:15:36Z
+last-modified:  2012-08-22T11:33:24Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          195.184.214.0/24
+descr:          LLC FTICOM
+descr:          Donetsk, Ukraine
+origin:         AS3261
+notify:         yk@donbass.net
+mnt-by:         AS3261-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2009-10-19T17:34:29Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.117.208.0/20
+descr:          Prosodie
+origin:         AS8784
+notify:         ripe@mgn.net
+mnt-by:         MGN-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2009-10-27T11:17:49Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          217.156.124.0/24
+descr:          ITC
+origin:         AS8614
+mnt-by:         AS8614-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          212.18.95.0/24
+descr:          DE-PPP-212-18-95-0
+origin:         AS8687
+mnt-by:         PPP-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          80.88.128.0/20
+descr:          DK-EMPERION-20010828-ROUTE
+origin:         AS21125
+mnt-by:         EMP-NOC-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          130.32.0.0/16
+descr:          Baring Asset Management London
+origin:         AS15601
+notify:         internet.admin@baring-asset.com
+mnt-by:         AS15601-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          192.104.77.0/24
+descr:          n@work Internet Informationssysteme GmbH
+origin:         AS9211
+notify:         noc@work.de
+mnt-by:         NWORK-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          217.222.0.0/18
+descr:          INTERBUSINESS
+descr:          DATACOM
+origin:         AS20959
+remarks:        ************************************************
+remarks:        *                Pay attention                 *
+remarks:        *   Any communication sent to email different  *
+remarks:        *   from the following will be ignored!        *
+remarks:        *   Any abuse reports, please send them to     *
+remarks:        *       abuse@business.telecomitalia.it        *
+remarks:        ************************************************
+notify:         network@cgi.interbusiness.it
+mnt-by:         TIG-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2005-03-24T13:34:17Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          212.210.0.0/16
+descr:          INTERBUSINESS
+origin:         AS3269
+remarks:        ************************************************
+remarks:        *                Pay attention                 *
+remarks:        *   Any communication sent to email different  *
+remarks:        *   from the following will be ignored!        *
+remarks:        *   Any abuse reports, please send them to     *
+remarks:        *       abuse@business.telecomitalia.it        *
+remarks:        ************************************************
+notify:         network@cgi.interbusiness.it
+mnt-by:         INTERB-MNT
+created:        2001-10-09T13:12:03Z
+last-modified:  2005-03-24T13:57:46Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          217.195.192.0/20
+descr:          Fibersunucu internet Erisim
+origin:         AS20649
+mnt-by:         MNT-FIBERSUNUCU
+created:        1970-01-01T00:00:00Z
+last-modified:  2015-01-01T15:53:12Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          80.72.128.0/20
+descr:          DE-CONTINUM-80-72-128-20
+descr:          Continum AG
+descr:          Internet.Server.Technik
+descr:          http://www.continum.net
+origin:         AS20849
+notify:         ripe@continum.net
+mnt-by:         CO-MNT
+created:        2002-07-30T11:50:20Z
+last-modified:  2012-09-07T11:48:46Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          194.44.228.0/24
+descr:          UARNET-RIVNE-OSTROH-STATIC-OPTIC-20130319
+origin:         AS3255
+mnt-by:         AS3255-MNT
+created:        1970-01-01T00:00:00Z
+last-modified:  2014-06-06T15:56:53Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
+
+route:          212.180.11.128/25
+descr:          Alcatel Business Systems
+origin:         AS16048
+remarks:        easynet.fr
+mnt-by:         FR-EASYNET
+created:        1970-01-01T00:00:00Z
+last-modified:  2001-09-22T09:31:39Z
+source:         RIPE
+remarks:        ****************************
+remarks:        * THIS OBJECT IS MODIFIED
+remarks:        * Please note that all data that is generally regarded as personal
+remarks:        * data has been removed from this object.
+remarks:        * To view the original object, please query the RIPE Database at:
+remarks:        * http://www.ripe.net/whois
+remarks:        ****************************
