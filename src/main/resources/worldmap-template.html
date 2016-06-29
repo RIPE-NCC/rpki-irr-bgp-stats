@@ -1,0 +1,107 @@
+<!--
+
+    Copyright (c) 2015 RIPE NCC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+      - Redistributions of source code must retain the above copyright notice,
+        this list of conditions and the following disclaimer.
+      - Redistributions in binary form must reproduce the above copyright notice,
+        this list of conditions and the following disclaimer in the documentation
+        and/or other materials provided with the distribution.
+      - Neither the name of this software, nor the names of its contributors, nor
+        the names of the contributors' employers may be used to endorse or promote
+        products derived from this software without specific prior written
+        permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+    google.load('visualization', '1', {packages: ['geochart']});
+    google.setOnLoadCallback(drawMap);
+
+      function drawMap() {
+
+        // Adoption world map
+
+        var adoption_data = google.visualization.arrayToDataTable([
+          ['Country', 'fraction'],
+          ***COUNTRY_ADOPTION***
+        ]);
+
+        var adoption_options = {
+                title: 'Fraction of announced IPv4 space covered',
+        };
+
+        var adoption_chart = new google.visualization.GeoChart(document.getElementById('adoption_worldmap'));
+        adoption_chart.draw(adoption_data, adoption_options);
+
+        // VALID world map
+
+        var valid_data = google.visualization.arrayToDataTable([
+          ['Country', 'fraction'],
+          ***COUNTRY_VALID***
+        ]);
+
+        var valid_options = {
+                title: 'Fraction of announced IPv4 space valid',
+        };
+
+        var valid_chart = new google.visualization.GeoChart(document.getElementById('valid_worldmap'));
+        valid_chart.draw(valid_data, valid_options);
+
+        // BGP matching
+
+        var matching_data = google.visualization.arrayToDataTable([
+          ['Country', 'fraction'],
+          ***COUNTRY_MATCHING***
+        ]);
+
+        var matching_options = {
+                title: 'ROAs matching actual BGP',
+                colorAxis: {colors:['#fd2323', '#ed9200', '#e4d417', '#95c12d']}
+        };
+
+        var matching_chart = new google.visualization.GeoChart(document.getElementById('matching_worldmap'));
+        matching_chart.draw(matching_data, matching_options);
+      };
+    </script>
+</head>
+<body>
+
+  <div id="adoption">
+      <h1>Fraction of announced IPv4 space covered</h1>
+      <div id="adoption_worldmap"></div>
+  </div>
+
+
+  <div id="valid">
+      <h1>Fraction of announced IPv4 space valid</h1>
+      <div id="valid_worldmap"></div>
+  </div>
+
+  <div id="matching">
+      <h1>IPv4 space that is valid as a fraction of space that is covered</h1>
+      <div id="matching_worldmap"></div>
+  </div>
+
+
+</body>
+</html>

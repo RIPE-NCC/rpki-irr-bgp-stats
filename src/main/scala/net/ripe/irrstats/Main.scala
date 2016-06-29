@@ -32,6 +32,7 @@ import java.io.File
 import java.math.BigInteger
 
 import net.ripe.ipresource.{IpRange, IpResourceSet}
+import net.ripe.irrstats.map.WorldMapPage
 import net.ripe.irrstats.rirs.{ExtendedStatsUtils, CountryHoldings, RIRHoldings}
 import net.ripe.irrstats.ris.RisDumpUtil
 import net.ripe.irrstats.roas.RoaUtil
@@ -54,7 +55,8 @@ object Main extends App {
                     quiet: Boolean = false,
                     date: String = DateTime.now().toString("YYYYMMdd"),
                     rir: String = "all",
-                    countries: Boolean = false) {
+                    countries: Boolean = false,
+                    worldmap: Boolean = false) {
 
     def routeAuthorisationType(): RouteAuthorisationDumpType = {
       if (routeAuthorisationFile.getName.endsWith(".csv")) {
@@ -80,6 +82,7 @@ object Main extends App {
     opt[String]('r', "rir") optional() action { (x, c) => c.copy(rir = x) } text { "Only show results for specified rir, defaults to all"}
 
     opt[Unit]('c', "countries") optional() action { (x, c) => c.copy(countries = true) } text { "Do a report per country instead of per RIR" }
+    opt[Unit]('w', "worldmap") optional() action { (x, c) => c.copy(worldmap = true, countries = true) } text { "Produce an HTML page with country stats projected on a number of world maps" }
 
     checkConfig { c =>
       if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt") ) failure("option -r must refer roas.csv or route[6].db file") else success }
@@ -110,50 +113,37 @@ object Main extends App {
       val announcementsPerHolder: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy { ann => majorityFor(ann.prefix, holdings) }
       val authorisationsPerHolder: Map[String, Seq[RtrPrefix]] = authorisations.groupBy( pfx => majorityFor(pfx.prefix, holdings))
 
-
       implicit val actorSystem = akka.actor.ActorSystem()
 
-      def reportRiRQuality(rir: String) = {
-
-        val rirAnnouncements = announcementsPerHolder.getOrElse(rir, Seq.empty)
-        val rirAuthorisations = authorisationsPerHolder.getOrElse(rir, Seq.empty)
+      def regionAnnouncementStats(region: String) = {
+        val announcements = announcementsPerHolder.getOrElse(region, Seq.empty)
+        val authorisations = authorisationsPerHolder.getOrElse(region, Seq.empty)
 
         val validator = new BgpAnnouncementValidator()
-        validator.startUpdate(rirAnnouncements, rirAuthorisations)
+        validator.startUpdate(announcements, authorisations)
         val validatedAnnouncements = validator.validatedAnnouncements
 
-        val stats = analyseValidatedAnnouncements(validatedAnnouncements)
+        analyseValidatedAnnouncements(validatedAnnouncements)
+      }
 
-        // Returns "-" for division by zero
-        def safePercentage(fraction: Int, total: Int) = if (total == 0) {
-          ""
-        } else {
-          f"${(fraction.toFloat / total)}%1.4f"
+
+      def reportRiRQuality(region: String) = {
+
+        val authorisations = authorisationsPerHolder.getOrElse(region, Seq.empty)
+        val stats = regionAnnouncementStats(region)
+
+        def floatOptionToString(fo: Option[Float]) = fo match {
+          case None => ""
+          case Some(f) => f"${f}%1.4f"
         }
 
-        def safePercentageBig(fraction: BigInteger, total: BigInteger) = if (total.equals(BigInteger.ZERO)) {
-          ""
-        } else {
-          f"${fraction.multiply(BigInteger.valueOf(10000)).divide(total).floatValue / 10000}%1.4f"
-        }
-
-        def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentageBig(fraction.numberOfIps, (stats.combined.numberOfIps))
-        def safePercentageAnnouncements(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.count, stats.combined.count)
-
-        val accuracyAnnouncements = safePercentage(stats.valid.count , (stats.valid.count + stats.invalidAsn.count + stats.invalidLength.count))
-        val accuracyAnnouncementsFiltered = safePercentage(stats.valid.count, (stats.valid.count + stats.invalidAsnFiltered.count + stats.invalidLengthFiltered.count))
-        val accuracySpace = safePercentageBig(stats.valid.numberOfIps, (stats.valid.numberOfIps.add(stats.invalidAsn.numberOfIps).add(stats.invalidLength.numberOfIps)))
-        val accuracySpaceFiltered = safePercentageBig(stats.valid.numberOfIps, (stats.valid.numberOfIps.add(stats.invalidAsnFiltered.numberOfIps).add(stats.invalidLengthFiltered.numberOfIps)))
-
-        println(s"${config.date}, ${rir}, ${rirAuthorisations.size}, ${stats.combined.count}, ${accuracyAnnouncements}, " +
-                s"${accuracyAnnouncementsFiltered}, ${safePercentageAnnouncements(stats.valid)}, ${safePercentageAnnouncements(stats.invalidLength)}, " +
-                s"${safePercentageAnnouncements(stats.invalidLengthFiltered)}, ${safePercentageAnnouncements(stats.invalidAsn)}, " +
-                s"${safePercentageAnnouncements(stats.invalidAsnFiltered)}, ${safePercentageAnnouncements(stats.unknown)}, ${stats.combined.numberOfIps}, " +
-                s"${accuracySpace}, ${accuracySpaceFiltered}, ${safePercentageIpSpace(stats.valid)}, ${safePercentageIpSpace(stats.invalidLength)}, " +
-                s"${safePercentageIpSpace(stats.invalidLengthFiltered)}, ${{safePercentageIpSpace(stats.invalidAsn)}}, " +
-                s"${{safePercentageIpSpace(stats.invalidAsnFiltered)}}, ${{safePercentageIpSpace(stats.unknown)}}")
-
-
+        println(s"${config.date}, ${region}, ${authorisations.size}, ${stats.combined.count}, ${floatOptionToString(stats.accuracyAnnouncements)}, " +
+                s"${floatOptionToString(stats.accuracyAnnouncementsFiltered)}, ${floatOptionToString(stats.percentageValid)}, ${floatOptionToString(stats.percentageInvalidLength)}, " +
+                s"${floatOptionToString(stats.percentageInvalidLengthFiltered)}, ${floatOptionToString(stats.percentageInvalidAsn)}, " +
+                s"${floatOptionToString(stats.percentageInvalidAsnFiltered)}, ${floatOptionToString(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, " +
+                s"${floatOptionToString(stats.accuracySpace)}, ${floatOptionToString(stats.accuracySpaceFiltered)}, ${floatOptionToString(stats.percentageSpaceValid)}, ${floatOptionToString(stats.percentageSpaceInvalidLength)}, " +
+                s"${floatOptionToString(stats.percentageSpaceInvalidLengthFiltered)}, ${floatOptionToString(stats.percentageSpaceInvalidAsn)}, " +
+                s"${floatOptionToString(stats.percentageSpaceInvalidAsnFiltered)}, ${floatOptionToString(stats.percentageSpaceUnknown)}")
       }
 
       def printHeader(): Unit = println("date, RIR, authorisations, announcements, accuracy announcements, accuracy announcements filtered, " +
@@ -162,22 +152,41 @@ object Main extends App {
                 "fraction space valid, fraction space invalid length, fraction space invalid length filtered, fraction space invalid asn, " +
                 "fraction space invalid asn filtered, fraction space unknown")
 
-      if(!config.quiet) {
-        printHeader()
-      }
 
-      if(config.rir == "all") {
-        for (rir <- holdings.keys) {
-          reportRiRQuality(rir)
+
+      if (config.worldmap) {
+        val countryStats = holdings.keys.map { cc =>
+          val stats = regionAnnouncementStats(cc)
+
+          WorldMapCountryStat(cc, stats.percentageSpaceAdoption, stats.percentageSpaceValid, stats.accuracySpace)
         }
+
+        val adoptionValues = countryStats.filter(cs => cs.adoption.isDefined).map{ cs => (cs.countryCode -> cs.adoption.get) }.toMap
+        val validValues = countryStats.filter(cs => cs.valid.isDefined).map{ cs => (cs.countryCode -> cs.valid.get) }.toMap
+        val matchingValues = countryStats.filter(cs => cs.matching.isDefined).map{ cs => (cs.countryCode -> cs.matching.get) }.toMap
+
+        print(WorldMapPage.printWorldMapHtmlPage(adoptionValues, validValues, matchingValues))
+
       } else {
-        reportRiRQuality(config.rir)
+        if (!config.quiet) {
+          printHeader()
+        }
+
+        if (config.rir == "all") {
+          for (rir <- holdings.keys) {
+            reportRiRQuality(rir)
+          }
+        } else {
+          reportRiRQuality(config.rir)
+        }
       }
 
       sys.exit(0)
 
     }
   }
+
+  case class WorldMapCountryStat(countryCode: String, adoption: Option[Float], valid: Option[Float], matching: Option[Float])
 
   case class ValidatedAnnouncementStat(count: Integer, numberOfIps: BigInteger)
   case class ValidatedAnnouncementStats(combined: ValidatedAnnouncementStat,
@@ -187,7 +196,42 @@ object Main extends App {
                                         invalidAsn: ValidatedAnnouncementStat,
                                         invalidAsnFiltered: ValidatedAnnouncementStat,
                                         unknown: ValidatedAnnouncementStat
-                                       )
+                                       ) {
+
+    private def safePercentageBig(fraction: BigInteger, total: BigInteger): Option[Float] = {
+      if (total.equals(BigInteger.ZERO)) {
+        None
+      } else {
+        Some({fraction.multiply(BigInteger.valueOf(10000)).divide(total).floatValue / 10000}%1.4f)
+      }
+    }
+
+    private def safePercentage(fraction: Int, total: Int): Option[Float] =
+      safePercentageBig(BigInteger.valueOf(fraction), BigInteger.valueOf(total))
+
+    private def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentageBig(fraction.numberOfIps, (combined.numberOfIps))
+    private def safePercentageAnnouncements(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.count, combined.count)
+
+    def accuracyAnnouncements = safePercentage(valid.count , (valid.count + invalidAsn.count + invalidLength.count))
+    def accuracyAnnouncementsFiltered = safePercentage(valid.count, (valid.count + invalidAsnFiltered.count + invalidLengthFiltered.count))
+    def accuracySpace = safePercentageBig(valid.numberOfIps, (valid.numberOfIps.add(invalidAsn.numberOfIps).add(invalidLength.numberOfIps)))
+    def accuracySpaceFiltered = safePercentageBig(valid.numberOfIps, (valid.numberOfIps.add(invalidAsnFiltered.numberOfIps).add(invalidLengthFiltered.numberOfIps)))
+
+    def percentageValid = safePercentageAnnouncements(valid)
+    def percentageInvalidLength = safePercentageAnnouncements(invalidLength)
+    def percentageInvalidAsn = safePercentageAnnouncements(invalidAsn)
+    def percentageInvalidLengthFiltered = safePercentageAnnouncements(invalidLengthFiltered)
+    def percentageInvalidAsnFiltered = safePercentageAnnouncements(invalidAsnFiltered)
+    def percentageUnknown = safePercentageAnnouncements(unknown)
+
+    def percentageSpaceValid = safePercentageIpSpace(valid)
+    def percentageSpaceInvalidLength = safePercentageIpSpace(invalidLength)
+    def percentageSpaceInvalidAsn = safePercentageIpSpace(invalidAsn)
+    def percentageSpaceInvalidLengthFiltered = safePercentageIpSpace(invalidLengthFiltered)
+    def percentageSpaceInvalidAsnFiltered = safePercentageIpSpace(invalidAsnFiltered)
+    def percentageSpaceUnknown = safePercentageIpSpace(unknown)
+    def percentageSpaceAdoption = safePercentageBig(valid.numberOfIps.add(invalidAsn.numberOfIps).add(invalidLength.numberOfIps), combined.numberOfIps)
+  }
 
   def analyseValidatedAnnouncements(announcements: Seq[BgpValidatedAnnouncement]) = {
 
