@@ -26,28 +26,27 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.rirs
+package net.ripe.irrstats.stats
 
-import java.io.File
+import java.math.BigInteger
 
-import net.ripe.ipresource.{IpResource, IpResourceSet}
-import org.scalatest.{FunSuite, Matchers}
+import net.ripe.ipresource.{IpRange, IpResourceSet}
+import org.scalatest.{Matchers, FunSuite}
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class ExtendedStatsTest extends FunSuite with Matchers {
-  
-  test("Should parse IPv4") {
-    ExtendedStatsUtils.parseIpv4("213.154.64.0", "8192") should equal (IpResourceSet.parse("213.154.64.0/19"))
+class AnnouncementStatsUtilTest extends FunSuite with Matchers {
+
+  import scala.language.implicitConversions
+  implicit def stringToIpRange(s: String) = IpRange.parse(s)
+
+  test("Should count overlapping IP addresses in prefixes only once") {
+    val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.0.0.0/23")
+    AnnouncementStatsUtil.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(512))
   }
 
-  test("Should parse extended delegated stats") {
-
-    val holdings = RIRHoldings.parse(new File(Thread.currentThread().getContextClassLoader().getResource("extended-delegated-stats.txt").getFile))
-
-    holdings.get("apnic").get.contains(IpResource.parse("1.0.0.0/24")) should be (true)
-
-    ExtendedStatsUtils.regionFor(IpResource.parse("1.0.0.0/24"), holdings) should equal("apnic")
-    ExtendedStatsUtils.regionFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
+  test("Should count IP addresses in different prefixes") {
+    val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.1.0.0/23")
+    AnnouncementStatsUtil.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(256 + 512))
   }
 
 }

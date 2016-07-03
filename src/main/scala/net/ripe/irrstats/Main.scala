@@ -29,7 +29,7 @@
 package net.ripe.irrstats
 
 import java.io.File
-import java.math.BigInteger
+import stats._
 
 import net.ripe.ipresource.{IpRange, IpResourceSet}
 import net.ripe.irrstats.map.WorldMapPage
@@ -68,7 +68,7 @@ object Main extends App {
   }
 
 
-  val parser = new scopt.OptionParser[Config](ApplicationName) {
+  val cliOptionParser = new scopt.OptionParser[Config](ApplicationName) {
     head(ApplicationName, ApplicationVersion)
 
     opt[File]('b', "bgp-announcements") required() valueName("<file>") action { (x, c) =>
@@ -89,7 +89,7 @@ object Main extends App {
 
   }
 
-  parser.parse(args, Config()) match {
+  cliOptionParser.parse(args, Config()) match {
     case None => // Ignore - help text will be printed  by library if required arguments are not passed
     case Some(config) => {
 
@@ -110,26 +110,26 @@ object Main extends App {
         CountryHoldings.parse(config.statsFile)
       }
 
-      val announcementsPerHolder: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy { ann => majorityFor(ann.prefix, holdings) }
-      val authorisationsPerHolder: Map[String, Seq[RtrPrefix]] = authorisations.groupBy( pfx => majorityFor(pfx.prefix, holdings))
+      val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy { ann => regionFor(ann.prefix, holdings) }
+      val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = authorisations.groupBy( pfx => regionFor(pfx.prefix, holdings))
 
       implicit val actorSystem = akka.actor.ActorSystem()
 
       def regionAnnouncementStats(region: String) = {
-        val announcements = announcementsPerHolder.getOrElse(region, Seq.empty)
-        val authorisations = authorisationsPerHolder.getOrElse(region, Seq.empty)
+        val announcements = announcementsByRegion.getOrElse(region, Seq.empty)
+        val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
 
         val validator = new BgpAnnouncementValidator()
         validator.startUpdate(announcements, authorisations)
         val validatedAnnouncements = validator.validatedAnnouncements
 
-        analyseValidatedAnnouncements(validatedAnnouncements)
+        AnnouncementStatsUtil.analyseValidatedAnnouncements(validatedAnnouncements)
       }
 
 
-      def reportRiRQuality(region: String) = {
+      def reportRegionQuality(region: String) = {
 
-        val authorisations = authorisationsPerHolder.getOrElse(region, Seq.empty)
+        val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
         val stats = regionAnnouncementStats(region)
 
         def floatOptionToString(fo: Option[Float]) = fo match {
@@ -174,10 +174,10 @@ object Main extends App {
 
         if (config.rir == "all") {
           for (rir <- holdings.keys) {
-            reportRiRQuality(rir)
+            reportRegionQuality(rir)
           }
         } else {
-          reportRiRQuality(config.rir)
+          reportRegionQuality(config.rir)
         }
       }
 
@@ -186,82 +186,7 @@ object Main extends App {
     }
   }
 
-  case class WorldMapCountryStat(countryCode: String, adoption: Option[Float], valid: Option[Float], matching: Option[Float])
 
-  case class ValidatedAnnouncementStat(count: Integer, numberOfIps: BigInteger)
-  case class ValidatedAnnouncementStats(combined: ValidatedAnnouncementStat,
-                                        valid: ValidatedAnnouncementStat,
-                                        invalidLength: ValidatedAnnouncementStat,
-                                        invalidLengthFiltered: ValidatedAnnouncementStat,
-                                        invalidAsn: ValidatedAnnouncementStat,
-                                        invalidAsnFiltered: ValidatedAnnouncementStat,
-                                        unknown: ValidatedAnnouncementStat
-                                       ) {
-
-    private def safePercentageBig(fraction: BigInteger, total: BigInteger): Option[Float] = {
-      if (total.equals(BigInteger.ZERO)) {
-        None
-      } else {
-        Some({fraction.multiply(BigInteger.valueOf(10000)).divide(total).floatValue / 10000}%1.4f)
-      }
-    }
-
-    private def safePercentage(fraction: Int, total: Int): Option[Float] =
-      safePercentageBig(BigInteger.valueOf(fraction), BigInteger.valueOf(total))
-
-    private def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentageBig(fraction.numberOfIps, (combined.numberOfIps))
-    private def safePercentageAnnouncements(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.count, combined.count)
-
-    def accuracyAnnouncements = safePercentage(valid.count , (valid.count + invalidAsn.count + invalidLength.count))
-    def accuracyAnnouncementsFiltered = safePercentage(valid.count, (valid.count + invalidAsnFiltered.count + invalidLengthFiltered.count))
-    def accuracySpace = safePercentageBig(valid.numberOfIps, (valid.numberOfIps.add(invalidAsn.numberOfIps).add(invalidLength.numberOfIps)))
-    def accuracySpaceFiltered = safePercentageBig(valid.numberOfIps, (valid.numberOfIps.add(invalidAsnFiltered.numberOfIps).add(invalidLengthFiltered.numberOfIps)))
-
-    def percentageValid = safePercentageAnnouncements(valid)
-    def percentageInvalidLength = safePercentageAnnouncements(invalidLength)
-    def percentageInvalidAsn = safePercentageAnnouncements(invalidAsn)
-    def percentageInvalidLengthFiltered = safePercentageAnnouncements(invalidLengthFiltered)
-    def percentageInvalidAsnFiltered = safePercentageAnnouncements(invalidAsnFiltered)
-    def percentageUnknown = safePercentageAnnouncements(unknown)
-
-    def percentageSpaceValid = safePercentageIpSpace(valid)
-    def percentageSpaceInvalidLength = safePercentageIpSpace(invalidLength)
-    def percentageSpaceInvalidAsn = safePercentageIpSpace(invalidAsn)
-    def percentageSpaceInvalidLengthFiltered = safePercentageIpSpace(invalidLengthFiltered)
-    def percentageSpaceInvalidAsnFiltered = safePercentageIpSpace(invalidAsnFiltered)
-    def percentageSpaceUnknown = safePercentageIpSpace(unknown)
-    def percentageSpaceAdoption = safePercentageBig(valid.numberOfIps.add(invalidAsn.numberOfIps).add(invalidLength.numberOfIps), combined.numberOfIps)
-  }
-
-  def analyseValidatedAnnouncements(announcements: Seq[BgpValidatedAnnouncement]) = {
-
-    import scala.collection.JavaConverters._
-
-    def getNumberOfAddresses(prefixes: Seq[IpRange]) = {
-      val resourceSet = new IpResourceSet()
-      prefixes.foreach(pfx => resourceSet.addAll(new IpResourceSet(pfx)))
-      resourceSet.iterator().asScala.foldLeft(BigInteger.ZERO)((r, c) => {
-        r.add(c.getEnd.getValue.subtract(c.getStart.getValue).add(BigInteger.ONE))
-      })
-    }
-
-    val valid = announcements.filter(_.validity == RouteValidity.Valid)
-    val invalidLength = announcements.filter(_.validity == RouteValidity.InvalidLength)
-    val invalidAsn = announcements.filter(_.validity == RouteValidity.InvalidAsn)
-    val unknown = announcements.filter(_.validity == RouteValidity.Unknown)
-    val filteredInvalidLength = invalidLength.filter(a => valid.find(_.prefix.overlaps(a.prefix)) == None) // count if no covering valid found
-    val filteredInvalidAsn = invalidAsn.filter(a => valid.find(_.prefix.overlaps(a.prefix)) == None) // count if no covering valid found
-
-    ValidatedAnnouncementStats(
-      combined = ValidatedAnnouncementStat(announcements.size, getNumberOfAddresses(announcements.map(_.prefix))),
-      valid = ValidatedAnnouncementStat(valid.size, getNumberOfAddresses(valid.map(_.prefix))),
-      invalidLength = ValidatedAnnouncementStat(invalidLength.size, getNumberOfAddresses(invalidLength.map(_.prefix))),
-      invalidLengthFiltered = ValidatedAnnouncementStat(filteredInvalidLength.size, getNumberOfAddresses(filteredInvalidLength.map(_.prefix))),
-      invalidAsn = ValidatedAnnouncementStat(invalidAsn.size, getNumberOfAddresses(invalidAsn.map(_.prefix))),
-      invalidAsnFiltered = ValidatedAnnouncementStat(filteredInvalidAsn.size, getNumberOfAddresses(filteredInvalidAsn.map(_.prefix))),
-      unknown = ValidatedAnnouncementStat(unknown.size, getNumberOfAddresses(unknown.map(_.prefix)))
-    )
-  }
 
 
   sealed trait RouteAuthorisationDumpType
