@@ -156,16 +156,17 @@ object Main extends App {
 
       if (config.worldmap) {
         val countryStats = holdings.keys.map { cc =>
-          val stats = regionAnnouncementStats(cc)
-
-          WorldMapCountryStat(cc, stats.percentageSpaceAdoption, stats.percentageSpaceValid, stats.accuracySpace)
+          WorldMapCountryStat.fromCcAndStats(cc, regionAnnouncementStats(cc))
         }
 
+        val prefixesAdoptionValues = countryStats.filter(cs => cs.prefixesAdoption.isDefined).map{ cs => (cs.countryCode -> cs.prefixesAdoption.get) }.toMap
+        val prefixesValidValues = countryStats.filter(cs => cs.prefixesValid.isDefined).map{ cs => (cs.countryCode -> cs.prefixesValid.get) }.toMap
+        val prefixesMatchingValues = countryStats.filter(cs => cs.prefixesMatching.isDefined).map{ cs => (cs.countryCode -> cs.prefixesMatching.get) }.toMap
         val adoptionValues = countryStats.filter(cs => cs.adoption.isDefined).map{ cs => (cs.countryCode -> cs.adoption.get) }.toMap
         val validValues = countryStats.filter(cs => cs.valid.isDefined).map{ cs => (cs.countryCode -> cs.valid.get) }.toMap
         val matchingValues = countryStats.filter(cs => cs.matching.isDefined).map{ cs => (cs.countryCode -> cs.matching.get) }.toMap
 
-        print(WorldMapPage.printWorldMapHtmlPage(adoptionValues, validValues, matchingValues))
+        print(WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues))
 
       } else {
         if (!config.quiet) {

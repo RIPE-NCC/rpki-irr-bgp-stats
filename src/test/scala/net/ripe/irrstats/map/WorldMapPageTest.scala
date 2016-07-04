@@ -35,19 +35,29 @@ class WorldMapPageTest extends FunSuite with Matchers {
 
   test("Should render page") {
 
-    val adoptionValues = Map("NL" -> 0.85.toFloat, "BE" -> 0.45.toFloat)
-    val validValues = Map("NL" -> 0.84.toFloat, "BE" -> 0.44.toFloat)
-    val matchingValues = Map("NL" -> 0.99.toFloat, "BE" -> 0.99.toFloat)
+    val prefixesAdoptionValues = Map("NL" -> 0.86.toFloat, "BE" -> 0.46.toFloat)
+    val prefixesValidValues = Map("NL" -> 0.85.toFloat, "BE" -> 0.45.toFloat)
+    val prefixesMatchingValues = Map("NL" -> 0.84.toFloat, "BE" -> 0.44.toFloat)
+    val adoptionValues = Map("NL" -> 0.83.toFloat, "BE" -> 0.43.toFloat)
+    val validValues = Map("NL" -> 0.82.toFloat, "BE" -> 0.42.toFloat)
+    val matchingValues = Map("NL" -> 0.81.toFloat, "BE" -> 0.41.toFloat)
 
-    val page = WorldMapPage.printWorldMapHtmlPage(adoptionValues, validValues, matchingValues)
+    val page = WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues)
 
+    page should include ("['NL', 0.86]")
     page should include ("['NL', 0.85]")
     page should include ("['NL', 0.84]")
-    page should include ("['NL', 0.99]")
+    page should include ("['NL', 0.83]")
+    page should include ("['NL', 0.82]")
+    page should include ("['NL', 0.81]")
 
+    page should include ("['BE', 0.46]")
     page should include ("['BE', 0.45]")
     page should include ("['BE', 0.44]")
-    page should include ("['BE', 0.99]")
+    page should include ("['BE', 0.43]")
+    page should include ("['BE', 0.42]")
+    page should include ("['BE', 0.41]")
+
   }
 
 }

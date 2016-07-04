@@ -37,12 +37,15 @@ object WorldMapPage {
 
 
   // Returns an HTML page as a String with a Google Geomap world map and embedded data
-  def printWorldMapHtmlPage(adoptionValues: Map[String, Float], validValues: Map[String, Float], matchingValues: Map[String, Float]): String = {
+  def printWorldMapHtmlPage(prefixesAdoptionValues: Map[String, Float], prefixesValidValues: Map[String, Float], prefixesMatchingValues: Map[String, Float], adoptionValues: Map[String, Float], validValues: Map[String, Float], matchingValues: Map[String, Float]): String = {
 
     // Yes, I am aware that better template frameworks exist, but I just have one simple thing to do, and prefer no deps.
     scala.io.Source.fromInputStream(getClass.getResourceAsStream("/worldmap-template.html")).getLines().map { line =>
 
       line
+        .replace("***COUNTRY_PREFIXES_ADOPTION***", convertValuesToArrayData(prefixesAdoptionValues))
+        .replace("***COUNTRY_PREFIXES_VALID***", convertValuesToArrayData(prefixesValidValues))
+        .replace("***COUNTRY_PREFIXES_MATCHING***", convertValuesToArrayData(prefixesMatchingValues))
         .replace("***COUNTRY_ADOPTION***", convertValuesToArrayData(adoptionValues))
         .replace("***COUNTRY_VALID***", convertValuesToArrayData(validValues))
         .replace("***COUNTRY_MATCHING***", convertValuesToArrayData(matchingValues))

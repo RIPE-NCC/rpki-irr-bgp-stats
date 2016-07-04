@@ -39,6 +39,50 @@
 
       function drawMap() {
 
+        // Prefixes adoption world map
+
+        var prefixes_adoption_data = google.visualization.arrayToDataTable([
+          ['Country', 'fraction'],
+          ***COUNTRY_PREFIXES_ADOPTION***
+        ]);
+
+        var prefixes_adoption_options = {
+                title: 'Fraction of announced IPv4 prefixes covered',
+        };
+
+        var adoption_chart = new google.visualization.GeoChart(document.getElementById('prefixes_adoption_worldmap'));
+        adoption_chart.draw(prefixes_adoption_data, prefixes_adoption_options);
+
+         // Prefixes VALID world map
+
+        var prefixes_valid_data = google.visualization.arrayToDataTable([
+          ['Country', 'fraction'],
+          ***COUNTRY_PREFIXES_VALID***
+        ]);
+
+        var prefixes_valid_options = {
+                title: 'Fraction of announced IPv4 prefixes valid',
+        };
+
+        var prefixes_valid_chart = new google.visualization.GeoChart(document.getElementById('prefixes_valid_worldmap'));
+        prefixes_valid_chart.draw(prefixes_valid_data, prefixes_valid_options);
+
+        // Prefixes BGP matching
+
+        var prefixes_matching_data = google.visualization.arrayToDataTable([
+          ['Country', 'fraction'],
+          ***COUNTRY_PREFIXES_MATCHING***
+        ]);
+
+        var prefixes_matching_options = {
+                title: 'Prefixes ROAs matching actual BGP',
+                colorAxis: {colors:['#fd2323', '#ed9200', '#e4d417', '#95c12d']}
+        };
+
+        var prefixes_matching_chart = new google.visualization.GeoChart(document.getElementById('prefixes_matching_worldmap'));
+        prefixes_matching_chart.draw(prefixes_matching_data, prefixes_matching_options);
+
+
         // Adoption world map
 
         var adoption_data = google.visualization.arrayToDataTable([
@@ -86,11 +130,25 @@
 </head>
 <body>
 
+  <div id="prefixes_adoption">
+      <h1>Fraction of announced IPv4 prefixes covered</h1>
+      <div id="prefixes_adoption_worldmap"></div>
+  </div>
+
+  <div id="prefixes_valid">
+      <h1>Fraction of announced IPv4 prefixes valid</h1>
+      <div id="prefixes_valid_worldmap"></div>
+  </div>
+
+  <div id="prefixes_matching">
+      <h1>IPv4 prefixes that are valid as a fraction of prefixes that are covered</h1>
+      <div id="prefixes_matching_worldmap"></div>
+  </div>
+
   <div id="adoption">
       <h1>Fraction of announced IPv4 space covered</h1>
       <div id="adoption_worldmap"></div>
   </div>
-
 
   <div id="valid">
       <h1>Fraction of announced IPv4 space valid</h1>

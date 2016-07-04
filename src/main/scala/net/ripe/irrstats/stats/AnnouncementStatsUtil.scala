@@ -35,7 +35,16 @@ import net.ripe.rpki.validator.bgp.preview.BgpValidatedAnnouncement
 import net.ripe.rpki.validator.models.RouteValidity
 import scala.collection.JavaConverters._
 
-case class WorldMapCountryStat(countryCode: String, adoption: Option[Float], valid: Option[Float], matching: Option[Float])
+case class WorldMapCountryStat(countryCode: String,
+                               prefixesAdoption: Option[Float], prefixesValid: Option[Float], prefixesMatching: Option[Float],
+                               adoption: Option[Float], valid: Option[Float], matching: Option[Float])
+
+object WorldMapCountryStat {
+  def fromCcAndStats(cc: String, stats: ValidatedAnnouncementStats) = {
+    new WorldMapCountryStat(cc, stats.percentageAdoption, stats.percentageValid, stats.accuracyAnnouncements, stats.percentageSpaceAdoption, stats.percentageSpaceValid, stats.accuracySpace)
+  }
+}
+
 case class ValidatedAnnouncementStat(count: Integer, numberOfIps: BigInteger)
 case class ValidatedAnnouncementStats(combined: ValidatedAnnouncementStat,
                                       covered: ValidatedAnnouncementStat,
@@ -74,6 +83,7 @@ case class ValidatedAnnouncementStats(combined: ValidatedAnnouncementStat,
   def percentageInvalidLengthFiltered = safePercentageAnnouncements(invalidLengthFiltered)
   def percentageInvalidAsnFiltered = safePercentageAnnouncements(invalidAsnFiltered)
   def percentageUnknown = safePercentageAnnouncements(unknown)
+  def percentageAdoption = safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
 
   def percentageSpaceValid = safePercentageIpSpace(valid)
   def percentageSpaceInvalidLength = safePercentageIpSpace(invalidLength)
