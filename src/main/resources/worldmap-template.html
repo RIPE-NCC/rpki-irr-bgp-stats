@@ -129,7 +129,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
 
     google.load('visualization', '1', {packages: ['geochart']});
@@ -140,11 +140,13 @@
         // Prefixes adoption world map
 
         var prefixes_adoption_data = google.visualization.arrayToDataTable([
-          ['Country', 'fraction'],
+          ['Country', '%'],
           ***COUNTRY_PREFIXES_ADOPTION***
         ]);
 
         var prefixes_adoption_options = {
+                width: 900,
+                keepAspectRatio: true,
                 title: 'Fraction of announced IPv4 prefixes covered',
         };
 
@@ -154,11 +156,13 @@
          // Prefixes VALID world map
 
         var prefixes_valid_data = google.visualization.arrayToDataTable([
-          ['Country', 'fraction'],
+          ['Country', '%'],
           ***COUNTRY_PREFIXES_VALID***
         ]);
 
         var prefixes_valid_options = {
+                width: 900,
+                keepAspectRatio: true,
                 title: 'Fraction of announced IPv4 prefixes valid',
         };
 
@@ -168,11 +172,13 @@
         // Prefixes BGP matching
 
         var prefixes_matching_data = google.visualization.arrayToDataTable([
-          ['Country', 'fraction'],
+          ['Country', '%'],
           ***COUNTRY_PREFIXES_MATCHING***
         ]);
 
         var prefixes_matching_options = {
+                width: 900,
+                keepAspectRatio: true,
                 title: 'Prefixes ROAs matching actual BGP',
                 colorAxis: {colors:['#fd2323', '#ed9200', '#e4d417', '#95c12d']}
         };
@@ -184,11 +190,13 @@
         // Adoption world map
 
         var adoption_data = google.visualization.arrayToDataTable([
-          ['Country', 'fraction'],
+          ['Country', '%'],
           ***COUNTRY_ADOPTION***
         ]);
 
         var adoption_options = {
+                width: 900,
+                keepAspectRatio: true,
                 title: 'Fraction of announced IPv4 space covered',
         };
 
@@ -198,11 +206,13 @@
         // VALID world map
 
         var valid_data = google.visualization.arrayToDataTable([
-          ['Country', 'fraction'],
+          ['Country', '%'],
           ***COUNTRY_VALID***
         ]);
 
         var valid_options = {
+                width: 900,
+                keepAspectRatio: true,
                 title: 'Fraction of announced IPv4 space valid',
         };
 
@@ -212,11 +222,13 @@
         // BGP matching
 
         var matching_data = google.visualization.arrayToDataTable([
-          ['Country', 'fraction'],
+          ['Country', '%'],
           ***COUNTRY_MATCHING***
         ]);
 
         var matching_options = {
+                width: 900,
+                keepAspectRatio: true,
                 title: 'ROAs matching actual BGP',
                 colorAxis: {colors:['#fd2323', '#ed9200', '#e4d417', '#95c12d']}
         };
@@ -224,6 +236,37 @@
         var matching_chart = new google.visualization.GeoChart(document.getElementById('matching_worldmap'));
         matching_chart.draw(matching_data, matching_options);
       };
+
+      $(document).ready(function() {
+            $("select").change(function() {
+
+                $(this).find("option:selected").each(function() {
+                    if ($(this).attr("value")=="paw") {
+                        $(".graph").not(".paw").hide();
+                        $(".paw").show();
+                    } else if ($(this).attr("value")=="saw") {
+                        $(".graph").not(".saw").hide();
+                        $(".saw").show();
+                    } else if ($(this).attr("value")=="pvw") {
+                        $(".graph").not(".pvw").hide();
+                        $(".pvw").show();
+                    } else if ($(this).attr("value")=="svw") {
+                        $(".graph").not(".svw").hide();
+                        $(".svw").show();
+                    } else if ($(this).attr("value")=="pmw") {
+                        $(".graph").not(".pmw").hide();
+                        $(".pmw").show();
+                    } else if ($(this).attr("value")=="smw") {
+                        $(".graph").not(".smw").hide();
+                        $(".smw").show();
+                    } else { // default
+                        $(".graph").not(".saw").hide();
+                        $(".saw").show();
+                    }
+               });
+            }).change();
+      });
+
     </script>
 
 
@@ -1061,33 +1104,38 @@
                             <!-- End of header ENDHEADERMARKER -->
 
                             <!-- Insert your content here CONTENTMARKER -->
-                            <div id="prefixes_adoption">
-                                <h1>Fraction of announced IPv4 prefixes covered</h1>
+                            <p>Select a graph:
+                                <select id="type_select_selector">
+                                    <option value="saw">IPv4 space covered</option>
+                                    <option value="svw">IPv4 space valid</option>
+                                    <option value="smw">IPv4 space valid as fraction of covered</option>
+                                    <option value="paw">IPv4 prefixes covered</option>
+                                    <option value="pvw">IPv4 prefixes valid</option>
+                                    <option value="pmw">IPv4 prefixes valid as fraction of covered</option>
+                                </select>
+                            </p>
+
+                            <div id="prefixes_adoption" class="graph paw">
                                 <div id="prefixes_adoption_worldmap"></div>
                             </div>
 
-                            <div id="prefixes_valid">
-                                <h1>Fraction of announced IPv4 prefixes valid</h1>
+                            <div id="prefixes_valid" class="graph pvw">
                                 <div id="prefixes_valid_worldmap"></div>
                             </div>
 
-                            <div id="prefixes_matching">
-                                <h1>IPv4 prefixes that are valid as a fraction of prefixes that are covered</h1>
+                            <div id="prefixes_matching" class="graph pmw">
                                 <div id="prefixes_matching_worldmap"></div>
                             </div>
 
-                            <div id="adoption">
-                                <h1>Fraction of announced IPv4 space covered</h1>
+                            <div id="adoption" class="graph saw">
                                 <div id="adoption_worldmap"></div>
                             </div>
 
-                            <div id="valid">
-                                <h1>Fraction of announced IPv4 space valid</h1>
+                            <div id="valid" class="graph svw">
                                 <div id="valid_worldmap"></div>
                             </div>
 
-                            <div id="matching">
-                                <h1>IPv4 space that is valid as a fraction of space that is covered</h1>
+                            <div id="matching" class="graph smw">
                                 <div id="matching_worldmap"></div>
                             </div>
 

@@ -32,7 +32,7 @@ package net.ripe.irrstats.map
 object WorldMapPage {
 
   private def convertValuesToArrayData(countryValues: Map[String, Float]) = {
-    countryValues.map { entry => "['" + entry._1 + "', " + entry._2 + "]" }.mkString(",\n          ")
+    countryValues.map { entry => "['" + entry._1 + "', " + f"${entry._2 * 100}%3.2f]" }.mkString(",\n          ")
   }
 
 
