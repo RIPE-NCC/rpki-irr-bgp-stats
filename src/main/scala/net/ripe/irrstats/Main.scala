@@ -31,14 +31,13 @@ package net.ripe.irrstats
 import java.io.File
 import stats._
 
-import net.ripe.ipresource.{IpRange, IpResourceSet}
 import net.ripe.irrstats.map.WorldMapPage
 import net.ripe.irrstats.rirs.{ExtendedStatsUtils, CountryHoldings, RIRHoldings}
 import net.ripe.irrstats.ris.RisDumpUtil
 import net.ripe.irrstats.roas.RoaUtil
 import net.ripe.irrstats.route.RouteParser
-import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpValidatedAnnouncement, BgpAnnouncementValidator}
-import net.ripe.rpki.validator.models.{RouteValidity, RtrPrefix}
+import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpAnnouncementValidator}
+import net.ripe.rpki.validator.models.RtrPrefix
 import org.joda.time.DateTime
 
 import scala.language.postfixOps
@@ -132,18 +131,18 @@ object Main extends App {
         val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
         val stats = regionAnnouncementStats(region)
 
-        def floatOptionToString(fo: Option[Float]) = fo match {
+        def doubleOptionToString(fo: Option[Double]) = fo match {
           case None => ""
           case Some(f) => f"${f}%1.4f"
         }
 
-        println(s"${config.date}, ${region}, ${authorisations.size}, ${stats.combined.count}, ${floatOptionToString(stats.accuracyAnnouncements)}, " +
-                s"${floatOptionToString(stats.accuracyAnnouncementsFiltered)}, ${floatOptionToString(stats.percentageValid)}, ${floatOptionToString(stats.percentageInvalidLength)}, " +
-                s"${floatOptionToString(stats.percentageInvalidLengthFiltered)}, ${floatOptionToString(stats.percentageInvalidAsn)}, " +
-                s"${floatOptionToString(stats.percentageInvalidAsnFiltered)}, ${floatOptionToString(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, " +
-                s"${floatOptionToString(stats.accuracySpace)}, ${floatOptionToString(stats.accuracySpaceFiltered)}, ${floatOptionToString(stats.percentageSpaceValid)}, ${floatOptionToString(stats.percentageSpaceInvalidLength)}, " +
-                s"${floatOptionToString(stats.percentageSpaceInvalidLengthFiltered)}, ${floatOptionToString(stats.percentageSpaceInvalidAsn)}, " +
-                s"${floatOptionToString(stats.percentageSpaceInvalidAsnFiltered)}, ${floatOptionToString(stats.percentageSpaceUnknown)}")
+        println(s"${config.date}, ${region}, ${authorisations.size}, ${stats.combined.count}, ${doubleOptionToString(stats.accuracyAnnouncements)}, " +
+                s"${doubleOptionToString(stats.accuracyAnnouncementsFiltered)}, ${doubleOptionToString(stats.percentageValid)}, ${doubleOptionToString(stats.percentageInvalidLength)}, " +
+                s"${doubleOptionToString(stats.percentageInvalidLengthFiltered)}, ${doubleOptionToString(stats.percentageInvalidAsn)}, " +
+                s"${doubleOptionToString(stats.percentageInvalidAsnFiltered)}, ${doubleOptionToString(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, " +
+                s"${doubleOptionToString(stats.accuracySpace)}, ${doubleOptionToString(stats.accuracySpaceFiltered)}, ${doubleOptionToString(stats.percentageSpaceValid)}, ${doubleOptionToString(stats.percentageSpaceInvalidLength)}, " +
+                s"${doubleOptionToString(stats.percentageSpaceInvalidLengthFiltered)}, ${doubleOptionToString(stats.percentageSpaceInvalidAsn)}, " +
+                s"${doubleOptionToString(stats.percentageSpaceInvalidAsnFiltered)}, ${doubleOptionToString(stats.percentageSpaceUnknown)}")
       }
 
       def printHeader(): Unit = println("date, RIR, authorisations, announcements, accuracy announcements, accuracy announcements filtered, " +

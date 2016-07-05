@@ -35,12 +35,12 @@ class WorldMapPageTest extends FunSuite with Matchers {
 
   test("Should render page") {
 
-    val prefixesAdoptionValues = Map("NL" -> 0.861.toFloat, "BE" -> 0.46.toFloat)
-    val prefixesValidValues = Map("NL" -> 0.8512.toFloat, "BE" -> 0.45.toFloat)
-    val prefixesMatchingValues = Map("NL" -> 0.8400.toFloat, "BE" -> 0.44.toFloat)
-    val adoptionValues = Map("NL" -> 0.83.toFloat, "BE" -> 0.43.toFloat)
-    val validValues = Map("NL" -> 0.82.toFloat, "BE" -> 0.42.toFloat)
-    val matchingValues = Map("NL" -> 0.81.toFloat, "BE" -> 0.41.toFloat)
+    val prefixesAdoptionValues = Map("NL" -> 0.861, "BE" -> 0.46)
+    val prefixesValidValues = Map("NL" -> 0.8512, "BE" -> 0.45)
+    val prefixesMatchingValues = Map("NL" -> 0.8400, "BE" -> 0.44)
+    val adoptionValues = Map("NL" -> 0.83, "BE" -> 0.43)
+    val validValues = Map("NL" -> 0.82, "BE" -> 0.42)
+    val matchingValues = Map("NL" -> 0.81, "BE" -> 0.41)
 
     val page = WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues)
 

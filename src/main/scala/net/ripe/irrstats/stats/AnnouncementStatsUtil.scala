@@ -36,8 +36,8 @@ import net.ripe.rpki.validator.models.RouteValidity
 import scala.collection.JavaConverters._
 
 case class WorldMapCountryStat(countryCode: String,
-                               prefixesAdoption: Option[Float], prefixesValid: Option[Float], prefixesMatching: Option[Float],
-                               adoption: Option[Float], valid: Option[Float], matching: Option[Float])
+                               prefixesAdoption: Option[Double], prefixesValid: Option[Double], prefixesMatching: Option[Double],
+                               adoption: Option[Double], valid: Option[Double], matching: Option[Double])
 
 object WorldMapCountryStat {
   def fromCcAndStats(cc: String, stats: ValidatedAnnouncementStats) = {
@@ -56,15 +56,15 @@ case class ValidatedAnnouncementStats(combined: ValidatedAnnouncementStat,
                                       unknown: ValidatedAnnouncementStat
                                      ) {
 
-  private def safePercentageBig(fraction: BigInteger, total: BigInteger): Option[Float] = {
+  private def safePercentageBig(fraction: BigInteger, total: BigInteger): Option[Double] = {
     if (total.equals(BigInteger.ZERO)) {
       None
     } else {
-      Some({fraction.multiply(BigInteger.valueOf(10000)).divide(total).floatValue / 10000}%1.4f)
+      Some(fraction.doubleValue / total.doubleValue)
     }
   }
 
-  private def safePercentage(fraction: Int, total: Int): Option[Float] =
+  private def safePercentage(fraction: Int, total: Int): Option[Double] =
     safePercentageBig(BigInteger.valueOf(fraction), BigInteger.valueOf(total))
 
   private def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentageBig(fraction.numberOfIps, (combined.numberOfIps))
