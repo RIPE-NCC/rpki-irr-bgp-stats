@@ -46,7 +46,8 @@ object WorldMapCountryStat {
 }
 
 case class ValidatedAnnouncementStat(count: Integer, numberOfIps: BigInteger)
-case class ValidatedAnnouncementStats(combined: ValidatedAnnouncementStat,
+case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncement],
+                                      combined: ValidatedAnnouncementStat,
                                       covered: ValidatedAnnouncementStat,
                                       valid: ValidatedAnnouncementStat,
                                       invalidLength: ValidatedAnnouncementStat,
@@ -114,6 +115,7 @@ object AnnouncementStatsUtil {
     val filteredInvalidAsn = invalidAsn.filter(a => valid.find(_.prefix.overlaps(a.prefix)) == None) // count if no covering valid found
 
     ValidatedAnnouncementStats(
+      announcements = announcements,
       combined = ValidatedAnnouncementStat(announcements.size, getNumberOfAddresses(announcements.map(_.prefix))),
       covered = ValidatedAnnouncementStat(valid.size + invalidLength. size + invalidAsn.size, getNumberOfAddresses(valid.map(_.prefix) ++ invalidLength.map(_.prefix) ++ invalidAsn.map(_.prefix))),
       valid = ValidatedAnnouncementStat(valid.size, getNumberOfAddresses(valid.map(_.prefix))),

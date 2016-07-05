@@ -26,38 +26,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.reporting.map
+package net.ripe.irrstats.reporting
 
-import org.scalatest.{Matchers, FunSuite}
+object WorldMapPage {
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class WorldMapPageTest extends FunSuite with Matchers {
-
-  test("Should render page") {
-
-    val prefixesAdoptionValues = Map("NL" -> 0.861, "BE" -> 0.46)
-    val prefixesValidValues = Map("NL" -> 0.8512, "BE" -> 0.45)
-    val prefixesMatchingValues = Map("NL" -> 0.8400, "BE" -> 0.44)
-    val adoptionValues = Map("NL" -> 0.83, "BE" -> 0.43)
-    val validValues = Map("NL" -> 0.82, "BE" -> 0.42)
-    val matchingValues = Map("NL" -> 0.81, "BE" -> 0.41)
-
-    val page = WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues)
-
-    page should include ("['NL', 86.10]")
-    page should include ("['NL', 85.12]")
-    page should include ("['NL', 84.00]")
-    page should include ("['NL', 83.00]")
-    page should include ("['NL', 82.00]")
-    page should include ("['NL', 81.00]")
-
-    page should include ("['BE', 46.00]")
-    page should include ("['BE', 45.00]")
-    page should include ("['BE', 44.00]")
-    page should include ("['BE', 43.00]")
-    page should include ("['BE', 42.00]")
-    page should include ("['BE', 41.00]")
-
+  private def convertValuesToArrayData(countryValues: Map[String, Double]) = {
+    countryValues.map { entry => "['" + entry._1 + "', " + f"${entry._2 * 100}%3.2f]" }.mkString(",\n          ")
   }
+
+
+  // Returns an HTML page as a String with a Google Geomap world map and embedded data
+  def printWorldMapHtmlPage(prefixesAdoptionValues: Map[String, Double], prefixesValidValues: Map[String, Double], prefixesMatchingValues: Map[String, Double], adoptionValues: Map[String, Double], validValues: Map[String, Double], matchingValues: Map[String, Double]): String = {
+
+    // Yes, I am aware that better template frameworks exist, but I just have one simple thing to do, and prefer no deps.
+    scala.io.Source.fromInputStream(getClass.getResourceAsStream("/worldmap-template.html")).getLines().map { line =>
+
+      line
+        .replace("***COUNTRY_PREFIXES_ADOPTION***", convertValuesToArrayData(prefixesAdoptionValues))
+        .replace("***COUNTRY_PREFIXES_VALID***", convertValuesToArrayData(prefixesValidValues))
+        .replace("***COUNTRY_PREFIXES_MATCHING***", convertValuesToArrayData(prefixesMatchingValues))
+        .replace("***COUNTRY_ADOPTION***", convertValuesToArrayData(adoptionValues))
+        .replace("***COUNTRY_VALID***", convertValuesToArrayData(validValues))
+        .replace("***COUNTRY_MATCHING***", convertValuesToArrayData(matchingValues))
+    }.mkString("\n")
+  }
+
 
 }

@@ -31,10 +31,10 @@ package net.ripe.irrstats
 import java.io.File
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.parsing.roas.RoaUtil
-import net.ripe.irrstats.reporting.map.WorldMapPage
 import analysis._
 import net.ripe.irrstats.parsing.rirs.{ExtendedStatsUtils, CountryHoldings, RIRHoldings}
 import net.ripe.irrstats.parsing.route.RouteParser
+import net.ripe.irrstats.reporting.{CountryDetails, WorldMapPage}
 import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpAnnouncementValidator}
 import net.ripe.rpki.validator.models.RtrPrefix
 import org.joda.time.DateTime
@@ -169,7 +169,8 @@ object Main extends App {
         print(WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues))
 
       } else if (config.countryDetails != None) {
-        println("Should do report on country:" + config.countryDetails.get)
+        val cc = config.countryDetails.get
+        CountryDetails.printCountryAnnouncementReport(cc, regionAnnouncementStats(cc))
       } else {
         if (!config.quiet) {
           printHeader()
