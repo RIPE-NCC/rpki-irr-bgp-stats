@@ -26,36 +26,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.ris
+package net.ripe.irrstats.parsing.roas
 
 import java.io.File
 
 import net.ripe.ipresource.{Asn, IpRange}
-import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
+import net.ripe.rpki.validator.models.RtrPrefix
+import org.scalatest.{FunSuite, Matchers}
 
-import scala.io.Source
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
+class RoaUtilTest extends FunSuite with Matchers {
 
-object RisDumpUtil {
-
-  private val RisPeerThreshold = 5
-
-  def parseDumpFile(dumpFile: File): Seq[BgpAnnouncement] = {
-    val SimpleRisEntryRegex = """^([\d]+)\s+(\S+)\s+(\d+).*$""".r
-
-    Source.fromFile(dumpFile, "ASCII").getLines().flatMap { _ match {
-        case (SimpleRisEntryRegex(asn, prefix, peers)) => {
-          if (peers.toInt >= RisPeerThreshold) {
-            Some(BgpAnnouncement(Asn.parse(asn), IpRange.parse(prefix)))
-          } else {
-            None
-          }
-        }
-        case _ => {
-          None
-        }
-      }
-    }.toSeq
+  test("Should parse roas.csv") {
+    val roaTestFile = new File(Thread.currentThread().getContextClassLoader().getResource("roas.csv").getFile)
+    RoaUtil.parse(roaTestFile) should contain (RtrPrefix(Asn.parse("AS31207"), IpRange.parse("86.106.22.0/24"), Some(24)))
   }
-
 
 }

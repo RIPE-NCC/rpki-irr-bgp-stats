@@ -29,13 +29,12 @@
 package net.ripe.irrstats
 
 import java.io.File
-import stats._
-
-import net.ripe.irrstats.map.WorldMapPage
-import net.ripe.irrstats.rirs.{ExtendedStatsUtils, CountryHoldings, RIRHoldings}
-import net.ripe.irrstats.ris.RisDumpUtil
-import net.ripe.irrstats.roas.RoaUtil
-import net.ripe.irrstats.route.RouteParser
+import net.ripe.irrstats.parsing.ris.RisDumpUtil
+import net.ripe.irrstats.parsing.roas.RoaUtil
+import net.ripe.irrstats.reporting.map.WorldMapPage
+import analysis._
+import net.ripe.irrstats.parsing.rirs.{ExtendedStatsUtils, CountryHoldings, RIRHoldings}
+import net.ripe.irrstats.parsing.route.RouteParser
 import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpAnnouncementValidator}
 import net.ripe.rpki.validator.models.RtrPrefix
 import org.joda.time.DateTime
@@ -55,6 +54,7 @@ object Main extends App {
                     date: String = DateTime.now().toString("YYYYMMdd"),
                     rir: String = "all",
                     countries: Boolean = false,
+                    countryDetails: Option[String] = None,
                     worldmap: Boolean = false) {
 
     def routeAuthorisationType(): RouteAuthorisationDumpType = {
@@ -79,6 +79,7 @@ object Main extends App {
     opt[Unit]('q', "quiet") optional() action { (x, c) => c.copy(quiet = true) } text { "Quiet output, just (real) numbers" }
     opt[String]('d', "date") optional() action { (x, c) => c.copy(date = x) } text { "Override date string, defaults to today"}
     opt[String]('r', "rir") optional() action { (x, c) => c.copy(rir = x) } text { "Only show results for specified rir, defaults to all"}
+    opt[String]('x', "country-details")  optional() action { (x, c) => c.copy(countries = true, countryDetails = Some(x)) } text { "Do a detailed announcement report for country code" }
 
     opt[Unit]('c', "countries") optional() action { (x, c) => c.copy(countries = true) } text { "Do a report per country instead of per RIR" }
     opt[Unit]('w', "worldmap") optional() action { (x, c) => c.copy(worldmap = true, countries = true) } text { "Produce an HTML page with country stats projected on a number of world maps" }
@@ -167,6 +168,8 @@ object Main extends App {
 
         print(WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues))
 
+      } else if (config.countryDetails != None) {
+        println("Should do report on country:" + config.countryDetails.get)
       } else {
         if (!config.quiet) {
           printHeader()

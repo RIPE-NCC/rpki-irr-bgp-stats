@@ -26,58 +26,30 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.route
+package net.ripe.irrstats.reporting.map
 
-import java.io.File
+object WorldMapPage {
 
-import net.ripe.ipresource.{Asn, IpRange}
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
-
-import scala.io.Source
+  private def convertValuesToArrayData(countryValues: Map[String, Double]) = {
+    countryValues.map { entry => "['" + entry._1 + "', " + f"${entry._2 * 100}%3.2f]" }.mkString(",\n          ")
+  }
 
 
-object RouteParser {
+  // Returns an HTML page as a String with a Google Geomap world map and embedded data
+  def printWorldMapHtmlPage(prefixesAdoptionValues: Map[String, Double], prefixesValidValues: Map[String, Double], prefixesMatchingValues: Map[String, Double], adoptionValues: Map[String, Double], validValues: Map[String, Double], matchingValues: Map[String, Double]): String = {
 
-  def parse(routeFile: File) = {
-    
-    var routes = List.empty[Route]
+    // Yes, I am aware that better template frameworks exist, but I just have one simple thing to do, and prefer no deps.
+    scala.io.Source.fromInputStream(getClass.getResourceAsStream("/worldmap-template.html")).getLines().map { line =>
 
-    var prefix: IpRange = null
-    var asn: Asn = null
-    var lastModified: DateTime = null
-    
-    val keyValueRegex = """^([\w\-]+):\s*(\S*).*$""".r
-    
-    for (l <- Source.fromFile(routeFile, "iso-8859-1").getLines) {
-      
-      l match {
-          case keyValueRegex(key, value) => {            
-            key match {
-              case "route" | "route6" => {
-                if (asn != null && prefix != null) {
-                  routes = routes :+ Route(prefix, asn, lastModified)
-                  prefix = IpRange.parse(value)
-                  asn = null
-                  lastModified = null
-                } else {
-                  prefix = IpRange.parse(value)
-                }
-              }
-              case "origin" => asn = Asn.parse(value)
-              case "last-modified" => lastModified = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z").withZoneUTC().parseDateTime(value)
-              case _ => // ignore other
-            }
-          }
-          case _ => // nothing to do
-        }
-    }
-    
-    routes = routes :+ Route(prefix, asn, lastModified)
-    
-    routes
-  }  
+      line
+        .replace("***COUNTRY_PREFIXES_ADOPTION***", convertValuesToArrayData(prefixesAdoptionValues))
+        .replace("***COUNTRY_PREFIXES_VALID***", convertValuesToArrayData(prefixesValidValues))
+        .replace("***COUNTRY_PREFIXES_MATCHING***", convertValuesToArrayData(prefixesMatchingValues))
+        .replace("***COUNTRY_ADOPTION***", convertValuesToArrayData(adoptionValues))
+        .replace("***COUNTRY_VALID***", convertValuesToArrayData(validValues))
+        .replace("***COUNTRY_MATCHING***", convertValuesToArrayData(matchingValues))
+    }.mkString("\n")
+  }
+
+
 }
-
-
-case class Route(prefix: IpRange, asn: Asn, lastModified: DateTime)

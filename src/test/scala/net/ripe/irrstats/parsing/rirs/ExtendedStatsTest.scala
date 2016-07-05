@@ -26,31 +26,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.map
+package net.ripe.irrstats.parsing.rirs
 
+import java.io.File
 
-object WorldMapPage {
+import net.ripe.ipresource.{IpResource, IpResourceSet}
+import org.scalatest.{FunSuite, Matchers}
 
-  private def convertValuesToArrayData(countryValues: Map[String, Double]) = {
-    countryValues.map { entry => "['" + entry._1 + "', " + f"${entry._2 * 100}%3.2f]" }.mkString(",\n          ")
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
+class ExtendedStatsTest extends FunSuite with Matchers {
+  
+  test("Should parse IPv4") {
+    ExtendedStatsUtils.parseIpv4("213.154.64.0", "8192") should equal (IpResourceSet.parse("213.154.64.0/19"))
   }
 
+  test("Should parse extended delegated stats") {
 
-  // Returns an HTML page as a String with a Google Geomap world map and embedded data
-  def printWorldMapHtmlPage(prefixesAdoptionValues: Map[String, Double], prefixesValidValues: Map[String, Double], prefixesMatchingValues: Map[String, Double], adoptionValues: Map[String, Double], validValues: Map[String, Double], matchingValues: Map[String, Double]): String = {
+    val holdings = RIRHoldings.parse(new File(Thread.currentThread().getContextClassLoader().getResource("extended-delegated-stats.txt").getFile))
 
-    // Yes, I am aware that better template frameworks exist, but I just have one simple thing to do, and prefer no deps.
-    scala.io.Source.fromInputStream(getClass.getResourceAsStream("/worldmap-template.html")).getLines().map { line =>
+    holdings.get("apnic").get.contains(IpResource.parse("1.0.0.0/24")) should be (true)
 
-      line
-        .replace("***COUNTRY_PREFIXES_ADOPTION***", convertValuesToArrayData(prefixesAdoptionValues))
-        .replace("***COUNTRY_PREFIXES_VALID***", convertValuesToArrayData(prefixesValidValues))
-        .replace("***COUNTRY_PREFIXES_MATCHING***", convertValuesToArrayData(prefixesMatchingValues))
-        .replace("***COUNTRY_ADOPTION***", convertValuesToArrayData(adoptionValues))
-        .replace("***COUNTRY_VALID***", convertValuesToArrayData(validValues))
-        .replace("***COUNTRY_MATCHING***", convertValuesToArrayData(matchingValues))
-    }.mkString("\n")
+    ExtendedStatsUtils.regionFor(IpResource.parse("1.0.0.0/24"), holdings) should equal("apnic")
+    ExtendedStatsUtils.regionFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
   }
-
 
 }

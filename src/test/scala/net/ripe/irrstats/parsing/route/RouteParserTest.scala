@@ -26,27 +26,44 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.stats
+package net.ripe.irrstats.parsing.route
 
-import java.math.BigInteger
+import java.io.File
 
-import net.ripe.ipresource.{IpRange, IpResourceSet}
-import org.scalatest.{Matchers, FunSuite}
+import org.scalatest.{FunSuite, Matchers}
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class AnnouncementStatsUtilTest extends FunSuite with Matchers {
-
-  import scala.language.implicitConversions
-  implicit def stringToIpRange(s: String) = IpRange.parse(s)
-
-  test("Should count overlapping IP addresses in prefixes only once") {
-    val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.0.0.0/23")
-    AnnouncementStatsUtil.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(512))
+class RouteParserTest extends FunSuite with Matchers {
+  
+  test("regex should split") {
+    val routeLine = "mnt-by:          MNT-SOMETHING # bla"
+    val otherLine = "# bla"
+    val keyValueRegex = """^([\w\-]+):\s*(\S*).*$""".r
+    
+    routeLine match {
+      case keyValueRegex(key, value) => {
+        key should equal("mnt-by")
+        value should equal ("MNT-SOMETHING")
+      }
+      case _ => fail("Should have matched")
+    }
+    
+    otherLine match {
+      case keyValueRegex(k, v) => fail("Should not match")
+      case _ => // okay
+    }
+    
   }
 
-  test("Should count IP addresses in different prefixes") {
-    val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.1.0.0/23")
-    AnnouncementStatsUtil.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(256 + 512))
+  test("should parse routes file") {
+    val routesFile = new File(Thread.currentThread().getContextClassLoader().getResource("ripe-db-route.txt").getFile)
+    val routes = RouteParser.parse(routesFile)
+    routes.size should equal(62)
   }
-
+  
+  test("should parse routes6 file") {
+    val route6sFile = new File(Thread.currentThread().getContextClassLoader().getResource("ripe-db-route6.txt").getFile)
+    val route6s = RouteParser.parse(route6sFile)
+	  route6s.size should equal(62)
+  }
 }

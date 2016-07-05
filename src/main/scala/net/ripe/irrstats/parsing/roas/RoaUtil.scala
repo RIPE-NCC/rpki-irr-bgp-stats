@@ -26,20 +26,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.roas
+package net.ripe.irrstats.parsing.roas
 
 import java.io.File
 
-import net.ripe.ipresource.{Asn, IpRange}
+import net.ripe.ipresource.{IpRange, Asn}
 import net.ripe.rpki.validator.models.RtrPrefix
-import org.scalatest.{FunSuite, Matchers}
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class RoaUtilTest extends FunSuite with Matchers {
+import scala.io.Source
 
-  test("Should parse roas.csv") {
-    val roaTestFile = new File(Thread.currentThread().getContextClassLoader().getResource("roas.csv").getFile)
-    RoaUtil.parse(roaTestFile) should contain (RtrPrefix(Asn.parse("AS31207"), IpRange.parse("86.106.22.0/24"), Some(24)))
-  }
+object RoaUtil {
+
+  def parse(roaCsvFile: File): List[RtrPrefix] = Source.fromFile(roaCsvFile, "iso-8859-1").getLines.flatMap { line =>
+    if (!line.equals("ASN,IP Prefix,Max Length") && !line.startsWith("#")) {
+      val tokens = line.split(',')
+      if (tokens.length == 3) {
+        val asn = Asn.parse(tokens(0))
+        val prefix = IpRange.parse(tokens(1))
+        Some(RtrPrefix(asn, prefix, Some(tokens(2).toInt)))
+      } else {
+        None
+      }
+    } else {
+      None
+    }
+  }.toList
+
 
 }
+

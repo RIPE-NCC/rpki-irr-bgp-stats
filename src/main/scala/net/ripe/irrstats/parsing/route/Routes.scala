@@ -26,44 +26,58 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.route
+package net.ripe.irrstats.parsing.route
 
 import java.io.File
 
-import org.scalatest.{FunSuite, Matchers}
+import net.ripe.ipresource.{Asn, IpRange}
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class RouteParserTest extends FunSuite with Matchers {
-  
-  test("regex should split") {
-    val routeLine = "mnt-by:          MNT-SOMETHING # bla"
-    val otherLine = "# bla"
+import scala.io.Source
+
+
+object RouteParser {
+
+  def parse(routeFile: File) = {
+    
+    var routes = List.empty[Route]
+
+    var prefix: IpRange = null
+    var asn: Asn = null
+    var lastModified: DateTime = null
+    
     val keyValueRegex = """^([\w\-]+):\s*(\S*).*$""".r
     
-    routeLine match {
-      case keyValueRegex(key, value) => {
-        key should equal("mnt-by")
-        value should equal ("MNT-SOMETHING")
-      }
-      case _ => fail("Should have matched")
+    for (l <- Source.fromFile(routeFile, "iso-8859-1").getLines) {
+      
+      l match {
+          case keyValueRegex(key, value) => {            
+            key match {
+              case "route" | "route6" => {
+                if (asn != null && prefix != null) {
+                  routes = routes :+ Route(prefix, asn, lastModified)
+                  prefix = IpRange.parse(value)
+                  asn = null
+                  lastModified = null
+                } else {
+                  prefix = IpRange.parse(value)
+                }
+              }
+              case "origin" => asn = Asn.parse(value)
+              case "last-modified" => lastModified = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z").withZoneUTC().parseDateTime(value)
+              case _ => // ignore other
+            }
+          }
+          case _ => // nothing to do
+        }
     }
     
-    otherLine match {
-      case keyValueRegex(k, v) => fail("Should not match")
-      case _ => // okay
-    }
+    routes = routes :+ Route(prefix, asn, lastModified)
     
-  }
-
-  test("should parse routes file") {
-    val routesFile = new File(Thread.currentThread().getContextClassLoader().getResource("ripe-db-route.txt").getFile)
-    val routes = RouteParser.parse(routesFile)
-    routes.size should equal(62)
-  }
-  
-  test("should parse routes6 file") {
-    val route6sFile = new File(Thread.currentThread().getContextClassLoader().getResource("ripe-db-route6.txt").getFile)
-    val route6s = RouteParser.parse(route6sFile)
-	  route6s.size should equal(62)
-  }
+    routes
+  }  
 }
+
+
+case class Route(prefix: IpRange, asn: Asn, lastModified: DateTime)

@@ -26,32 +26,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.roas
+package net.ripe.irrstats.parsing.ris
 
 import java.io.File
 
-import net.ripe.ipresource.{IpRange, Asn}
-import net.ripe.rpki.validator.models.RtrPrefix
+import net.ripe.ipresource.{Asn, IpRange}
+import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
 
 import scala.io.Source
 
-object RoaUtil {
+object RisDumpUtil {
 
-  def parse(roaCsvFile: File): List[RtrPrefix] = Source.fromFile(roaCsvFile, "iso-8859-1").getLines.flatMap { line =>
-    if (!line.equals("ASN,IP Prefix,Max Length") && !line.startsWith("#")) {
-      val tokens = line.split(',')
-      if (tokens.length == 3) {
-        val asn = Asn.parse(tokens(0))
-        val prefix = IpRange.parse(tokens(1))
-        Some(RtrPrefix(asn, prefix, Some(tokens(2).toInt)))
-      } else {
-        None
+  private val RisPeerThreshold = 5
+
+  def parseDumpFile(dumpFile: File): Seq[BgpAnnouncement] = {
+    val SimpleRisEntryRegex = """^([\d]+)\s+(\S+)\s+(\d+).*$""".r
+
+    Source.fromFile(dumpFile, "ASCII").getLines().flatMap { _ match {
+        case (SimpleRisEntryRegex(asn, prefix, peers)) => {
+          if (peers.toInt >= RisPeerThreshold) {
+            Some(BgpAnnouncement(Asn.parse(asn), IpRange.parse(prefix)))
+          } else {
+            None
+          }
+        }
+        case _ => {
+          None
+        }
       }
-    } else {
-      None
-    }
-  }.toList
+    }.toSeq
+  }
 
 
 }
-
