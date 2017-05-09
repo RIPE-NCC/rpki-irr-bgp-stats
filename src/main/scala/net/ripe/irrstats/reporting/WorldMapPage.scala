@@ -30,6 +30,12 @@ package net.ripe.irrstats.reporting
 
 object WorldMapPage {
 
+  private val ShowMatchingThreshold = 0.001 // 0.1%
+
+  private def findMatchingValuesAboveAdoptionThreshold(adoptionValues: Map[String, Double], matchingValues: Map[String, Double]): Map[String, Double] = {
+    matchingValues.filter(mv => adoptionValues.isDefinedAt(mv._1) && adoptionValues.get(mv._1).get > ShowMatchingThreshold)
+  }
+
   private def convertValuesToArrayData(countryValues: Map[String, Double]) = {
     countryValues.map { entry => "['" + entry._1 + "', " + f"${entry._2 * 100}%3.2f]" }.mkString(",\n          ")
   }
@@ -44,10 +50,10 @@ object WorldMapPage {
       line
         .replace("***COUNTRY_PREFIXES_ADOPTION***", convertValuesToArrayData(prefixesAdoptionValues))
         .replace("***COUNTRY_PREFIXES_VALID***", convertValuesToArrayData(prefixesValidValues))
-        .replace("***COUNTRY_PREFIXES_MATCHING***", convertValuesToArrayData(prefixesMatchingValues))
+        .replace("***COUNTRY_PREFIXES_MATCHING***", convertValuesToArrayData(findMatchingValuesAboveAdoptionThreshold(prefixesAdoptionValues, prefixesMatchingValues)))
         .replace("***COUNTRY_ADOPTION***", convertValuesToArrayData(adoptionValues))
         .replace("***COUNTRY_VALID***", convertValuesToArrayData(validValues))
-        .replace("***COUNTRY_MATCHING***", convertValuesToArrayData(matchingValues))
+        .replace("***COUNTRY_MATCHING***", convertValuesToArrayData(findMatchingValuesAboveAdoptionThreshold(adoptionValues, matchingValues)))
     }.mkString("\n")
   }
 

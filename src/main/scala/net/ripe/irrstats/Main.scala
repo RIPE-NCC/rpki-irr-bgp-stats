@@ -55,7 +55,8 @@ object Main extends App {
                     rir: String = "all",
                     countries: Boolean = false,
                     countryDetails: Option[String] = None,
-                    worldmap: Boolean = false) {
+                    worldmap: Boolean = false,
+                    asn: Boolean = false) {
 
     def routeAuthorisationType(): RouteAuthorisationDumpType = {
       if (routeAuthorisationFile.getName.endsWith(".csv")) {
@@ -83,6 +84,8 @@ object Main extends App {
 
     opt[Unit]('c', "countries") optional() action { (x, c) => c.copy(countries = true) } text { "Do a report per country instead of per RIR" }
     opt[Unit]('w', "worldmap") optional() action { (x, c) => c.copy(worldmap = true, countries = true) } text { "Produce an HTML page with country stats projected on a number of world maps" }
+
+    opt[Unit]('a', "asn") optional() action { (x, c) => c.copy(asn = true) } text { "Find and report top ASNs" }
 
     checkConfig { c =>
       if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt") ) failure("option -r must refer roas.csv or route[6].db file") else success }
@@ -152,6 +155,20 @@ object Main extends App {
                 "fraction space valid, fraction space invalid length, fraction space invalid length filtered, fraction space invalid asn, " +
                 "fraction space invalid asn filtered, fraction space unknown")
 
+
+      if (config.asn) {
+        val validator = new BgpAnnouncementValidator()
+        validator.startUpdate(announcements, authorisations)
+        val validatedAnnouncements = validator.validatedAnnouncements
+
+        println("Asn, PfxAnn, PfxValid, PfxInvalid, SpaceAnn, SpaceValid, SpaceInvalid")
+
+        AsnStatsAnalyser.statsPerAsn(validatedAnnouncements).toList.sortBy(_.spaceValid).reverse.take(100).foreach(stat =>
+          println(s"${stat.asn}, ${stat.numberOfAnnouncements}, ${stat.numberValidAnnouncements}, ${stat.numberInvalidAnnouncements}, ${stat.spaceAnnounced}, ${stat.spaceValid}, ${stat.spaceInvalid}")
+        )
+
+        sys.exit(0)
+      }
 
 
       if (config.worldmap) {
