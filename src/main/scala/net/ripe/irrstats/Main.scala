@@ -141,19 +141,19 @@ object Main extends App {
         }
 
         println(s"${config.date}, ${region}, ${authorisations.size}, ${stats.combined.count}, ${doubleOptionToString(stats.accuracyAnnouncements)}, " +
-                s"${doubleOptionToString(stats.accuracyAnnouncementsFiltered)}, ${doubleOptionToString(stats.percentageValid)}, ${doubleOptionToString(stats.percentageInvalidLength)}, " +
-                s"${doubleOptionToString(stats.percentageInvalidLengthFiltered)}, ${doubleOptionToString(stats.percentageInvalidAsn)}, " +
-                s"${doubleOptionToString(stats.percentageInvalidAsnFiltered)}, ${doubleOptionToString(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, " +
-                s"${doubleOptionToString(stats.accuracySpace)}, ${doubleOptionToString(stats.accuracySpaceFiltered)}, ${doubleOptionToString(stats.percentageSpaceValid)}, ${doubleOptionToString(stats.percentageSpaceInvalidLength)}, " +
-                s"${doubleOptionToString(stats.percentageSpaceInvalidLengthFiltered)}, ${doubleOptionToString(stats.percentageSpaceInvalidAsn)}, " +
-                s"${doubleOptionToString(stats.percentageSpaceInvalidAsnFiltered)}, ${doubleOptionToString(stats.percentageSpaceUnknown)}")
+                s"${doubleOptionToString(stats.percentageValid)}, ${doubleOptionToString(stats.percentageInvalidLength)}, " +
+                s"${doubleOptionToString(stats.percentageInvalidAsn)}, " +
+                s"${doubleOptionToString(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, " +
+                s"${doubleOptionToString(stats.accuracySpace)}, ${doubleOptionToString(stats.percentageSpaceValid)}, ${doubleOptionToString(stats.percentageSpaceInvalidLength)}, " +
+                s"${doubleOptionToString(stats.percentageSpaceInvalidAsn)}, " +
+                s"${doubleOptionToString(stats.percentageSpaceUnknown)}")
       }
 
-      def printHeader(): Unit = println("date, RIR, authorisations, announcements, accuracy announcements, accuracy announcements filtered, " +
-                "fraction valid, fraction invalid length, fraction invalid length filtered, fraction invalid asn, fraction invalid asn filtered, fraction unknown, " +
-                "space announced, accuracy space, accuracy space filtered, " +
-                "fraction space valid, fraction space invalid length, fraction space invalid length filtered, fraction space invalid asn, " +
-                "fraction space invalid asn filtered, fraction space unknown")
+      def printHeader(): Unit = println("date, RIR, authorisations, announcements, accuracy announcements, " +
+                "fraction valid, fraction invalid length, fraction invalid asn, fraction unknown, " +
+                "space announced, accuracy space, " +
+                "fraction space valid, fraction space invalid length, fraction space invalid asn, " +
+                "fraction space unknown")
 
 
       if (config.asn) {

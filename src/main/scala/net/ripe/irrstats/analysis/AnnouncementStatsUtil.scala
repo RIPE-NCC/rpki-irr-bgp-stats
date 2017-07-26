@@ -51,9 +51,7 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
                                       covered: ValidatedAnnouncementStat,
                                       valid: ValidatedAnnouncementStat,
                                       invalidLength: ValidatedAnnouncementStat,
-                                      invalidLengthFiltered: ValidatedAnnouncementStat,
                                       invalidAsn: ValidatedAnnouncementStat,
-                                      invalidAsnFiltered: ValidatedAnnouncementStat,
                                       unknown: ValidatedAnnouncementStat
                                      ) {
 
@@ -72,25 +70,18 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
   private def safePercentageAnnouncements(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.count, combined.count)
 
   def accuracyAnnouncements = safePercentage(valid.count , (valid.count + invalidAsn.count + invalidLength.count))
-  def accuracyAnnouncementsFiltered = safePercentage(valid.count, (valid.count + invalidAsnFiltered.count + invalidLengthFiltered.count))
   def accuracySpace = safePercentageBig(valid.numberOfIps, covered.numberOfIps)
-
-  // TODO: verify if this does not count IP addresses more than once (there may be overlap in the sets in particular invalid length and same address also for invalid asn)
-  def accuracySpaceFiltered = safePercentageBig(valid.numberOfIps, (valid.numberOfIps.add(invalidAsnFiltered.numberOfIps).add(invalidLengthFiltered.numberOfIps)))
 
   def percentageValid = safePercentageAnnouncements(valid)
   def percentageInvalidLength = safePercentageAnnouncements(invalidLength)
   def percentageInvalidAsn = safePercentageAnnouncements(invalidAsn)
-  def percentageInvalidLengthFiltered = safePercentageAnnouncements(invalidLengthFiltered)
-  def percentageInvalidAsnFiltered = safePercentageAnnouncements(invalidAsnFiltered)
+
   def percentageUnknown = safePercentageAnnouncements(unknown)
   def percentageAdoption = safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
 
   def percentageSpaceValid = safePercentageIpSpace(valid)
   def percentageSpaceInvalidLength = safePercentageIpSpace(invalidLength)
   def percentageSpaceInvalidAsn = safePercentageIpSpace(invalidAsn)
-  def percentageSpaceInvalidLengthFiltered = safePercentageIpSpace(invalidLengthFiltered)
-  def percentageSpaceInvalidAsnFiltered = safePercentageIpSpace(invalidAsnFiltered)
   def percentageSpaceUnknown = safePercentageIpSpace(unknown)
   def percentageSpaceAdoption = safePercentageBig(covered.numberOfIps, combined.numberOfIps)
 }
@@ -120,9 +111,7 @@ object AnnouncementStatsUtil {
       covered = ValidatedAnnouncementStat(valid.size + invalidLength. size + invalidAsn.size, getNumberOfAddresses(valid.map(_.prefix) ++ invalidLength.map(_.prefix) ++ invalidAsn.map(_.prefix))),
       valid = ValidatedAnnouncementStat(valid.size, getNumberOfAddresses(valid.map(_.prefix))),
       invalidLength = ValidatedAnnouncementStat(invalidLength.size, getNumberOfAddresses(invalidLength.map(_.prefix))),
-      invalidLengthFiltered = ValidatedAnnouncementStat(filteredInvalidLength.size, getNumberOfAddresses(filteredInvalidLength.map(_.prefix))),
       invalidAsn = ValidatedAnnouncementStat(invalidAsn.size, getNumberOfAddresses(invalidAsn.map(_.prefix))),
-      invalidAsnFiltered = ValidatedAnnouncementStat(filteredInvalidAsn.size, getNumberOfAddresses(filteredInvalidAsn.map(_.prefix))),
       unknown = ValidatedAnnouncementStat(unknown.size, getNumberOfAddresses(unknown.map(_.prefix)))
     )
   }
