@@ -102,8 +102,6 @@ object AnnouncementStatsUtil {
     val invalidLength = announcements.filter(_.validity == RouteValidity.InvalidLength)
     val invalidAsn = announcements.filter(_.validity == RouteValidity.InvalidAsn)
     val unknown = announcements.filter(_.validity == RouteValidity.Unknown)
-    val filteredInvalidLength = invalidLength.filter(a => valid.find(_.prefix.overlaps(a.prefix)) == None) // count if no covering valid found
-    val filteredInvalidAsn = invalidAsn.filter(a => valid.find(_.prefix.overlaps(a.prefix)) == None) // count if no covering valid found
 
     ValidatedAnnouncementStats(
       announcements = announcements,
