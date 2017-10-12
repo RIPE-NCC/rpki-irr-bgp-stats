@@ -1,4 +1,32 @@
 /**
+ * Copyright (c) 2015 RIPE NCC
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *   - Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
+ *   - Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
+ *   - Neither the name of this software, nor the names of its contributors, nor
+ *     the names of the contributors' employers may be used to endorse or promote
+ *     products derived from this software without specific prior written
+ *     permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+/**
   * Copyright (c) 2015 RIPE NCC
   * All rights reserved.
   *
@@ -31,10 +59,10 @@ package net.ripe.irrstats
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.parsing.roas.RoaUtil
 import analysis._
-import net.ripe.irrstats.parsing.rirs.{ExtendedStatsUtils, CountryHoldings, RIRHoldings}
+import net.ripe.irrstats.parsing.rirs.{CountryHoldings, ExtendedStatsUtils, RIRHoldings}
 import net.ripe.irrstats.parsing.route.RouteParser
-import net.ripe.irrstats.reporting.{CountryDetails, WorldMapPage}
-import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpAnnouncementValidator}
+import net.ripe.irrstats.reporting.{CountryDetails, RegionCsv, WorldMapPage}
+import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpAnnouncementValidator, BgpValidatedAnnouncement}
 import net.ripe.rpki.validator.models.RtrPrefix
 
 import scala.language.postfixOps
@@ -61,10 +89,11 @@ object Main extends App {
 
   val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy { ann => regionFor(ann.prefix, holdings) }
   val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
-
+  
   implicit val actorSystem = akka.actor.ActorSystem()
 
-  def regionAnnouncementStats(region: String) = {
+  def regionAnnouncementStats(region: String): ValidatedAnnouncementStats = {
+
     val announcements = announcementsByRegion.getOrElse(region, Seq.empty)
     val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
 
@@ -72,35 +101,8 @@ object Main extends App {
     validator.startUpdate(announcements, authorisations)
     val validatedAnnouncements = validator.validatedAnnouncements
 
-    AnnouncementStatsUtil.analyseValidatedAnnouncements(validatedAnnouncements)
+    AnnouncementStatsUtil.analyseValidatedAnnouncements(validatedAnnouncements, authorisations.size)
   }
-
-
-  def reportRegionQuality(region: String) = {
-
-    val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
-    val stats = regionAnnouncementStats(region)
-
-    def doubleOptionToString(fo: Option[Double]) = fo match {
-      case None => ""
-      case Some(f) => f"${f}%1.4f"
-    }
-
-    println(s"${config.date}, ${region}, ${authorisations.size}, ${stats.combined.count}, ${doubleOptionToString(stats.accuracyAnnouncements)}, " +
-      s"${doubleOptionToString(stats.percentageValid)}, ${doubleOptionToString(stats.percentageInvalidLength)}, " +
-      s"${doubleOptionToString(stats.percentageInvalidAsn)}, " +
-      s"${doubleOptionToString(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, " +
-      s"${doubleOptionToString(stats.accuracySpace)}, ${doubleOptionToString(stats.percentageSpaceValid)}, ${doubleOptionToString(stats.percentageSpaceInvalidLength)}, " +
-      s"${doubleOptionToString(stats.percentageSpaceInvalidAsn)}, " +
-      s"${doubleOptionToString(stats.percentageSpaceUnknown)}")
-  }
-
-  def printHeader(): Unit = println("date, RIR, authorisations, announcements, accuracy announcements, " +
-    "fraction valid, fraction invalid length, fraction invalid asn, fraction unknown, " +
-    "space announced, accuracy space, " +
-    "fraction space valid, fraction space invalid length, fraction space invalid asn, " +
-    "fraction space unknown")
-
 
   if (config.asn) {
     val validator = new BgpAnnouncementValidator()
@@ -136,15 +138,15 @@ object Main extends App {
     CountryDetails.printCountryAnnouncementReport(cc, regionAnnouncementStats(cc))
   } else {
     if (!config.quiet) {
-      printHeader()
+      RegionCsv.printHeader()
     }
 
     if (config.rir == "all") {
       for (rir <- holdings.keys) {
-        reportRegionQuality(rir)
+        RegionCsv.reportRegionQuality(rir, regionAnnouncementStats(rir), config.date)
       }
     } else {
-      reportRegionQuality(config.rir)
+      RegionCsv.reportRegionQuality(config.rir, regionAnnouncementStats(config.rir), config.date)
     }
   }
 

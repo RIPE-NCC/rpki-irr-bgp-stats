@@ -52,7 +52,8 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
                                       valid: ValidatedAnnouncementStat,
                                       invalidLength: ValidatedAnnouncementStat,
                                       invalidAsn: ValidatedAnnouncementStat,
-                                      unknown: ValidatedAnnouncementStat
+                                      unknown: ValidatedAnnouncementStat,
+                                      numberOfAuthorisations: Int
                                      ) {
 
   private def safePercentageBig(fraction: BigInteger, total: BigInteger): Option[Double] = {
@@ -96,7 +97,7 @@ object AnnouncementStatsUtil {
     })
   }
 
-  def analyseValidatedAnnouncements(announcements: Seq[BgpValidatedAnnouncement]) = {
+  def analyseValidatedAnnouncements(announcements: Seq[BgpValidatedAnnouncement], numberOfAuthorisations: Int) = {
 
     val valid = announcements.filter(_.validity == RouteValidity.Valid)
     val invalidLength = announcements.filter(_.validity == RouteValidity.InvalidLength)
@@ -110,7 +111,8 @@ object AnnouncementStatsUtil {
       valid = ValidatedAnnouncementStat(valid.size, getNumberOfAddresses(valid.map(_.prefix))),
       invalidLength = ValidatedAnnouncementStat(invalidLength.size, getNumberOfAddresses(invalidLength.map(_.prefix))),
       invalidAsn = ValidatedAnnouncementStat(invalidAsn.size, getNumberOfAddresses(invalidAsn.map(_.prefix))),
-      unknown = ValidatedAnnouncementStat(unknown.size, getNumberOfAddresses(unknown.map(_.prefix)))
+      unknown = ValidatedAnnouncementStat(unknown.size, getNumberOfAddresses(unknown.map(_.prefix))),
+      numberOfAuthorisations = numberOfAuthorisations
     )
   }
 }
