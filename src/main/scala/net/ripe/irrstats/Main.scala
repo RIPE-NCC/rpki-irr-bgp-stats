@@ -58,19 +58,14 @@ package net.ripe.irrstats
 
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.parsing.roas.RoaUtil
-import analysis._
-import net.ripe.irrstats.parsing.rirs.{CountryHoldings, ExtendedStatsUtils, RIRHoldings}
 import net.ripe.irrstats.parsing.route.RouteParser
-import net.ripe.irrstats.reporting.{CountryDetails, RegionCsv, WorldMapPage}
-import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpAnnouncementValidator, BgpValidatedAnnouncement}
+import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
 import net.ripe.rpki.validator.models.RtrPrefix
 
 import scala.language.postfixOps
 
 
 object Main extends App {
-
-  import ExtendedStatsUtils._
 
   val config = Config.config(args)
 
@@ -81,74 +76,12 @@ object Main extends App {
     case RouteObjectDbDump => RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix))
   }
 
-  val holdings = if (config.countries == false) {
-    RIRHoldings.parse(config.statsFile)
-  } else {
-    CountryHoldings.parse(config.statsFile)
+  config.analysisMode match {
+    case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
+    case WorldMapMode =>  ReportWorldMap.report(announcements, authorisations, config.statsFile)
+    case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, config.statsFile, config.countryDetails.get)
+    case CountryMode => ReportCountry.reportCountries(announcements, authorisations, config.statsFile, config.quiet, config.date)
+    case RirMode => ReportRir.report(announcements, authorisations, config.statsFile, config.quiet, config.date, config.rir)
   }
 
-  val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy { ann => regionFor(ann.prefix, holdings) }
-  val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
-  
-  implicit val actorSystem = akka.actor.ActorSystem()
-
-  def regionAnnouncementStats(region: String): ValidatedAnnouncementStats = {
-
-    val announcements = announcementsByRegion.getOrElse(region, Seq.empty)
-    val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
-
-    val validator = new BgpAnnouncementValidator()
-    validator.startUpdate(announcements, authorisations)
-    val validatedAnnouncements = validator.validatedAnnouncements
-
-    AnnouncementStatsUtil.analyseValidatedAnnouncements(validatedAnnouncements, authorisations.size)
-  }
-
-  if (config.asn) {
-    val validator = new BgpAnnouncementValidator()
-    validator.startUpdate(announcements, authorisations)
-    val validatedAnnouncements = validator.validatedAnnouncements
-
-    println("Asn, PfxAnn, PfxValid, PfxInvalid, SpaceAnn, SpaceValid, SpaceInvalid")
-
-    AsnStatsAnalyser.statsPerAsn(validatedAnnouncements).toList.sortBy(_.spaceValid).reverse.take(100).foreach(stat =>
-      println(s"${stat.asn}, ${stat.numberOfAnnouncements}, ${stat.numberValidAnnouncements}, ${stat.numberInvalidAnnouncements}, ${stat.spaceAnnounced}, ${stat.spaceValid}, ${stat.spaceInvalid}")
-    )
-
-    sys.exit(0)
-  }
-
-
-  if (config.worldmap) {
-    val countryStats = holdings.keys.map { cc =>
-      WorldMapCountryStat.fromCcAndStats(cc, regionAnnouncementStats(cc))
-    }
-
-    val prefixesAdoptionValues = countryStats.filter(cs => cs.prefixesAdoption.isDefined).map { cs => (cs.countryCode -> cs.prefixesAdoption.get) }.toMap
-    val prefixesValidValues = countryStats.filter(cs => cs.prefixesValid.isDefined).map { cs => (cs.countryCode -> cs.prefixesValid.get) }.toMap
-    val prefixesMatchingValues = countryStats.filter(cs => cs.prefixesMatching.isDefined).map { cs => (cs.countryCode -> cs.prefixesMatching.get) }.toMap
-    val adoptionValues = countryStats.filter(cs => cs.adoption.isDefined).map { cs => (cs.countryCode -> cs.adoption.get) }.toMap
-    val validValues = countryStats.filter(cs => cs.valid.isDefined).map { cs => (cs.countryCode -> cs.valid.get) }.toMap
-    val matchingValues = countryStats.filter(cs => cs.matching.isDefined).map { cs => (cs.countryCode -> cs.matching.get) }.toMap
-
-    print(WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues))
-
-  } else if (config.countryDetails != None) {
-    val cc = config.countryDetails.get
-    CountryDetails.printCountryAnnouncementReport(cc, regionAnnouncementStats(cc))
-  } else {
-    if (!config.quiet) {
-      RegionCsv.printHeader()
-    }
-
-    if (config.rir == "all") {
-      for (rir <- holdings.keys) {
-        RegionCsv.reportRegionQuality(rir, regionAnnouncementStats(rir), config.date)
-      }
-    } else {
-      RegionCsv.reportRegionQuality(config.rir, regionAnnouncementStats(config.rir), config.date)
-    }
-  }
-
-  sys.exit(0)
 }
