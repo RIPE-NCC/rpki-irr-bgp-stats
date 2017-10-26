@@ -28,27 +28,26 @@
  */
 package net.ripe.irrstats
 
-import java.io.File
-
 import net.ripe.irrstats.analysis.RegionStatsUtil
+import net.ripe.irrstats.parsing.rirs.ExtendedStatsUtils.Holdings
 import net.ripe.irrstats.reporting.{CountryDetails, RegionCsv}
 import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
 import net.ripe.rpki.validator.models.RtrPrefix
 
 object ReportCountry {
 
-  def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], statsFile: File, countryCode: String) = {
-    CountryDetails.printCountryAnnouncementReport(countryCode, new RegionStatsUtil(CountryDetailsMode, statsFile, announcements, authorisations).regionAnnouncementStats(countryCode))
+  def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, countryCode: String) = {
+    CountryDetails.printCountryAnnouncementReport(countryCode, new RegionStatsUtil(holdings, announcements, authorisations).regionAnnouncementStats(countryCode))
   }
 
-  def reportCountries(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], statsFile: File, quiet: Boolean, dateString: String) = {
+  def reportCountries(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String) = {
     if (! quiet) {
       RegionCsv.printHeader()
     }
 
-    val countryStats = new RegionStatsUtil(CountryDetailsMode, statsFile, announcements, authorisations)
+    val countryStats = new RegionStatsUtil(holdings, announcements, authorisations)
 
-    for (cc <- countryStats.holdings.keys) {
+    for (cc <- holdings.keys) {
       RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString)
     }
 

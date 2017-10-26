@@ -28,6 +28,7 @@
  */
 package net.ripe.irrstats
 
+import net.ripe.irrstats.parsing.rirs.{CountryHoldings, RIRHoldings}
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.parsing.roas.RoaUtil
 import net.ripe.irrstats.parsing.route.RouteParser
@@ -48,12 +49,15 @@ object Main extends App {
     case RouteObjectDbDump => RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix))
   }
 
+  lazy val rirHoldings = RIRHoldings.parse(config.statsFile)
+  lazy val countryHoldings = CountryHoldings.parse(config.statsFile)
+
   config.analysisMode match {
     case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
-    case WorldMapMode =>  ReportWorldMap.report(announcements, authorisations, config.statsFile)
-    case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, config.statsFile, config.countryDetails.get)
-    case CountryMode => ReportCountry.reportCountries(announcements, authorisations, config.statsFile, config.quiet, config.date)
-    case RirMode => ReportRir.report(announcements, authorisations, config.statsFile, config.quiet, config.date, config.rir)
+    case WorldMapMode =>  ReportWorldMap.report(announcements, authorisations, countryHoldings)
+    case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHoldings, config.countryDetails.get)
+    case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHoldings, config.quiet, config.date)
+    case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
   }
 
 }

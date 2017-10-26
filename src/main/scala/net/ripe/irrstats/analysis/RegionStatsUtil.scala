@@ -28,23 +28,14 @@
  */
 package net.ripe.irrstats.analysis
 
-import java.io.File
-
-import net.ripe.irrstats.{AnalysisMode, RirMode}
-import net.ripe.irrstats.parsing.rirs.ExtendedStatsUtils.regionFor
-import net.ripe.irrstats.parsing.rirs.{CountryHoldings, RIRHoldings}
+import net.ripe.irrstats.parsing.rirs.ExtendedStatsUtils.{Holdings, regionFor}
 import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpAnnouncementValidator}
 import net.ripe.rpki.validator.models.RtrPrefix
 
-class RegionStatsUtil(analysisMode: AnalysisMode, statsFile: File, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
+class RegionStatsUtil(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
 
-  lazy val holdings = analysisMode match {
-    case RirMode => RIRHoldings.parse(statsFile)
-    case _ => CountryHoldings.parse(statsFile)
-  }
-
-  lazy val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy { ann => regionFor(ann.prefix, holdings) }
-  lazy val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
+  val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy { ann => regionFor(ann.prefix, holdings) }
+  val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
 
   implicit val actorSystem = akka.actor.ActorSystem()
 

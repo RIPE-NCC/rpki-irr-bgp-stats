@@ -28,25 +28,24 @@
  */
 package net.ripe.irrstats
 
-import java.io.File
-
 import net.ripe.irrstats.analysis.RegionStatsUtil
+import net.ripe.irrstats.parsing.rirs.ExtendedStatsUtils.Holdings
 import net.ripe.irrstats.reporting.RegionCsv
 import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
 import net.ripe.rpki.validator.models.RtrPrefix
 
 object ReportRir {
 
-  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], statsFile: File, quiet: Boolean, dateString: String, rirString: String) = {
+  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String, rirString: String) = {
 
     if (! quiet) {
       RegionCsv.printHeader()
     }
 
-    val countryStats = new RegionStatsUtil(CountryDetailsMode, statsFile, announcements, authorisations)
+    val countryStats = new RegionStatsUtil(holdings, announcements, authorisations)
 
     val rirs = if (rirString == "all") {
-      countryStats.holdings.keys
+      holdings.keys
     } else {
       List(rirString)
     }

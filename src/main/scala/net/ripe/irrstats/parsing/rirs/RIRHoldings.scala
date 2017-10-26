@@ -62,7 +62,7 @@ object RIRHoldings {
 
   import ExtendedStatsUtils._
 
-  def parse(statsFile: File): Map[String, IpResourceSet] = {
+  def parse(statsFile: File): Holdings = {
     
     val afrinic = new IpResourceSet()
     val afrinicReserved = new IpResourceSet()

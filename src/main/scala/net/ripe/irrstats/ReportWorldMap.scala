@@ -28,17 +28,16 @@
  */
 package net.ripe.irrstats
 
-import java.io.File
-
 import net.ripe.irrstats.analysis.RegionStatsUtil
+import net.ripe.irrstats.parsing.rirs.ExtendedStatsUtils.Holdings
 import net.ripe.irrstats.reporting.WorldMapPage
 import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
 import net.ripe.rpki.validator.models.RtrPrefix
 
 object ReportWorldMap {
 
-  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], statsFile: File) = {
-    val countryStats = new RegionStatsUtil(WorldMapMode, statsFile, announcements, authorisations).worldMapStats
+  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings) = {
+    val countryStats = new RegionStatsUtil(holdings, announcements, authorisations).worldMapStats
 
     val prefixesAdoptionValues = countryStats.filter(cs => cs.prefixesAdoption.isDefined).map { cs => (cs.countryCode -> cs.prefixesAdoption.get) }.toMap
     val prefixesValidValues = countryStats.filter(cs => cs.prefixesValid.isDefined).map { cs => (cs.countryCode -> cs.prefixesValid.get) }.toMap
