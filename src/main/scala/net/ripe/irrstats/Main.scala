@@ -35,9 +35,6 @@ import net.ripe.irrstats.parsing.route.RouteParser
 import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
 import net.ripe.rpki.validator.models.RtrPrefix
 
-import scala.language.postfixOps
-
-
 object Main extends App {
 
   val config = Config.config(args)
@@ -59,5 +56,7 @@ object Main extends App {
     case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHoldings, config.quiet, config.date)
     case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
   }
+
+  System.exit(0) // We're done here
 
 }
