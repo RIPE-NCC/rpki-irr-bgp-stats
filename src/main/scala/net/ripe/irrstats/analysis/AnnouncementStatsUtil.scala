@@ -40,8 +40,10 @@ case class WorldMapCountryStat(countryCode: String,
                                adoption: Option[Double], valid: Option[Double], matching: Option[Double])
 
 object WorldMapCountryStat {
-  def fromCcAndStats(cc: String, stats: ValidatedAnnouncementStats) = {
-    new WorldMapCountryStat(cc, stats.percentageAdoption, stats.percentageValid, stats.accuracyAnnouncements, stats.percentageSpaceAdoption, stats.percentageSpaceValid, stats.accuracySpace)
+  def fromCcAndStats(cc: String, stats: ValidatedAnnouncementStats): WorldMapCountryStat = {
+    new WorldMapCountryStat(cc,
+                            stats.percentageAdoption, stats.percentageValid, stats.accuracyAnnouncements,
+                            stats.percentageSpaceAdoption, stats.percentageSpaceValid, stats.accuracySpace)
   }
 }
 
@@ -70,26 +72,26 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
   private def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentageBig(fraction.numberOfIps, (combined.numberOfIps))
   private def safePercentageAnnouncements(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.count, combined.count)
 
-  def accuracyAnnouncements = safePercentage(valid.count , (valid.count + invalidAsn.count + invalidLength.count))
-  def accuracySpace = safePercentageBig(valid.numberOfIps, covered.numberOfIps)
+  def accuracyAnnouncements: Option[Double] = safePercentage(valid.count , (valid.count + invalidAsn.count + invalidLength.count))
+  def accuracySpace: Option[Double] = safePercentageBig(valid.numberOfIps, covered.numberOfIps)
 
-  def percentageValid = safePercentageAnnouncements(valid)
-  def percentageInvalidLength = safePercentageAnnouncements(invalidLength)
-  def percentageInvalidAsn = safePercentageAnnouncements(invalidAsn)
+  def percentageValid: Option[Double] = safePercentageAnnouncements(valid)
+  def percentageInvalidLength: Option[Double] = safePercentageAnnouncements(invalidLength)
+  def percentageInvalidAsn: Option[Double] = safePercentageAnnouncements(invalidAsn)
 
-  def percentageUnknown = safePercentageAnnouncements(unknown)
-  def percentageAdoption = safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
+  def percentageUnknown: Option[Double] = safePercentageAnnouncements(unknown)
+  def percentageAdoption: Option[Double] = safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
 
-  def percentageSpaceValid = safePercentageIpSpace(valid)
-  def percentageSpaceInvalidLength = safePercentageIpSpace(invalidLength)
-  def percentageSpaceInvalidAsn = safePercentageIpSpace(invalidAsn)
-  def percentageSpaceUnknown = safePercentageIpSpace(unknown)
-  def percentageSpaceAdoption = safePercentageBig(covered.numberOfIps, combined.numberOfIps)
+  def percentageSpaceValid: Option[Double] = safePercentageIpSpace(valid)
+  def percentageSpaceInvalidLength: Option[Double] = safePercentageIpSpace(invalidLength)
+  def percentageSpaceInvalidAsn: Option[Double] = safePercentageIpSpace(invalidAsn)
+  def percentageSpaceUnknown: Option[Double] = safePercentageIpSpace(unknown)
+  def percentageSpaceAdoption: Option[Double] = safePercentageBig(covered.numberOfIps, combined.numberOfIps)
 }
 
 object AnnouncementStatsUtil {
 
-  def getNumberOfAddresses(prefixes: Seq[IpRange]) = {
+  def getNumberOfAddresses(prefixes: Seq[IpRange]): BigInteger = {
     val resourceSet = new IpResourceSet()
     prefixes.foreach(pfx => resourceSet.addAll(new IpResourceSet(pfx)))
     resourceSet.iterator().asScala.foldLeft(BigInteger.ZERO)((r, c) => {
@@ -97,7 +99,7 @@ object AnnouncementStatsUtil {
     })
   }
 
-  def analyseValidatedAnnouncements(announcements: Seq[BgpValidatedAnnouncement], numberOfAuthorisations: Int) = {
+  def analyseValidatedAnnouncements(announcements: Seq[BgpValidatedAnnouncement], numberOfAuthorisations: Int): ValidatedAnnouncementStats = {
 
     val valid = announcements.filter(_.validity == RouteValidity.Valid)
     val invalidLength = announcements.filter(_.validity == RouteValidity.InvalidLength)
@@ -107,7 +109,8 @@ object AnnouncementStatsUtil {
     ValidatedAnnouncementStats(
       announcements = announcements,
       combined = ValidatedAnnouncementStat(announcements.size, getNumberOfAddresses(announcements.map(_.prefix))),
-      covered = ValidatedAnnouncementStat(valid.size + invalidLength. size + invalidAsn.size, getNumberOfAddresses(valid.map(_.prefix) ++ invalidLength.map(_.prefix) ++ invalidAsn.map(_.prefix))),
+      covered = ValidatedAnnouncementStat(valid.size + invalidLength. size + invalidAsn.size,
+                                          getNumberOfAddresses(valid.map(_.prefix) ++ invalidLength.map(_.prefix) ++ invalidAsn.map(_.prefix))),
       valid = ValidatedAnnouncementStat(valid.size, getNumberOfAddresses(valid.map(_.prefix))),
       invalidLength = ValidatedAnnouncementStat(invalidLength.size, getNumberOfAddresses(invalidLength.map(_.prefix))),
       invalidAsn = ValidatedAnnouncementStat(invalidAsn.size, getNumberOfAddresses(invalidAsn.map(_.prefix))),
