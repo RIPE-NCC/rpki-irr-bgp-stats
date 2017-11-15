@@ -26,11 +26,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.parsing.rirs
+package net.ripe.irrstats.parsing.holdings
 
 import java.io.File
 
 import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet, Ipv4Address}
+import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
 
 import scala.io.Source
 
@@ -58,11 +59,11 @@ object ExtendedStatsUtils {
   }
 }
 
-object RIRHoldings {
+object RIRHoldings extends AnalysedHoldings {
 
   import ExtendedStatsUtils._
 
-  def parse(statsFile: File): Holdings = {
+  override def parse(statsFile: File): Holdings = {
     
     val afrinic = new IpResourceSet()
     val afrinicReserved = new IpResourceSet()
@@ -115,11 +116,11 @@ object RIRHoldings {
 /**
   * Finds all the resources 'assigned' by RIRs per country
   */
-object CountryHoldings {
+object CountryHoldings extends AnalysedHoldings {
 
   import ExtendedStatsUtils._
 
-  def parse(statsFile: File): Holdings = {
+  override def parse(statsFile: File): Holdings = {
 
     val countryMap = collection.mutable.Map[String, IpResourceSet]()
 
@@ -141,4 +142,9 @@ object CountryHoldings {
 
     countryMap.toMap // make this immutable when we're done
   }
+}
+
+
+sealed trait AnalysedHoldings {
+  def parse(statsFile: File): Holdings = ???
 }

@@ -29,7 +29,7 @@
 package net.ripe.irrstats
 
 import net.ripe.irrstats.analysis.RegionStatsUtil
-import net.ripe.irrstats.parsing.rirs.ExtendedStatsUtils.Holdings
+import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
 import net.ripe.irrstats.reporting.{CountryDetails, RegionCsv}
 import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
 import net.ripe.rpki.validator.models.RtrPrefix

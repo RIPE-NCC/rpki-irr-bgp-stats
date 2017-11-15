@@ -28,7 +28,7 @@
  */
 package net.ripe.irrstats
 
-import net.ripe.irrstats.parsing.rirs.{CountryHoldings, RIRHoldings}
+import net.ripe.irrstats.parsing.holdings.{CountryHoldings, RIRHoldings}
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.parsing.roas.RoaUtil
 import net.ripe.irrstats.parsing.route.RouteParser
@@ -46,6 +46,8 @@ object Main extends App {
     case RouteObjectDbDump => RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix))
   }
 
+  // lazy vals are only initialised when used for the first time,
+  // so there is no performance penalty defining all of the following
   lazy val rirHoldings = RIRHoldings.parse(config.statsFile)
   lazy val countryHoldings = CountryHoldings.parse(config.statsFile)
 

@@ -28,7 +28,7 @@
  */
 package net.ripe.irrstats.analysis
 
-import net.ripe.irrstats.parsing.rirs.ExtendedStatsUtils.{Holdings, regionFor}
+import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, regionFor}
 import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpAnnouncementValidator}
 import net.ripe.rpki.validator.models.RtrPrefix
 

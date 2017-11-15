@@ -29,7 +29,7 @@
 package net.ripe.irrstats
 
 import net.ripe.irrstats.analysis.RegionStatsUtil
-import net.ripe.irrstats.parsing.rirs.ExtendedStatsUtils.Holdings
+import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
 import net.ripe.irrstats.reporting.RegionCsv
 import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
 import net.ripe.rpki.validator.models.RtrPrefix
@@ -42,7 +42,7 @@ object ReportRir {
       RegionCsv.printHeader()
     }
 
-    val countryStats = new RegionStatsUtil(holdings, announcements, authorisations)
+    val rirStats = new RegionStatsUtil(holdings, announcements, authorisations)
 
     val rirs = if (rirString == "all") {
       holdings.keys
@@ -51,7 +51,7 @@ object ReportRir {
     }
 
     for (rir <- rirs) {
-      RegionCsv.reportRegionQuality(rir, countryStats.regionAnnouncementStats(rir), dateString)
+      RegionCsv.reportRegionQuality(rir, rirStats.regionAnnouncementStats(rir), dateString)
     }
 
   }
