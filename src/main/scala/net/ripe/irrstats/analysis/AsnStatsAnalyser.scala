@@ -30,9 +30,8 @@ package net.ripe.irrstats.analysis
 
 import java.math.BigInteger
 
-import net.ripe.ipresource.{IpRange, Asn}
-import net.ripe.rpki.validator.bgp.preview.BgpValidatedAnnouncement
-import net.ripe.rpki.validator.models.RouteValidity
+import net.ripe.ipresource.Asn
+import net.ripe.irrstats.route.validation._
 
 import scala.collection.immutable.Iterable
 

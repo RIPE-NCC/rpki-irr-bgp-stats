@@ -31,7 +31,7 @@ package net.ripe.irrstats.parsing.ris
 import java.io.File
 
 import net.ripe.ipresource.{Asn, IpRange}
-import net.ripe.rpki.validator.bgp.preview.BgpAnnouncement
+import net.ripe.irrstats.route.validation.BgpAnnouncement
 
 import scala.io.Source
 

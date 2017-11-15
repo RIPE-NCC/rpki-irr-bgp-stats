@@ -26,38 +26,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats
+package net.ripe.irrstats.route.validation
 
-import net.ripe.irrstats.parsing.holdings.{CountryHoldings, RIRHoldings}
-import net.ripe.irrstats.parsing.ris.RisDumpUtil
-import net.ripe.irrstats.parsing.roas.RoaUtil
-import net.ripe.irrstats.parsing.route.RouteParser
-import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
+import net.ripe.ipresource.{Asn, IpRange}
+import NumberResources._
 
-object Main extends App {
+import scalaz.Reducer
 
-  val config = Config.config(args)
+case class RtrPrefix(asn: Asn, prefix: IpRange, maxPrefixLength: Option[Int] = None) {
+  def interval = NumberResourceInterval(prefix.getStart, prefix.getEnd)
+  def effectiveMaxPrefixLength = maxPrefixLength.getOrElse(prefix.getPrefixLength)
+}
 
-  val announcements: Seq[BgpAnnouncement] = RisDumpUtil.parseDumpFile(config.risDumpFile)
-
-  val authorisations: Seq[RtrPrefix] = config.routeAuthorisationType() match {
-    case RoaCsvDump => RoaUtil.parse(config.routeAuthorisationFile)
-    case RouteObjectDbDump => RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix))
+object RtrPrefix {
+  /**
+    * Takes an RtrPrefix and returns the associated IP range.
+    */
+  implicit object RtrPrefixReducer extends Reducer[RtrPrefix, NumberResourceInterval] {
+    override def unit(prefix: RtrPrefix) = prefix.interval
   }
-
-  // lazy vals are only initialised when used for the first time,
-  // so there is no performance penalty defining all of the following
-  lazy val rirHoldings = RIRHoldings.parse(config.statsFile)
-  lazy val countryHoldings = CountryHoldings.parse(config.statsFile)
-
-  config.analysisMode match {
-    case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
-    case WorldMapMode =>  ReportWorldMap.report(announcements, authorisations, countryHoldings)
-    case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHoldings, config.countryDetails.get)
-    case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHoldings, config.quiet, config.date)
-    case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
-  }
-
-  System.exit(0) // We're done here
 
 }
+

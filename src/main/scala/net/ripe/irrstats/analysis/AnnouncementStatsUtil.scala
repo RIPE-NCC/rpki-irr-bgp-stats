@@ -30,9 +30,9 @@ package net.ripe.irrstats.analysis
 
 import java.math.BigInteger
 
-import net.ripe.ipresource.{IpResourceSet, IpRange}
-import net.ripe.rpki.validator.bgp.preview.BgpValidatedAnnouncement
-import net.ripe.rpki.validator.models.RouteValidity
+import net.ripe.ipresource.{IpRange, IpResourceSet}
+import net.ripe.irrstats.route.validation.{BgpValidatedAnnouncement, RouteValidity}
+
 import scala.collection.JavaConverters._
 
 case class WorldMapCountryStat(countryCode: String,

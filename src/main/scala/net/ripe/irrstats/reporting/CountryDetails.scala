@@ -29,7 +29,7 @@
 package net.ripe.irrstats.reporting
 
 import net.ripe.irrstats.analysis.ValidatedAnnouncementStats
-import net.ripe.rpki.validator.models.RouteValidity
+import net.ripe.irrstats.route.validation.RouteValidity
 
 object CountryDetails {
 

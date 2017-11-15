@@ -29,8 +29,7 @@
 package net.ripe.irrstats
 
 import net.ripe.irrstats.analysis.AsnStatsAnalyser
-import net.ripe.rpki.validator.bgp.preview.{BgpAnnouncement, BgpAnnouncementValidator}
-import net.ripe.rpki.validator.models.RtrPrefix
+import net.ripe.irrstats.route.validation._
 
 object ReportAsn {
 

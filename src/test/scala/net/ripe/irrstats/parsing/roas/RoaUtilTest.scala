@@ -31,7 +31,7 @@ package net.ripe.irrstats.parsing.roas
 import java.io.File
 
 import net.ripe.ipresource.{Asn, IpRange}
-import net.ripe.rpki.validator.models.RtrPrefix
+import net.ripe.irrstats.route.validation.RtrPrefix
 import org.scalatest.{FunSuite, Matchers}
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])

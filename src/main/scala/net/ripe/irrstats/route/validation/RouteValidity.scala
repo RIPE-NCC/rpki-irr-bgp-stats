@@ -26,33 +26,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.analysis
+package net.ripe.irrstats.route.validation
 
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, regionFor}
-import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix}
-
-class RegionStatsUtil(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
-
-  val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy { ann => regionFor(ann.prefix, holdings) }
-  val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
-
-  implicit val actorSystem = akka.actor.ActorSystem()
-
-  def regionAnnouncementStats(region: String): ValidatedAnnouncementStats = {
-
-    val announcements = announcementsByRegion.getOrElse(region, Seq.empty)
-    val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
-
-    val validator = new BgpAnnouncementValidator()
-    validator.startUpdate(announcements, authorisations)
-    val validatedAnnouncements = validator.validatedAnnouncements
-
-    AnnouncementStatsUtil.analyseValidatedAnnouncements(validatedAnnouncements, authorisations.size)
-  }
-
-  def worldMapStats: Iterable[WorldMapCountryStat] = holdings.keys.map { cc =>
-    WorldMapCountryStat.fromCcAndStats(cc, regionAnnouncementStats(cc))
-  }
-
-
+object RouteValidity extends Enumeration {
+  type RouteValidity = Value
+  val Valid = Value("Valid")
+  val InvalidAsn = Value("Invalid ASN")
+  val InvalidLength = Value("Invalid Length")
+  val Unknown = Value("Unknown")
 }
