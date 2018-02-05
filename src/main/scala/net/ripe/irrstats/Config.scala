@@ -54,6 +54,7 @@ object Config {
     opt[Unit]('c', "countries") optional() action { (x, c) => c.copy(analysisMode = CountryMode ) } text { "Do a report per country instead of per RIR" }
     opt[Unit]('w', "worldmap") optional() action { (x, c) => c.copy(analysisMode = WorldMapMode) } text { "Produce an HTML page with country stats projected on a number of world maps" }
     opt[Unit]('a', "asn") optional() action { (x, c) => c.copy(analysisMode = AsnMode) } text { "Find and report top ASNs" }
+    opt[Unit]('l', "loose") optional() action { (x, c) => c.copy(looseRouteObjectValidation = true) } text { "Accept all more specific announcments for ROUTE ojects (defaults to strict)" }
 
     checkConfig { c =>
       if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt") ) failure("option -r must refer roas.csv or route[6].db file") else success }
@@ -67,6 +68,7 @@ object Config {
 case class Config(risDumpFile: File = new File("."),
                   statsFile: File = new File("."),
                   routeAuthorisationFile: File = new File("."),
+                  looseRouteObjectValidation: Boolean = true,
                   quiet: Boolean = false,
                   date: String = DateTime.now().toString("YYYYMMdd"),
                   analysisMode: AnalysisMode = RirMode,

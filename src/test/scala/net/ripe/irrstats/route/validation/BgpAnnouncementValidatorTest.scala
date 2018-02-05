@@ -133,4 +133,28 @@ class BgpAnnouncementValidatorTest extends FunSuite with Matchers with BeforeAnd
     BgpValidatedAnnouncement.make(announcement, valids, invalidsLength = invalidsLength).validity should be(Valid)
     BgpValidatedAnnouncement.make(announcement, valids, invalidsAsn, invalidsLength).validity should be(Valid)
   }
+
+  test("Should find stale authorisations") {
+
+    val announcement = (65001, "10.0.0.0/24"): BgpAnnouncement
+    val irrelevantAnnouncement = (65001, "192.168.0.0/16"): BgpAnnouncement
+
+    val coveringRoaAllowingByMaxLength = RtrPrefix(65001, "10.0.0.0/20", Some(24))
+    val coveringRoaNotAllowing = RtrPrefix(65001, "10.0.0.0/20")
+    val exactRoa = RtrPrefix(65001, "10.0.0.0/24")
+    val otherAsnRoa = RtrPrefix(65002, "10.0.0.0/24")
+    val otherPrefixRoa = RtrPrefix(65001, "10.1.0.0/24")
+
+    val validator = new BgpAnnouncementValidator()
+
+    val staleAuthorisations = validator.staleness(Seq(announcement, irrelevantAnnouncement), Seq(coveringRoaAllowingByMaxLength, coveringRoaNotAllowing, exactRoa, otherAsnRoa, otherPrefixRoa)).stale
+
+    staleAuthorisations should not contain (coveringRoaAllowingByMaxLength)
+    staleAuthorisations should not contain (exactRoa)
+    staleAuthorisations should contain (coveringRoaNotAllowing)
+    staleAuthorisations should contain (otherAsnRoa)
+    staleAuthorisations should contain (otherPrefixRoa)
+
+  }
+
 }

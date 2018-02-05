@@ -33,7 +33,9 @@ import net.ripe.ipresource.{Asn, IpRange}
 import NumberResources.{NumberResourceInterval, NumberResourceIntervalTree}
 import org.joda.time.DateTime
 import RouteValidity._
+
 import scala.concurrent.stm.Ref
+import scalaz.Reducer
 
 case class BgpAnnouncementSet(url: String, lastModified: Option[DateTime] = None, entries: Seq[BgpAnnouncement] = Seq.empty)
 
@@ -48,6 +50,15 @@ object BgpValidatedAnnouncement {
     valids.map((Valid, _)) ++ invalidsAsn.map((InvalidAsn, _)) ++ invalidsLength.map((InvalidLength, _)))
 }
 
+case class StalenessStat(authorisations: Seq[RtrPrefix], stale: Seq[RtrPrefix]) {
+  def fraction: Double = {
+    if (authorisations.size > 0) {
+      stale.size.toDouble / authorisations.size.toDouble
+    } else {
+      1.0
+    }
+  }
+}
 
 case class BgpValidatedAnnouncement(announced: BgpAnnouncement, prefixes: Seq[(RouteValidity, RtrPrefix)] = List.empty) {
   require(!invalidsAsn.exists(_.asn == announced.asn), "invalidsAsn must not contain the announced ASN")
@@ -104,6 +115,23 @@ class BgpAnnouncementValidator(implicit actorSystem: akka.actor.ActorSystem) ext
   def startUpdate(announcements: Seq[BgpAnnouncement], prefixes: Seq[RtrPrefix]) = {
     val v = validate(announcements, prefixes)
     _validatedAnnouncements.single.set(v)
+  }
+
+  def staleness(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]): StalenessStat = {
+
+    // TODO: Use a tree to limit the searching below to relevant announcements only
+    val staleAuthorisations = authorisations.flatMap { auth =>
+      if(announcements.exists(
+          ann => ann.asn.equals(auth.asn) &&
+          auth.prefix.contains(ann.prefix) &&
+          auth.effectiveMaxPrefixLength >= ann.prefix.getPrefixLength)) {
+        None // Return only stale announcements
+      } else {
+        Some(auth)
+      }
+    }
+
+    StalenessStat(authorisations, staleAuthorisations)
   }
 
   private def validate(announcements: Seq[BgpAnnouncement], prefixes: Seq[RtrPrefix]): IndexedSeq[BgpValidatedAnnouncement] = {

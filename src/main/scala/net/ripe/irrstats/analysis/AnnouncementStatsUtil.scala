@@ -37,13 +37,14 @@ import scala.collection.JavaConverters._
 
 case class WorldMapCountryStat(countryCode: String,
                                prefixesAdoption: Option[Double], prefixesValid: Option[Double], prefixesMatching: Option[Double],
-                               adoption: Option[Double], valid: Option[Double], matching: Option[Double])
+                               adoption: Option[Double], valid: Option[Double], matching: Option[Double], totalPrefixes: Integer, totalAddresses: BigInteger)
 
 object WorldMapCountryStat {
   def fromCcAndStats(cc: String, stats: ValidatedAnnouncementStats): WorldMapCountryStat = {
     new WorldMapCountryStat(cc,
                             stats.percentageAdoption, stats.percentageValid, stats.accuracyAnnouncements,
-                            stats.percentageSpaceAdoption, stats.percentageSpaceValid, stats.accuracySpace)
+                            stats.percentageSpaceAdoption, stats.percentageSpaceValid, stats.accuracySpace,
+                            stats.combined.count, stats.combined.numberOfIps)
   }
 }
 

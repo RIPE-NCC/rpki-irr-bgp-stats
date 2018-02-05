@@ -29,7 +29,7 @@
 package net.ripe.irrstats.analysis
 
 import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, regionFor}
-import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix}
+import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
 
 class RegionStatsUtil(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
 
@@ -54,5 +54,20 @@ class RegionStatsUtil(holdings: Holdings, announcements: Seq[BgpAnnouncement], a
     WorldMapCountryStat.fromCcAndStats(cc, regionAnnouncementStats(cc))
   }
 
+  def worldStaleness: Map[String, StalenessStat] = holdings.keys.map { cc =>
+
+    def regionStaleStats(region: String) = {
+
+      val announcements = announcementsByRegion.getOrElse(region, Seq.empty)
+      val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
+
+      val validator = new BgpAnnouncementValidator()
+
+      validator.staleness(announcements, authorisations)
+    }
+
+    cc -> regionStaleStats(cc)
+  }.toMap
 
 }
+

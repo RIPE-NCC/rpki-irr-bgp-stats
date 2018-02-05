@@ -31,12 +31,14 @@ package net.ripe.irrstats
 import net.ripe.irrstats.analysis.RegionStatsUtil
 import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
 import net.ripe.irrstats.reporting.WorldMapPage
-import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
+import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix, StalenessStat}
 
 object ReportWorldMap {
 
   def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings) = {
-    val countryStats = new RegionStatsUtil(holdings, announcements, authorisations).worldMapStats
+    val regionStatsUtil = new RegionStatsUtil(holdings, announcements, authorisations)
+    val countryStats = regionStatsUtil.worldMapStats
+    val staleness = regionStatsUtil.worldStaleness
 
     val prefixesAdoptionValues = countryStats.filter(cs => cs.prefixesAdoption.isDefined).map { cs => (cs.countryCode -> cs.prefixesAdoption.get) }.toMap
     val prefixesValidValues = countryStats.filter(cs => cs.prefixesValid.isDefined).map { cs => (cs.countryCode -> cs.prefixesValid.get) }.toMap
@@ -45,7 +47,31 @@ object ReportWorldMap {
     val validValues = countryStats.filter(cs => cs.valid.isDefined).map { cs => (cs.countryCode -> cs.valid.get) }.toMap
     val matchingValues = countryStats.filter(cs => cs.matching.isDefined).map { cs => (cs.countryCode -> cs.matching.get) }.toMap
 
-    print(WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues))
+    val stalenessValues = staleness.filter(_._2.authorisations.size > 0).map { case (region, stat) => (region -> stat.fraction ) }
+
+    val usefulnessValues = {
+      val regions = prefixesValidValues.filter(_._2 > 0).keys
+
+      regions.map { region =>
+        val valid: Double = prefixesValidValues.getOrElse(region, 0)
+        val quality: Double = prefixesMatchingValues.getOrElse(region, 0)
+        val relevance: Double = (1 - staleness.getOrElse(region, StalenessStat(List.empty, List.empty)).fraction)
+        region -> (valid * quality * relevance)
+      }.toMap
+    }
+
+    val usefulnessSpaceValues = {
+      val regions = validValues.filter(_._2 > 0).keys
+
+      regions.map { region =>
+        val valid: Double = validValues.getOrElse(region, 0)
+        val quality: Double = matchingValues.getOrElse(region, 0)
+        val relevance: Double = (1 - staleness.getOrElse(region, StalenessStat(List.empty, List.empty)).fraction)
+        region -> (valid * quality * relevance)
+      }.toMap
+    }
+
+    print(WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues, stalenessValues, usefulnessValues, usefulnessSpaceValues))
   }
 
 }

@@ -42,7 +42,11 @@ object Main extends App {
 
   val authorisations: Seq[RtrPrefix] = config.routeAuthorisationType() match {
     case RoaCsvDump => RoaUtil.parse(config.routeAuthorisationFile)
-    case RouteObjectDbDump => RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix))
+    case RouteObjectDbDump => if (config.looseRouteObjectValidation) {
+      RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix, Some(24)))
+    } else {
+      RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix))
+    }
   }
 
   // lazy vals are only initialised when used for the first time,
