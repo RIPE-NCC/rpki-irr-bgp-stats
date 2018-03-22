@@ -26,7 +26,7 @@ I.e. it has the following columns:  ASN,IP Prefix,Max Length
 
 Route objects can also be used. This is tested with the ROUTE splitfile from the RIPE DB, but should
 work with other sources (famous last words..). It does insist on .txt. This was a quick hack, so no
-additional config parameter would be needed. ROUTE objects will be treated as though they are ROAs
+additional config parameter would be needed. ROUTE objects will be treated as though they are VRPs
 w.r.t. validation. Since ROUTE objects have no max length it is assumed to be the same as the prefix,
 unless the "--loose" flag is used.. in that case it's assumed to be /24 (yes, hardcoded v4)
 
@@ -37,9 +37,9 @@ Generally speaking the script then does the following:
  * parse the ROA.csv or ROUTE.txt file and create a full list of authorisations (not mapped)
 
  * Validate all announcements in relation to the authorisations
- ** This part uses the BGP preview code from our 2.x validator, copied over into this code
- ** The code uses a tree to make it slightly more efficient: it will only look at relevant authorisations
- ** Still.. if you run this with a full ROUTE.txt dump, it takes a while..
+ * This part uses the BGP preview code from our 2.x validator, copied over into this code
+ * The code uses a tree to make it slightly more efficient: it will only look at relevant authorisations
+ * Still.. if you run this with a full ROUTE.txt dump, it takes a while..
 
  * then report, see sections below..
 
@@ -81,6 +81,20 @@ As country based, but output is an HTML file (with a RIPE NCC template) with wor
 Published here, daily:
 
 https://lirportal.ripe.net/certification/content/static/statistics/world-roas.html
+
+The committed code also does some additional analyis: it evaluates the staleness of authorisations, meaning
+that it assumes that an authorisation for which no announcement is seen, is stale.
+
+Furthermore it introduces a 'usefulness' metric, defined as:
+
+  u = fraction valid * accuracy * (1 - staleness)
+
+But is debatable of course what does means and whether this is what the real world would consider 'useful'..
+The idea was that the overall figure can never be bigger than any of the three components, and that these
+components are most and equally important. If all are '1' than the result is also '1' -> 100%
+
+This is not used yet on the daily world map stats, but could be..
+
 
 ### Country details report
 
