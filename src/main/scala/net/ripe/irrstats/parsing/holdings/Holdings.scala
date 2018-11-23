@@ -55,7 +55,7 @@ object ExtendedStatsUtils {
   type Holdings = Map[String, IpResourceSet]
 
   def regionFor(resource: IpResource, holdings: Holdings): String = {
-    holdings.filter(_._2.contains(resource)).headOption.map(_._1).getOrElse("?")
+    holdings.find(_._2.contains(resource)).map(_._1).getOrElse("?")
   }
 }
 

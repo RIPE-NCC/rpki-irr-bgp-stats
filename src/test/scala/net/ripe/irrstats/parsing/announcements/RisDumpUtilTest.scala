@@ -26,36 +26,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.parsing.holdings
+package net.ripe.irrstats.parsing.announcements
 
 import java.io.File
 
-import net.ripe.ipresource.{IpResource, IpResourceSet}
+import net.ripe.irrstats.parsing.ris.RisDumpUtil
+import net.ripe.irrstats.route.validation.BgpAnnouncement
 import org.scalatest.{FunSuite, Matchers}
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class ExtendedStatsTest extends FunSuite with Matchers {
-  
-  test("Should parse IPv4") {
-    ExtendedStatsUtils.parseIpv4("213.154.64.0", "8192") should equal (IpResourceSet.parse("213.154.64.0/19"))
+class RisDumpUtilTest extends FunSuite with Matchers {
+
+  test("Should parse ipv4 dump file") {
+    val dumpFile = new File(Thread.currentThread().getContextClassLoader().getResource("ris-ipv4.txt").getFile)
+    val announcements: Seq[BgpAnnouncement] = RisDumpUtil.parseDumpFile(dumpFile)
+
+    // File contains 35 entries, 6 entries with peers < 5
+    announcements.length should be(29)
   }
 
-  test("Should parse extended delegated stats") {
+  test("Should parse ipv6 dump file") {
+    val dumpFile = new File(Thread.currentThread().getContextClassLoader().getResource("ris-ipv6.txt").getFile)
+    val announcements: Seq[BgpAnnouncement] = RisDumpUtil.parseDumpFile(dumpFile)
 
-    val holdings = RIRHoldings.parse(new File(Thread.currentThread().getContextClassLoader().getResource("extended-delegated-stats.txt").getFile))
-
-    holdings.get("apnic").get.contains(IpResource.parse("1.0.0.0/24")) should be (true)
-
-    ExtendedStatsUtils.regionFor(IpResource.parse("1.0.0.0/24"), holdings) should equal("apnic")
-    ExtendedStatsUtils.regionFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
-  }
-
-  test("Should parse country holding from extended delegated stats"){
-    val holdings = CountryHoldings.parse(new File(Thread.currentThread().getContextClassLoader().getResource("extended-delegated-stats.txt").getFile))
-
-    val countries = holdings.keySet
-    countries should be (Set("US", "AU", "GB", "FR", "EU", "IT", "JP", "CN"))
-
+    // File contains 35 entries, 13 entries with peers < 5
+    announcements.length should be(22)
   }
 
 }

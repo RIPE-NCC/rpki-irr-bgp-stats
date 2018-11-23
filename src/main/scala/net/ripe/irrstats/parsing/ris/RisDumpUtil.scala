@@ -43,7 +43,7 @@ object RisDumpUtil {
     val SimpleRisEntryRegex = """^([\d]+)\s+(\S+)\s+(\d+).*$""".r
 
     Source.fromFile(dumpFile, "ASCII").getLines().flatMap { _ match {
-        case (SimpleRisEntryRegex(asn, prefix, peers)) => {
+        case SimpleRisEntryRegex(asn, prefix, peers) => {
           if (peers.toInt >= RisPeerThreshold) {
             Some(BgpAnnouncement(Asn.parse(asn), IpRange.parse(prefix)))
           } else {
