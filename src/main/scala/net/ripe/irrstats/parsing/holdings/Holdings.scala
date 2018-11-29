@@ -55,7 +55,7 @@ object ExtendedStatsUtils {
   type Holdings = Map[String, IpResourceSet]
 
   def regionFor(resource: IpResource, holdings: Holdings): String = {
-    holdings.filter(_._2.contains(resource)).headOption.map(_._1).getOrElse("?")
+    holdings.find(_._2.contains(resource)).map(_._1).getOrElse("?")
   }
 }
 
@@ -77,10 +77,9 @@ object RIRHoldings extends AnalysedHoldings {
     val ripenccReserved = new IpResourceSet()
     
     // Huge file, so prefer to parse line by line to save memory
-    for (line <- Source.fromFile(statsFile, "ASCII").getLines) {
-      
+    Source.fromFile(statsFile, "ASCII").getLines.foreach { line =>
       val tokens = line.split('|')
-      
+
       if (tokens.length >= 7) {
         tokens(6) match {
           case "assigned" => tokens(0) match {
@@ -125,8 +124,7 @@ object CountryHoldings extends AnalysedHoldings {
     val countryMap = collection.mutable.Map[String, IpResourceSet]()
 
     // Huge file, so prefer to parse line by line to save memory
-    for (line <- Source.fromFile(statsFile, "ASCII").getLines) {
-
+    Source.fromFile(statsFile, "ASCII").getLines.foreach { line =>
       val tokens = line.split('|')
 
       if (tokens.length >= 7 && tokens(6) == "assigned") {
@@ -136,7 +134,7 @@ object CountryHoldings extends AnalysedHoldings {
           countryMap += (cc -> new IpResourceSet())
         }
 
-        countryMap.get(cc).get.addAll(parseResourceLine(tokens))
+        countryMap(cc).addAll(parseResourceLine(tokens))
       }
     }
 

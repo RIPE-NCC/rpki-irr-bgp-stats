@@ -42,18 +42,12 @@ object RisDumpUtil {
   def parseDumpFile(dumpFile: File): Seq[BgpAnnouncement] = {
     val SimpleRisEntryRegex = """^([\d]+)\s+(\S+)\s+(\d+).*$""".r
 
-    Source.fromFile(dumpFile, "ASCII").getLines().flatMap { _ match {
-        case (SimpleRisEntryRegex(asn, prefix, peers)) => {
-          if (peers.toInt >= RisPeerThreshold) {
-            Some(BgpAnnouncement(Asn.parse(asn), IpRange.parse(prefix)))
-          } else {
-            None
-          }
-        }
-        case _ => {
-          None
-        }
-      }
+    Source.fromFile(dumpFile, "ASCII").getLines().flatMap {
+      case (SimpleRisEntryRegex(asn, prefix, peers)) =>
+        if (peers.toInt >= RisPeerThreshold) {
+          Some(BgpAnnouncement(Asn.parse(asn), IpRange.parse(prefix)))
+        } else None
+      case _ => None
     }.toSeq
   }
 

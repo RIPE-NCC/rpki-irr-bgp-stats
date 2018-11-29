@@ -40,22 +40,22 @@ object ReportWorldMap {
     val countryStats = regionStatsUtil.worldMapStats
     val staleness = regionStatsUtil.worldStaleness
 
-    val prefixesAdoptionValues = countryStats.filter(cs => cs.prefixesAdoption.isDefined).map { cs => (cs.countryCode -> cs.prefixesAdoption.get) }.toMap
-    val prefixesValidValues = countryStats.filter(cs => cs.prefixesValid.isDefined).map { cs => (cs.countryCode -> cs.prefixesValid.get) }.toMap
-    val prefixesMatchingValues = countryStats.filter(cs => cs.prefixesMatching.isDefined).map { cs => (cs.countryCode -> cs.prefixesMatching.get) }.toMap
-    val adoptionValues = countryStats.filter(cs => cs.adoption.isDefined).map { cs => (cs.countryCode -> cs.adoption.get) }.toMap
-    val validValues = countryStats.filter(cs => cs.valid.isDefined).map { cs => (cs.countryCode -> cs.valid.get) }.toMap
-    val matchingValues = countryStats.filter(cs => cs.matching.isDefined).map { cs => (cs.countryCode -> cs.matching.get) }.toMap
+    val prefixesAdoptionValues = countryStats.withFilter(cs => cs.prefixesAdoption.isDefined).map { cs => cs.countryCode -> cs.prefixesAdoption.get }.toMap
+    val prefixesValidValues = countryStats.withFilter(cs => cs.prefixesValid.isDefined).map { cs => cs.countryCode -> cs.prefixesValid.get }.toMap
+    val prefixesMatchingValues = countryStats.withFilter(cs => cs.prefixesMatching.isDefined).map { cs => cs.countryCode -> cs.prefixesMatching.get }.toMap
+    val adoptionValues = countryStats.withFilter(cs => cs.adoption.isDefined).map { cs => cs.countryCode -> cs.adoption.get }.toMap
+    val validValues = countryStats.withFilter(cs => cs.valid.isDefined).map { cs => cs.countryCode -> cs.valid.get }.toMap
+    val matchingValues = countryStats.withFilter(cs => cs.matching.isDefined).map { cs => cs.countryCode -> cs.matching.get }.toMap
 
-    val stalenessValues = staleness.filter(_._2.authorisations.size > 0).map { case (region, stat) => (region -> stat.fraction ) }
+    val stalenessValues = staleness.withFilter(_._2.authorisations.nonEmpty).map { case (region, stat) => region -> stat.fraction }
 
     val usefulnessValues = {
-      val regions = prefixesValidValues.filter(_._2 > 0).keys
+      val regions = prefixesValidValues.withFilter(_._2 > 0).map(_._1)
 
       regions.map { region =>
         val valid: Double = prefixesValidValues.getOrElse(region, 0)
         val quality: Double = prefixesMatchingValues.getOrElse(region, 0)
-        val relevance: Double = (1 - staleness.getOrElse(region, StalenessStat(List.empty, List.empty)).fraction)
+        val relevance: Double = 1 - staleness.getOrElse(region, StalenessStat(List.empty, List.empty)).fraction
         region -> (valid * quality * relevance)
       }.toMap
     }
@@ -66,7 +66,7 @@ object ReportWorldMap {
       regions.map { region =>
         val valid: Double = validValues.getOrElse(region, 0)
         val quality: Double = matchingValues.getOrElse(region, 0)
-        val relevance: Double = (1 - staleness.getOrElse(region, StalenessStat(List.empty, List.empty)).fraction)
+        val relevance: Double = 1 - staleness.getOrElse(region, StalenessStat(List.empty, List.empty)).fraction
         region -> (valid * quality * relevance)
       }.toMap
     }

@@ -60,7 +60,7 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
                                      ) {
 
   private def safePercentageBig(fraction: BigInteger, total: BigInteger): Option[Double] = {
-    if (total.equals(BigInteger.ZERO)) {
+    if (total == BigInteger.ZERO) {
       None
     } else {
       Some(fraction.doubleValue / total.doubleValue)
@@ -70,10 +70,10 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
   private def safePercentage(fraction: Int, total: Int): Option[Double] =
     safePercentageBig(BigInteger.valueOf(fraction), BigInteger.valueOf(total))
 
-  private def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentageBig(fraction.numberOfIps, (combined.numberOfIps))
+  private def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentageBig(fraction.numberOfIps, combined.numberOfIps)
   private def safePercentageAnnouncements(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.count, combined.count)
 
-  def accuracyAnnouncements: Option[Double] = safePercentage(valid.count , (valid.count + invalidAsn.count + invalidLength.count))
+  def accuracyAnnouncements: Option[Double] = safePercentage(valid.count , valid.count + invalidAsn.count + invalidLength.count)
   def accuracySpace: Option[Double] = safePercentageBig(valid.numberOfIps, covered.numberOfIps)
 
   def percentageValid: Option[Double] = safePercentageAnnouncements(valid)

@@ -38,9 +38,9 @@ import scala.io.Source
 object RoaUtil {
 
   def parse(roaCsvFile: File): List[RtrPrefix] = Source.fromFile(roaCsvFile, "iso-8859-1").getLines.flatMap { line =>
-    if (!line.equals("ASN,IP Prefix,Max Length") && !line.startsWith("#")) {
-      val tokens = line.split(',')
-      if (tokens.length == 3) {
+    if (!line.startsWith("#") && !line.startsWith("ASN,") && !line.startsWith("\"ASN\",")) {
+      val tokens = line.replaceAll("\"", "").split(',')
+      if (tokens.length >= 3) {
         val asn = Asn.parse(tokens(0))
         val prefix = IpRange.parse(tokens(1))
         Some(RtrPrefix(asn, prefix, Some(tokens(2).toInt)))
@@ -51,7 +51,6 @@ object RoaUtil {
       None
     }
   }.toList
-
 
 }
 

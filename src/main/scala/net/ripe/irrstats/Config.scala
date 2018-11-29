@@ -40,28 +40,56 @@ object Config {
   private val cliOptionParser = new scopt.OptionParser[Config](ApplicationName) {
     head(ApplicationName, ApplicationVersion)
 
-    opt[File]('b', "bgp-announcements") required() valueName("<file>") action { (x, c) =>
-      c.copy(risDumpFile = x) } text { "Location of a RIS Dump style file with BGP announcements " }
-    opt[File]('s', "extended-delegated-stats") required() valueName("<file>") action { (x, c) =>
-      c.copy(statsFile = x) } text { "Location of a copy of the NRO extended delegated stats" }
-    opt[File]('r', "route-authorisations") required() valueName("<file>") action { (x, c) =>
-      c.copy(routeAuthorisationFile = x) } text { "Location of a file with either ROA export from the RIPE NCC RPKI Validator (.csv) or route[6] objects (.txt)" }
-    opt[Unit]('q', "quiet") optional() action { (x, c) => c.copy(quiet = true) } text { "Quiet output, just (real) numbers" }
-    opt[String]('d', "date") optional() action { (x, c) => c.copy(date = x) } text { "Override date string, defaults to today"}
-    opt[String]('r', "rir") optional() action { (x, c) => c.copy(rir = x) } text { "Only show results for specified rir, defaults to all"}
+    opt[File]('b', "bgp-announcements") required() valueName "<file>" action { (x, c) =>
+      c.copy(risDumpFile = x)
+    } text {
+      "Location of a RIS Dump style file with BGP announcements "
+    }
+    opt[File]('s', "extended-delegated-stats") required() valueName "<file>" action { (x, c) =>
+      c.copy(statsFile = x)
+    } text {
+      "Location of a copy of the NRO extended delegated stats"
+    }
+    opt[File]('r', "route-authorisations") required() valueName "<file>" action { (x, c) =>
+      c.copy(routeAuthorisationFile = x)
+    } text {
+      "Location of a file with either ROA export from the RIPE NCC RPKI Validator (.csv) or route[6] objects (.txt)"
+    }
+    opt[Unit]('q', "quiet") optional() action { (x, c) => c.copy(quiet = true) } text {
+      "Quiet output, just (real) numbers"
+    }
+    opt[String]('d', "date") optional() action { (x, c) => c.copy(date = x) } text {
+      "Override date string, defaults to today"
+    }
+    opt[String]('r', "rir") optional() action { (x, c) => c.copy(rir = x) } text {
+      "Only show results for specified rir, defaults to all"
+    }
 
-    opt[String]('x', "country-details")  optional() action { (x, c) => c.copy(analysisMode = CountryDetailsMode, countryDetails = Some(x)) } text { "Do a detailed announcement report for country code" }
-    opt[Unit]('c', "countries") optional() action { (x, c) => c.copy(analysisMode = CountryMode ) } text { "Do a report per country instead of per RIR" }
-    opt[Unit]('w', "worldmap") optional() action { (x, c) => c.copy(analysisMode = WorldMapMode) } text { "Produce an HTML page with country stats projected on a number of world maps" }
-    opt[Unit]('a', "asn") optional() action { (x, c) => c.copy(analysisMode = AsnMode) } text { "Find and report top ASNs" }
-    opt[Unit]('l', "loose") optional() action { (x, c) => c.copy(looseRouteObjectValidation = true) } text { "Accept all more specific announcments for ROUTE ojects (defaults to strict)" }
+    opt[String]('x', "country-details") optional() action { (x, c) => c.copy(analysisMode = CountryDetailsMode, countryDetails = Some(x)) } text {
+      "Do a detailed announcement report for country code"
+    }
+    opt[Unit]('c', "countries") optional() action { (x, c) => c.copy(analysisMode = CountryMode) } text {
+      "Do a report per country instead of per RIR"
+    }
+    opt[Unit]('w', "worldmap") optional() action { (x, c) => c.copy(analysisMode = WorldMapMode) } text {
+      "Produce an HTML page with country stats projected on a number of world maps"
+    }
+    opt[Unit]('a', "asn") optional() action { (x, c) => c.copy(analysisMode = AsnMode) } text {
+      "Find and report top ASNs"
+    }
+    opt[Unit]('l', "loose") optional() action { (x, c) => c.copy(looseRouteObjectValidation = true) } text {
+      "Accept all more specific announcments for ROUTE ojects (defaults to strict)"
+    }
 
     checkConfig { c =>
-      if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt") ) failure("option -r must refer roas.csv or route[6].db file") else success }
+      if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt")) failure("option -r must refer roas.csv or route[6].db file") else success
+    }
 
   }
 
-  def config(args: Array[String]) = cliOptionParser.parse(args, Config()).getOrElse { sys.exit(1) }
+  def config(args: Array[String]) = cliOptionParser.parse(args, Config()).getOrElse {
+    sys.exit(1)
+  }
 
 }
 
@@ -85,12 +113,19 @@ case class Config(risDumpFile: File = new File("."),
 }
 
 sealed trait RouteAuthorisationDumpType
+
 case object RoaCsvDump extends RouteAuthorisationDumpType
+
 case object RouteObjectDbDump extends RouteAuthorisationDumpType
 
 sealed trait AnalysisMode
+
 case object CountryMode extends AnalysisMode
+
 case object CountryDetailsMode extends AnalysisMode
+
 case object RirMode extends AnalysisMode
+
 case object WorldMapMode extends AnalysisMode
+
 case object AsnMode extends AnalysisMode

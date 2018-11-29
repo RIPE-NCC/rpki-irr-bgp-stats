@@ -33,6 +33,7 @@ import net.ripe.ipresource.{Asn, IpRange}
 import NumberResources.{NumberResourceInterval, NumberResourceIntervalTree}
 import org.joda.time.DateTime
 import RouteValidity._
+import net.ripe.irrstats.Time
 
 import scala.concurrent.stm.Ref
 import scalaz.Reducer
@@ -52,7 +53,7 @@ object BgpValidatedAnnouncement {
 
 case class StalenessStat(authorisations: Seq[RtrPrefix], stale: Seq[RtrPrefix]) {
   def fraction: Double = {
-    if (authorisations.size > 0) {
+    if (authorisations.nonEmpty) {
       stale.size.toDouble / authorisations.size.toDouble
     } else {
       1.0
@@ -112,7 +113,7 @@ class BgpAnnouncementValidator(implicit actorSystem: akka.actor.ActorSystem) ext
 
   def validatedAnnouncements: IndexedSeq[BgpValidatedAnnouncement] = _validatedAnnouncements.single.get
 
-  def startUpdate(announcements: Seq[BgpAnnouncement], prefixes: Seq[RtrPrefix]) = {
+  def startUpdate(announcements: Seq[BgpAnnouncement], prefixes: Seq[RtrPrefix]): Unit = {
     val v = validate(announcements, prefixes)
     _validatedAnnouncements.single.set(v)
   }
@@ -135,7 +136,7 @@ class BgpAnnouncementValidator(implicit actorSystem: akka.actor.ActorSystem) ext
   }
 
   private def validate(announcements: Seq[BgpAnnouncement], prefixes: Seq[RtrPrefix]): IndexedSeq[BgpValidatedAnnouncement] = {
-    val prefixTree = NumberResourceIntervalTree(prefixes: _*)
+    val (prefixTree, _) = Time.timed(NumberResourceIntervalTree(prefixes: _*))
     announcements.par.map(BgpAnnouncementValidator.validate(_, prefixTree)).seq.toIndexedSeq
   }
 }

@@ -26,27 +26,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.reporting
+package net.ripe.irrstats
 
-import net.ripe.irrstats.analysis.ValidatedAnnouncementStats
-
-object RegionCsv {
-
-  def printHeader(): Unit = println("date, RIR, authorisations, announcements, accuracy announcements, " +
-    "fraction valid, fraction invalid length, fraction invalid asn, fraction unknown, " +
-    "space announced, accuracy space, " +
-    "fraction space valid, fraction space invalid length, fraction space invalid asn, " +
-    "fraction space unknown")
-
-  def reportRegionQuality(region: String, stats: ValidatedAnnouncementStats, dateString: String): Unit = {
-
-    def string(fo: Option[Double]) = fo.map(f => f"$f%1.4f").getOrElse("")
-
-    println(s"$dateString, $region, ${stats.numberOfAuthorisations}, ${stats.combined.count}, ${string(stats.accuracyAnnouncements)}, " +
-      s"${string(stats.percentageValid)}, ${string(stats.percentageInvalidLength)}, ${string(stats.percentageInvalidAsn)}, " +
-      s"${string(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, ${string(stats.accuracySpace)}, " +
-      s"${string(stats.percentageSpaceValid)}, ${string(stats.percentageSpaceInvalidLength)}, " +
-      s"${string(stats.percentageSpaceInvalidAsn)}, ${string(stats.percentageSpaceUnknown)}")
+object Time {
+  def timed[T](f: => T): (T, Long) = {
+    val begin = System.currentTimeMillis()
+    val r = f
+    val end = System.currentTimeMillis()
+    (r, end - begin)
   }
-
 }

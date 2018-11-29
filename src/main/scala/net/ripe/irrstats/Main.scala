@@ -32,35 +32,55 @@ import net.ripe.irrstats.parsing.holdings.{CountryHoldings, RIRHoldings}
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.parsing.roas.RoaUtil
 import net.ripe.irrstats.parsing.route.RouteParser
-import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
+import net.ripe.irrstats.route.validation.RtrPrefix
+
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 object Main extends App {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+
   val config = Config.config(args)
 
-  val announcements: Seq[BgpAnnouncement] = RisDumpUtil.parseDumpFile(config.risDumpFile)
+  val (announcements, announcementTime) = Time.timed {
+    RisDumpUtil.parseDumpFile(config.risDumpFile)
+  }
 
-  val authorisations: Seq[RtrPrefix] = config.routeAuthorisationType() match {
-    case RoaCsvDump => RoaUtil.parse(config.routeAuthorisationFile)
-    case RouteObjectDbDump => if (config.looseRouteObjectValidation) {
-      RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix, Some(24)))
-    } else {
-      RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix))
+  val (authorisations, roaParseTime) = Time.timed {
+    config.routeAuthorisationType() match {
+      case RoaCsvDump => RoaUtil.parse(config.routeAuthorisationFile)
+      case RouteObjectDbDump => if (config.looseRouteObjectValidation) {
+        RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix, Some(24)))
+      } else {
+        RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix))
+      }
     }
   }
 
   // lazy vals are only initialised when used for the first time,
   // so there is no performance penalty defining all of the following
-  lazy val rirHoldings = RIRHoldings.parse(config.statsFile)
-  lazy val countryHoldings = CountryHoldings.parse(config.statsFile)
+  val rirHoldings = Future(Time.timed(RIRHoldings.parse(config.statsFile)))
+  val countryHoldings = Future(Time.timed(CountryHoldings.parse(config.statsFile)))
 
-  config.analysisMode match {
-    case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
-    case WorldMapMode =>  ReportWorldMap.report(announcements, authorisations, countryHoldings)
-    case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHoldings, config.countryDetails.get)
-    case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHoldings, config.quiet, config.date)
-    case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
+  val x = for {
+    (ch, _) <- countryHoldings
+    (rh, _) <- rirHoldings
+  } yield {
+    Time.timed {
+      config.analysisMode match {
+        case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
+        case WorldMapMode => ReportWorldMap.report(announcements, authorisations, ch)
+        case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, ch, config.countryDetails.get)
+        case CountryMode => ReportCountry.reportCountries(announcements, authorisations, ch, config.quiet, config.date)
+        case RirMode => ReportRir.report(announcements, authorisations, rh, config.quiet, config.date, config.rir)
+      }
+    }
   }
+
+  val (_, reportTime) = Await.result(x, Duration.Inf)
+
+  println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
 
   System.exit(0) // We're done here
 

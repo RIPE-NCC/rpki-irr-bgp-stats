@@ -28,13 +28,25 @@
  */
 package net.ripe.irrstats.analysis
 
+import net.ripe.irrstats.Time
 import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, regionFor}
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
 
 class RegionStatsUtil(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
 
-  val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy { ann => regionFor(ann.prefix, holdings) }
-  val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
+  val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = {
+    val (a, t) = Time.timed {
+      announcements.groupBy { ann => regionFor(ann.prefix, holdings) }
+    }
+    a
+  }
+
+  val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = {
+    val (a, t) = Time.timed {
+      authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
+    }
+    a
+  }
 
   implicit val actorSystem = akka.actor.ActorSystem()
 

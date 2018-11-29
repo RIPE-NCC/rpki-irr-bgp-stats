@@ -40,7 +40,7 @@ object AsnStatsAnalyser {
 
   def statsPerAsn(announcements: Seq[BgpValidatedAnnouncement]): Iterable[AsnStat] = {
     announcementsPerAsn(announcements).map {
-      case (asn, announcements) => AsnStat.fromAnnouncements(asn, announcements)
+      case (asn, an) => AsnStat.fromAnnouncements(asn, an)
     }
   }
 
@@ -51,12 +51,13 @@ case class AsnStat(asn: Asn,
                    spaceAnnounced: BigInteger, spaceValid: BigInteger, spaceInvalid: BigInteger)
 
 object AsnStat {
-  def fromAnnouncements(asn: Asn, announcements: Seq[BgpValidatedAnnouncement]) = {
+  def fromAnnouncements(asn: Asn, announcements: Seq[BgpValidatedAnnouncement]): AsnStat = {
 
     val valids = announcements.filter { a => a.validity == RouteValidity.Valid }
     val invalids = announcements.filter { a => a.validity == RouteValidity.InvalidAsn || a.validity == RouteValidity.InvalidLength }
 
-    def spaceFor(announcements: Seq[BgpValidatedAnnouncement]): BigInteger = AnnouncementStatsUtil.getNumberOfAddresses(announcements.map(_.prefix))
+    def spaceFor(announcements: Seq[BgpValidatedAnnouncement]): BigInteger =
+      AnnouncementStatsUtil.getNumberOfAddresses(announcements.map(_.prefix))
 
     AsnStat(
       asn,

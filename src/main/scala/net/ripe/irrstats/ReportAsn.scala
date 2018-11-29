@@ -28,25 +28,29 @@
  */
 package net.ripe.irrstats
 
+import akka.actor.ActorSystem
 import net.ripe.irrstats.analysis.AsnStatsAnalyser
 import net.ripe.irrstats.route.validation._
 
 object ReportAsn {
 
-  implicit val actorSystem = akka.actor.ActorSystem()
+  implicit val actorSystem: ActorSystem = akka.actor.ActorSystem()
 
-  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], quiet: Boolean) = {
+  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], quiet: Boolean): Unit = {
     val validator = new BgpAnnouncementValidator()
     validator.startUpdate(announcements, authorisations)
     val validatedAnnouncements = validator.validatedAnnouncements
 
-    if (! quiet) {
+    if (!quiet) {
       println("Asn, PfxAnn, PfxValid, PfxInvalid, SpaceAnn, SpaceValid, SpaceInvalid")
     }
 
-    AsnStatsAnalyser.statsPerAsn(validatedAnnouncements).toList.sortBy(_.spaceValid).reverse.take(100).foreach(stat =>
-      println(s"${stat.asn}, ${stat.numberOfAnnouncements}, ${stat.numberValidAnnouncements}, ${stat.numberInvalidAnnouncements}, ${stat.spaceAnnounced}, ${stat.spaceValid}, ${stat.spaceInvalid}")
-    )
+    AsnStatsAnalyser.statsPerAsn(validatedAnnouncements).toList.
+      sortBy(_.spaceValid.negate()).
+      take(100).
+      foreach(stat =>
+        println(s"${stat.asn}, ${stat.numberOfAnnouncements}, ${stat.numberValidAnnouncements}, ${stat.numberInvalidAnnouncements}, ${stat.spaceAnnounced}, ${stat.spaceValid}, ${stat.spaceInvalid}")
+      )
   }
 
 }

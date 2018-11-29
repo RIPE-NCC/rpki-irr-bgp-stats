@@ -46,10 +46,7 @@ object ReportCountry {
 
     val countryStats = new RegionStatsUtil(holdings, announcements, authorisations)
 
-    for (cc <- holdings.keys) {
-      RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString)
-    }
-
+    holdings.keys.par.foreach(cc => RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString))
   }
 
 }

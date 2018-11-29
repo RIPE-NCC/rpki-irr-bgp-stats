@@ -37,11 +37,12 @@ object ReportRir {
 
   def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String, rirString: String) = {
 
-    if (! quiet) {
+    if (!quiet) {
       RegionCsv.printHeader()
     }
 
-    val rirStats = new RegionStatsUtil(holdings, announcements, authorisations)
+    val (rirStats, t) = Time.timed(new RegionStatsUtil(holdings, announcements, authorisations))
+    println(s"t = $t")
 
     val rirs = if (rirString == "all") {
       holdings.keys
@@ -49,10 +50,10 @@ object ReportRir {
       List(rirString)
     }
 
-    for (rir <- rirs) {
-      RegionCsv.reportRegionQuality(rir, rirStats.regionAnnouncementStats(rir), dateString)
-    }
-
+    rirs.par.foreach(rir => {
+      val (stats, _) = Time.timed(rirStats.regionAnnouncementStats(rir))
+      RegionCsv.reportRegionQuality(rir, stats, dateString)
+    })
   }
 
 }
