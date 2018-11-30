@@ -30,10 +30,9 @@ package net.ripe.irrstats.analysis
 
 import java.math.BigInteger
 
-import net.ripe.ipresource.{IpRange, IpResourceSet}
+import net.ripe.irrstats.analysis.StatsUtil._
 import net.ripe.irrstats.route.validation.{BgpValidatedAnnouncement, RouteValidity}
 
-import scala.collection.JavaConverters._
 
 case class WorldMapCountryStat(countryCode: String,
                                prefixesAdoption: Option[Double], prefixesValid: Option[Double], prefixesMatching: Option[Double],
@@ -95,13 +94,6 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
 
 object AnnouncementStats {
 
-  def getNumberOfAddresses(prefixes: Seq[IpRange]): BigInteger = {
-    val resourceSet = new IpResourceSet()
-    prefixes.foreach(pfx => resourceSet.addAll(new IpResourceSet(pfx)))
-    resourceSet.iterator().asScala.foldLeft(BigInteger.ZERO)((r, c) => {
-      r.add(c.getEnd.getValue.subtract(c.getStart.getValue).add(BigInteger.ONE))
-    })
-  }
 
   def analyseValidatedAnnouncements(announcements: Seq[BgpValidatedAnnouncement], numberOfAuthorisations: Int): ValidatedAnnouncementStats = {
 

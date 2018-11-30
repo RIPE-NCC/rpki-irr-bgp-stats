@@ -41,12 +41,12 @@ class AnnouncementStatsTest extends FunSuite with Matchers {
 
   test("Should count overlapping IP addresses in prefixes only once") {
     val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.0.0.0/23")
-    AnnouncementStats.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(512))
+    StatsUtil.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(512))
   }
 
   test("Should count IP addresses in different prefixes") {
     val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.1.0.0/23")
-    AnnouncementStats.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(256 + 512))
+    StatsUtil.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(256 + 512))
   }
 
 }

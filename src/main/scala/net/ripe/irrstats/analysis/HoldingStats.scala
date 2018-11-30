@@ -57,12 +57,12 @@ class HoldingStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], auth
   def adoption(region: String)  = {
     val authorisations = authorisationsByHolding.getOrElse(region, Seq.empty)
 
-    val holdingsSize = holdingSize(region, holdings)
+    val holdingsSize = StatsUtil.getNumberOfAddresses(holdings(region))
     val roaCoverageSize = RtrPrefix.accumulateSize(authorisations)
 
     if(holdingsSize.equals(BigInteger.ZERO)) 0.0d else
     {
-      roaCoverageSize.doubleValue() / holdingsSize.doubleValue()
+      (bigDec(roaCoverageSize) / bigDec(holdingsSize)).doubleValue()
     }
   }
 
@@ -77,5 +77,8 @@ class HoldingStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], auth
     )
   }.toMap
 
+  def bigDec(javaBigInteger : BigInteger): BigDecimal = {
+      new BigDecimal(new java.math.BigDecimal(javaBigInteger))
+  }
 }
 

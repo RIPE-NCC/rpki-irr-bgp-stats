@@ -29,23 +29,16 @@
 package net.ripe.irrstats.parsing.holdings
 
 import java.io.File
-import java.math.BigInteger
 
 import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet, Ipv4Address}
+import net.ripe.irrstats.analysis.StatsUtil
 import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable
 import scala.io.Source
 
 object Holdings {
   def read(statsFile: File): Seq[String] = Source.fromFile(statsFile, "ASCII").getLines.toSeq
-
-  def holdingSize(region:String, holdings : Holdings) = {
-    def iprSize(ipResource : IpResource) : BigInteger = ipResource.getEnd.getValue.subtract(ipResource.getStart.getValue)
-
-    holdings(region).iterator().map(iprSize).foldLeft(BigInteger.ZERO)((res, next) => res.add(next))
-  }
 }
 
 object ExtendedStatsUtils {

@@ -36,9 +36,9 @@ object RegionCsv {
     "fraction valid, fraction invalid length, fraction invalid asn, fraction unknown, " +
     "space announced, accuracy space, " +
     "fraction space valid, fraction space invalid length, fraction space invalid asn, " +
-    "fraction space unknown, adoption IPs")
+    "fraction space unknown, adoption IPs, adoption")
 
-  def reportRegionQuality(region: String, stats: ValidatedAnnouncementStats, dateString: String): Unit = {
+  def reportRegionQuality(region: String, stats: ValidatedAnnouncementStats, dateString: String, adoption: Double): Unit = {
 
     def string(fo: Option[Double]) = fo.map(f => f"$f%1.4f").getOrElse("")
 
@@ -46,7 +46,8 @@ object RegionCsv {
       s"${string(stats.percentageValid)}, ${string(stats.percentageInvalidLength)}, ${string(stats.percentageInvalidAsn)}, " +
       s"${string(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, ${string(stats.accuracySpace)}, " +
       s"${string(stats.percentageSpaceValid)}, ${string(stats.percentageSpaceInvalidLength)}, " +
-      s"${string(stats.percentageSpaceInvalidAsn)}, ${string(stats.percentageSpaceUnknown)}, ${string(stats.percentageAdoptionAddresses)}")
+      s"${string(stats.percentageSpaceInvalidAsn)}, ${string(stats.percentageSpaceUnknown)}, ${string(stats
+        .percentageAdoptionAddresses)}, ${string(Some(adoption))}")
   }
 
 }

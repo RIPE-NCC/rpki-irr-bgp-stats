@@ -51,7 +51,7 @@ object ReportRir {
 
     rirs.par.foreach(rir => {
       val (stats, _) = Time.timed(rirStats.regionAnnouncementStats(rir))
-      RegionCsv.reportRegionQuality(rir, stats, dateString)
+      RegionCsv.reportRegionQuality(rir, stats, dateString, rirStats.adoption(rir))
     })
   }
 
