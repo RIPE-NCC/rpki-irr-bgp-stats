@@ -50,4 +50,12 @@ class ExtendedStatsTest extends FunSuite with Matchers {
     ExtendedStatsUtils.regionFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
   }
 
+  test("Should parse country holding from extended delegated stats"){
+    val holdings = CountryHoldings.parse(new File(Thread.currentThread().getContextClassLoader().getResource("extended-delegated-stats.txt").getFile))
+
+    val countries = holdings.keySet
+    countries should be (Set("US", "AU", "GB", "FR", "EU", "IT", "JP", "CN"))
+
+  }
+
 }

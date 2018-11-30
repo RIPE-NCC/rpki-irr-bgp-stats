@@ -26,53 +26,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.parsing.route
+package net.ripe.irrstats.parsing.announcements
 
 import java.io.File
 
-import net.ripe.ipresource.{Asn, IpRange}
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
+import net.ripe.irrstats.parsing.ris.RisDumpUtil
+import net.ripe.irrstats.route.validation.BgpAnnouncement
+import org.scalatest.{FunSuite, Matchers}
 
-import scala.io.Source
+@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
+class RisDumpUtilTest extends FunSuite with Matchers {
 
+  test("Should parse ipv4 dump file") {
+    val dumpFile = new File(Thread.currentThread().getContextClassLoader().getResource("ris-ipv4.txt").getFile)
+    val announcements: Seq[BgpAnnouncement] = RisDumpUtil.parseDumpFile(dumpFile)
 
-object RouteParser {
-
-  def parse(routeFile: File) = {
-
-    var routes = List.empty[Route]
-
-    var prefix: IpRange = null
-    var asn: Asn = null
-    var lastModified: DateTime = null
-
-    val keyValueRegex = """^([\w\-]+):\s*(\S*).*$""".r
-
-    Source.fromFile(routeFile, "iso-8859-1").getLines.foreach {
-      case keyValueRegex(key, value) => key match {
-        case "route" | "route6" =>
-          if (asn != null && prefix != null) {
-            routes = routes :+ Route(prefix, asn, lastModified)
-            prefix = IpRange.parse(value)
-            asn = null
-            lastModified = null
-          } else
-            prefix = IpRange.parse(value)
-        case "origin" =>
-          asn = Asn.parse(value)
-        case "last-modified" =>
-          lastModified = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z").withZoneUTC().parseDateTime(value)
-        case _ => // ignore other
-      }
-      case _ => // nothing to do
-    }
-
-    routes = routes :+ Route(prefix, asn, lastModified)
-
-    routes
+    // File contains 35 entries, 6 entries with peers < 5
+    announcements.length should be(29)
   }
+
+  test("Should parse ipv6 dump file") {
+    val dumpFile = new File(Thread.currentThread().getContextClassLoader().getResource("ris-ipv6.txt").getFile)
+    val announcements: Seq[BgpAnnouncement] = RisDumpUtil.parseDumpFile(dumpFile)
+
+    // File contains 35 entries, 13 entries with peers < 5
+    announcements.length should be(22)
+  }
+
 }
-
-
-case class Route(prefix: IpRange, asn: Asn, lastModified: DateTime)
