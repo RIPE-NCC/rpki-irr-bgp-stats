@@ -36,7 +36,8 @@ import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 object ReportCountry {
 
   def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, countryCode: String) = {
-    CountryDetails.printCountryAnnouncementReport(countryCode, new HoldingStats(holdings, announcements, authorisations).regionAnnouncementStats(countryCode))
+    val holdingStats = new HoldingStats(holdings, announcements, authorisations)
+    CountryDetails.printCountryAnnouncementReport(countryCode, holdingStats.regionAnnouncementStats(countryCode), holdingStats.adoption(countryCode))
   }
 
   def reportCountries(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String) = {

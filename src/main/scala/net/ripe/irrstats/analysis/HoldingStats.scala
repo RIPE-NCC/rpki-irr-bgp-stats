@@ -28,8 +28,12 @@
  */
 package net.ripe.irrstats.analysis
 
+import java.math.BigInteger
+
 import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, holdingFor}
+import net.ripe.irrstats.parsing.holdings.Holdings
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
+import Holdings._
 
 class HoldingStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
 
@@ -48,6 +52,18 @@ class HoldingStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], auth
     val validatedAnnouncements = validator.validatedAnnouncements
 
     AnnouncementStats.analyseValidatedAnnouncements(validatedAnnouncements, authorisations.size)
+  }
+
+  def adoption(region: String)  = {
+    val authorisations = authorisationsByHolding.getOrElse(region, Seq.empty)
+
+    val holdingsSize = holdingSize(region, holdings)
+    val roaCoverageSize = RtrPrefix.accumulateSize(authorisations)
+
+    if(holdingsSize.equals(BigInteger.ZERO)) 0.0d else
+    {
+      roaCoverageSize.doubleValue() / holdingsSize.doubleValue()
+    }
   }
 
   def worldMapStats: Iterable[WorldMapCountryStat] = holdings.keys.par.map { cc =>

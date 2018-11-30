@@ -33,7 +33,7 @@ import net.ripe.irrstats.route.validation.RouteValidity
 
 object CountryDetails {
 
-  def printCountryAnnouncementReport(cc: String, validatedAnnouncementStats: ValidatedAnnouncementStats) = {
+  def printCountryAnnouncementReport(cc: String, validatedAnnouncementStats: ValidatedAnnouncementStats, adoption: Double) = {
 
     println(s"Detailed announcement report for country code: ${cc}")
     println("")
@@ -42,6 +42,7 @@ object CountryDetails {
     println(s"   Invalid Length : ${validatedAnnouncementStats.invalidLength.count}" )
     println(s"   Invalid ASN    : ${validatedAnnouncementStats.invalidAsn.count}" )
     println(s"   Unknown        : ${validatedAnnouncementStats.unknown.count}" )
+    println(s"   Adoption       : ${adoption}" )
     println("")
 
 
