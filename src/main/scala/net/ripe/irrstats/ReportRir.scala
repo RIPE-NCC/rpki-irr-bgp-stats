@@ -42,7 +42,6 @@ object ReportRir {
     }
 
     val (rirStats, t) = Time.timed(new RegionStatsUtil(holdings, announcements, authorisations))
-    println(s"t = $t")
 
     val rirs = if (rirString == "all") {
       holdings.keys

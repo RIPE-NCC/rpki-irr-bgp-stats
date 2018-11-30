@@ -28,25 +28,13 @@
  */
 package net.ripe.irrstats.analysis
 
-import net.ripe.irrstats.Time
 import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, regionFor}
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
 
 class RegionStatsUtil(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
 
-  val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = {
-    val (a, t) = Time.timed {
-      announcements.groupBy { ann => regionFor(ann.prefix, holdings) }
-    }
-    a
-  }
-
-  val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = {
-    val (a, t) = Time.timed {
-      authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
-    }
-    a
-  }
+  val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy(ann => regionFor(ann.prefix, holdings))
+  val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
 
   implicit val actorSystem = akka.actor.ActorSystem()
 
@@ -59,26 +47,18 @@ class RegionStatsUtil(holdings: Holdings, announcements: Seq[BgpAnnouncement], a
     validator.startUpdate(announcements, authorisations)
     val validatedAnnouncements = validator.validatedAnnouncements
 
-    AnnouncementStatsUtil.analyseValidatedAnnouncements(validatedAnnouncements, authorisations.size)
+    AnnouncementStats.analyseValidatedAnnouncements(validatedAnnouncements, authorisations.size)
   }
 
-  def worldMapStats: Iterable[WorldMapCountryStat] = holdings.keys.map { cc =>
+  def worldMapStats: Iterable[WorldMapCountryStat] = holdings.keys.par.map { cc =>
     WorldMapCountryStat.fromCcAndStats(cc, regionAnnouncementStats(cc))
-  }
+  }.seq
 
-  def worldStaleness: Map[String, StalenessStat] = holdings.keys.map { cc =>
-
-    def regionStaleStats(region: String) = {
-
-      val announcements = announcementsByRegion.getOrElse(region, Seq.empty)
-      val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
-
-      val validator = new BgpAnnouncementValidator()
-
-      validator.staleness(announcements, authorisations)
-    }
-
-    cc -> regionStaleStats(cc)
+  def worldStaleness: Map[String, StalenessStat] = holdings.keys.map { region =>
+    region -> new BgpAnnouncementValidator().staleness(
+      announcementsByRegion.getOrElse(region, Seq.empty),
+      authorisationsByRegion.getOrElse(region, Seq.empty)
+    )
   }.toMap
 
 }

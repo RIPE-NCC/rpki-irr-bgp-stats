@@ -42,7 +42,7 @@ case class WorldMapCountryStat(countryCode: String,
 object WorldMapCountryStat {
   def fromCcAndStats(cc: String, stats: ValidatedAnnouncementStats): WorldMapCountryStat = {
     new WorldMapCountryStat(cc,
-                            stats.percentageAdoption, stats.percentageValid, stats.accuracyAnnouncements,
+                            stats.percentageAdoptionCount, stats.percentageValid, stats.accuracyAnnouncements,
                             stats.percentageSpaceAdoption, stats.percentageSpaceValid, stats.accuracySpace,
                             stats.combined.count, stats.combined.numberOfIps)
   }
@@ -59,7 +59,7 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
                                       numberOfAuthorisations: Int
                                      ) {
 
-  private def safePercentageBig(fraction: BigInteger, total: BigInteger): Option[Double] = {
+  private def safePercentage(fraction: BigInteger, total: BigInteger): Option[Double] = {
     if (total == BigInteger.ZERO) {
       None
     } else {
@@ -68,29 +68,30 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
   }
 
   private def safePercentage(fraction: Int, total: Int): Option[Double] =
-    safePercentageBig(BigInteger.valueOf(fraction), BigInteger.valueOf(total))
+    safePercentage(BigInteger.valueOf(fraction), BigInteger.valueOf(total))
 
-  private def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentageBig(fraction.numberOfIps, combined.numberOfIps)
+  private def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.numberOfIps, combined.numberOfIps)
   private def safePercentageAnnouncements(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.count, combined.count)
 
   def accuracyAnnouncements: Option[Double] = safePercentage(valid.count , valid.count + invalidAsn.count + invalidLength.count)
-  def accuracySpace: Option[Double] = safePercentageBig(valid.numberOfIps, covered.numberOfIps)
+  def accuracySpace: Option[Double] = safePercentage(valid.numberOfIps, covered.numberOfIps)
 
   def percentageValid: Option[Double] = safePercentageAnnouncements(valid)
   def percentageInvalidLength: Option[Double] = safePercentageAnnouncements(invalidLength)
   def percentageInvalidAsn: Option[Double] = safePercentageAnnouncements(invalidAsn)
 
   def percentageUnknown: Option[Double] = safePercentageAnnouncements(unknown)
-  def percentageAdoption: Option[Double] = safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
+  def percentageAdoptionCount: Option[Double] = safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
+  def percentageAdoptionAddresses: Option[Double] = safePercentage(valid.numberOfIps.add(invalidAsn.numberOfIps).add(invalidLength.numberOfIps), combined.numberOfIps)
 
   def percentageSpaceValid: Option[Double] = safePercentageIpSpace(valid)
   def percentageSpaceInvalidLength: Option[Double] = safePercentageIpSpace(invalidLength)
   def percentageSpaceInvalidAsn: Option[Double] = safePercentageIpSpace(invalidAsn)
   def percentageSpaceUnknown: Option[Double] = safePercentageIpSpace(unknown)
-  def percentageSpaceAdoption: Option[Double] = safePercentageBig(covered.numberOfIps, combined.numberOfIps)
+  def percentageSpaceAdoption: Option[Double] = safePercentage(covered.numberOfIps, combined.numberOfIps)
 }
 
-object AnnouncementStatsUtil {
+object AnnouncementStats {
 
   def getNumberOfAddresses(prefixes: Seq[IpRange]): BigInteger = {
     val resourceSet = new IpResourceSet()

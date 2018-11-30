@@ -43,43 +43,50 @@ object Main extends App {
 
   val config = Config.config(args)
 
-  val (announcements, announcementTime) = Time.timed {
-    RisDumpUtil.parseDumpFile(config.risDumpFile)
+  val announcementsF = Future {
+    Time.timed {
+      RisDumpUtil.parseDumpFile(config.risDumpFile)
+    }
   }
 
-  val (authorisations, roaParseTime) = Time.timed {
-    config.routeAuthorisationType() match {
-      case RoaCsvDump => RoaUtil.parse(config.routeAuthorisationFile)
-      case RouteObjectDbDump => if (config.looseRouteObjectValidation) {
-        RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix, Some(24)))
-      } else {
-        RouteParser.parse(config.routeAuthorisationFile).map(r => RtrPrefix(r.asn, r.prefix))
+  val roasF = Future {
+    Time.timed {
+      config.routeAuthorisationType() match {
+        case RoaCsvDump => RoaUtil.parse(config.routeAuthorisationFile)
+        case RouteObjectDbDump => if (config.looseRouteObjectValidation) {
+          RouteParser.parse(config.routeAuthorisationFile).par.map(r => RtrPrefix(r.asn, r.prefix, Some(24))).seq
+        } else {
+          RouteParser.parse(config.routeAuthorisationFile).par.map(r => RtrPrefix(r.asn, r.prefix)).seq
+        }
       }
     }
   }
+
 
   // lazy vals are only initialised when used for the first time,
   // so there is no performance penalty defining all of the following
-  val rirHoldings = Future(Time.timed(RIRHoldings.parse(config.statsFile)))
-  val countryHoldings = Future(Time.timed(CountryHoldings.parse(config.statsFile)))
+  val rirHoldingsF = Future(Time.timed(RIRHoldings.parse(config.statsFile)))
+  val countryHoldingsF = Future(Time.timed(CountryHoldings.parse(config.statsFile)))
 
-  val x = for {
-    (ch, _) <- countryHoldings
-    (rh, _) <- rirHoldings
+  val report = for {
+    (countryHolding, _)               <- countryHoldingsF
+    (rirHoldings, _)                  <- rirHoldingsF
+    (announcements, announcementTime) <- announcementsF
+    (authorisations, roaParseTime)    <- roasF
   } yield {
-    Time.timed {
+    val (_, reportTime) = Time.timed {
       config.analysisMode match {
         case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
-        case WorldMapMode => ReportWorldMap.report(announcements, authorisations, ch)
-        case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, ch, config.countryDetails.get)
-        case CountryMode => ReportCountry.reportCountries(announcements, authorisations, ch, config.quiet, config.date)
-        case RirMode => ReportRir.report(announcements, authorisations, rh, config.quiet, config.date, config.rir)
+        case WorldMapMode => ReportWorldMap.report(announcements, authorisations, countryHolding)
+        case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHolding, config.countryDetails.get)
+        case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
+        case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
       }
     }
+    (announcementTime, roaParseTime, reportTime)
   }
 
-  val (_, reportTime) = Await.result(x, Duration.Inf)
-
+  val (announcementTime, roaParseTime, reportTime) = Await.result(report, Duration.Inf)
   println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
 
   System.exit(0) // We're done here

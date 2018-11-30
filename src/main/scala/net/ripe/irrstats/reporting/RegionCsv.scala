@@ -36,7 +36,7 @@ object RegionCsv {
     "fraction valid, fraction invalid length, fraction invalid asn, fraction unknown, " +
     "space announced, accuracy space, " +
     "fraction space valid, fraction space invalid length, fraction space invalid asn, " +
-    "fraction space unknown")
+    "fraction space unknown, adoption IPs")
 
   def reportRegionQuality(region: String, stats: ValidatedAnnouncementStats, dateString: String): Unit = {
 
@@ -46,7 +46,7 @@ object RegionCsv {
       s"${string(stats.percentageValid)}, ${string(stats.percentageInvalidLength)}, ${string(stats.percentageInvalidAsn)}, " +
       s"${string(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, ${string(stats.accuracySpace)}, " +
       s"${string(stats.percentageSpaceValid)}, ${string(stats.percentageSpaceInvalidLength)}, " +
-      s"${string(stats.percentageSpaceInvalidAsn)}, ${string(stats.percentageSpaceUnknown)}")
+      s"${string(stats.percentageSpaceInvalidAsn)}, ${string(stats.percentageSpaceUnknown)}, ${string(stats.percentageAdoptionAddresses)}")
   }
 
 }
