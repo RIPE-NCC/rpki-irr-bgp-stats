@@ -40,18 +40,20 @@ class ExtendedStatsTest extends FunSuite with Matchers {
     ExtendedStatsUtils.parseIpv4("213.154.64.0", "8192") should equal (IpResourceSet.parse("213.154.64.0/19"))
   }
 
+  private val file = new File(Thread.currentThread().getContextClassLoader.getResource("extended-delegated-stats.txt").getFile)
+
   test("Should parse extended delegated stats") {
 
-    val holdings = RIRHoldings.parse(new File(Thread.currentThread().getContextClassLoader().getResource("extended-delegated-stats.txt").getFile))
+    val holdings = RIRHoldings.parse(Holdings.read(file))
 
-    holdings.get("apnic").get.contains(IpResource.parse("1.0.0.0/24")) should be (true)
+    holdings("apnic").contains(IpResource.parse("1.0.0.0/24")) should be (true)
 
-    ExtendedStatsUtils.regionFor(IpResource.parse("1.0.0.0/24"), holdings) should equal("apnic")
-    ExtendedStatsUtils.regionFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
+    ExtendedStatsUtils.holdingFor(IpResource.parse("1.0.0.0/24"), holdings) should equal("apnic")
+    ExtendedStatsUtils.holdingFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
   }
 
   test("Should parse country holding from extended delegated stats"){
-    val holdings = CountryHoldings.parse(new File(Thread.currentThread().getContextClassLoader().getResource("extended-delegated-stats.txt").getFile))
+    val holdings = CountryHoldings.parse(Holdings.read(file))
 
     val countries = holdings.keySet
     countries should be (Set("US", "AU", "GB", "FR", "EU", "IT", "JP", "CN"))

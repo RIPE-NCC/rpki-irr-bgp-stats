@@ -28,7 +28,7 @@
  */
 package net.ripe.irrstats
 
-import net.ripe.irrstats.parsing.holdings.{CountryHoldings, RIRHoldings}
+import net.ripe.irrstats.parsing.holdings.{CountryHoldings, EntityHoldings, Holdings, RIRHoldings}
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.parsing.roas.RoaUtil
 import net.ripe.irrstats.parsing.route.RouteParser
@@ -63,14 +63,18 @@ object Main extends App {
   }
 
 
+  val (holdingsLines, ht) = Time.timed(Holdings.read(config.statsFile))
+
   // lazy vals are only initialised when used for the first time,
   // so there is no performance penalty defining all of the following
-  val rirHoldingsF = Future(Time.timed(RIRHoldings.parse(config.statsFile)))
-  val countryHoldingsF = Future(Time.timed(CountryHoldings.parse(config.statsFile)))
+  val rirHoldingsF = Future(Time.timed(RIRHoldings.parse(holdingsLines)))
+  val countryHoldingsF = Future(Time.timed(CountryHoldings.parse(holdingsLines)))
+  val entityHoldingsF = Future(Time.timed(EntityHoldings.parse(holdingsLines)))
 
   val report = for {
-    (countryHolding, _)               <- countryHoldingsF
-    (rirHoldings, _)                  <- rirHoldingsF
+    (countryHolding, ct)              <- countryHoldingsF
+    (rirHoldings, rt)                 <- rirHoldingsF
+    (entityHoldings, et)              <- entityHoldingsF
     (announcements, announcementTime) <- announcementsF
     (authorisations, roaParseTime)    <- roasF
   } yield {
@@ -81,13 +85,13 @@ object Main extends App {
         case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHolding, config.countryDetails.get)
         case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
         case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
-        case PerEntityMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
+        case PerEntityMode => ReportRir.report(announcements, authorisations, entityHoldings, config.quiet, config.date, config.rir)
       }
     }
-    (announcementTime, roaParseTime, reportTime)
+    (announcementTime, roaParseTime, reportTime, ct, rt, et)
   }
 
-  val (announcementTime, roaParseTime, reportTime) = Await.result(report, Duration.Inf)
+  val (announcementTime, roaParseTime, reportTime, ct, rt, et) = Await.result(report, Duration.Inf)
   println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
 
   System.exit(0) // We're done here

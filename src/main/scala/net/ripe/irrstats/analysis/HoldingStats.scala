@@ -28,23 +28,20 @@
  */
 package net.ripe.irrstats.analysis
 
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, regionFor}
+import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, holdingFor}
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
 
 class HoldingStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
 
-  val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] =
-    announcements.groupBy(ann => regionFor(ann.prefix, holdings))
+  lazy val announcementsByHolding: collection.Map[String, Seq[BgpAnnouncement]] =
+    announcements.par.groupBy(ann => holdingFor(ann.prefix, holdings)).mapValues(_.seq).seq
 
-  val authorisationsByRegion: Map[String, Seq[RtrPrefix]] =
-    authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
-
-  implicit val actorSystem = akka.actor.ActorSystem()
+  lazy val authorisationsByHolding: collection.Map[String, Seq[RtrPrefix]] =
+    authorisations.par.groupBy(pfx => holdingFor(pfx.prefix, holdings)).mapValues(_.seq).seq
 
   def regionAnnouncementStats(region: String): ValidatedAnnouncementStats = {
-
-    val announcements = announcementsByRegion.getOrElse(region, Seq.empty)
-    val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
+    val announcements = announcementsByHolding.getOrElse(region, Seq.empty)
+    val authorisations = authorisationsByHolding.getOrElse(region, Seq.empty)
 
     val validator = new BgpAnnouncementValidator()
     validator.startUpdate(announcements, authorisations)
@@ -59,8 +56,8 @@ class HoldingStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], auth
 
   def worldStaleness: Map[String, StalenessStat] = holdings.keys.map { region =>
     region -> new BgpAnnouncementValidator().staleness(
-      announcementsByRegion.getOrElse(region, Seq.empty),
-      authorisationsByRegion.getOrElse(region, Seq.empty)
+      announcementsByHolding.getOrElse(region, Seq.empty),
+      authorisationsByHolding.getOrElse(region, Seq.empty)
     )
   }.toMap
 
