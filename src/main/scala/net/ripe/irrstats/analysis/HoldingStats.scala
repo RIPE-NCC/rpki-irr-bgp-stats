@@ -33,10 +33,10 @@ import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValid
 
 class HoldingStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
 
-  lazy val announcementsByHolding: collection.Map[String, Seq[BgpAnnouncement]] =
+  val announcementsByHolding: collection.Map[String, Seq[BgpAnnouncement]] =
     announcements.par.groupBy(ann => holdingFor(ann.prefix, holdings)).mapValues(_.seq).seq
 
-  lazy val authorisationsByHolding: collection.Map[String, Seq[RtrPrefix]] =
+  val authorisationsByHolding: collection.Map[String, Seq[RtrPrefix]] =
     authorisations.par.groupBy(pfx => holdingFor(pfx.prefix, holdings)).mapValues(_.seq).seq
 
   def regionAnnouncementStats(region: String): ValidatedAnnouncementStats = {
