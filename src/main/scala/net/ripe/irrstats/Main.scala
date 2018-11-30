@@ -81,6 +81,7 @@ object Main extends App {
         case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHolding, config.countryDetails.get)
         case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
         case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
+        case PerEntityMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
       }
     }
     (announcementTime, roaParseTime, reportTime)

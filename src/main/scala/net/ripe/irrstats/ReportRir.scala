@@ -28,7 +28,7 @@
  */
 package net.ripe.irrstats
 
-import net.ripe.irrstats.analysis.RegionStatsUtil
+import net.ripe.irrstats.analysis.HoldingStats
 import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
 import net.ripe.irrstats.reporting.RegionCsv
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
@@ -41,7 +41,7 @@ object ReportRir {
       RegionCsv.printHeader()
     }
 
-    val (rirStats, t) = Time.timed(new RegionStatsUtil(holdings, announcements, authorisations))
+    val (rirStats, t) = Time.timed(new HoldingStats(holdings, announcements, authorisations))
 
     val rirs = if (rirString == "all") {
       holdings.keys

@@ -129,3 +129,5 @@ case object RirMode extends AnalysisMode
 case object WorldMapMode extends AnalysisMode
 
 case object AsnMode extends AnalysisMode
+
+case object PerEntityMode extends AnalysisMode

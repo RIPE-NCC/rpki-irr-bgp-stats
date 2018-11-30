@@ -81,8 +81,10 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
   def percentageInvalidAsn: Option[Double] = safePercentageAnnouncements(invalidAsn)
 
   def percentageUnknown: Option[Double] = safePercentageAnnouncements(unknown)
-  def percentageAdoptionCount: Option[Double] = safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
-  def percentageAdoptionAddresses: Option[Double] = safePercentage(valid.numberOfIps.add(invalidAsn.numberOfIps).add(invalidLength.numberOfIps), combined.numberOfIps)
+  def percentageAdoptionCount: Option[Double] =
+    safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
+  def percentageAdoptionAddresses: Option[Double] =
+    safePercentage(valid.numberOfIps.add(invalidAsn.numberOfIps).add(invalidLength.numberOfIps), combined.numberOfIps)
 
   def percentageSpaceValid: Option[Double] = safePercentageIpSpace(valid)
   def percentageSpaceInvalidLength: Option[Double] = safePercentageIpSpace(invalidLength)

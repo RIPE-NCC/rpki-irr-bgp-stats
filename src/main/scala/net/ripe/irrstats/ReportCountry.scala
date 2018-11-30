@@ -28,7 +28,7 @@
  */
 package net.ripe.irrstats
 
-import net.ripe.irrstats.analysis.RegionStatsUtil
+import net.ripe.irrstats.analysis.HoldingStats
 import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
 import net.ripe.irrstats.reporting.{CountryDetails, RegionCsv}
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
@@ -36,7 +36,7 @@ import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 object ReportCountry {
 
   def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, countryCode: String) = {
-    CountryDetails.printCountryAnnouncementReport(countryCode, new RegionStatsUtil(holdings, announcements, authorisations).regionAnnouncementStats(countryCode))
+    CountryDetails.printCountryAnnouncementReport(countryCode, new HoldingStats(holdings, announcements, authorisations).regionAnnouncementStats(countryCode))
   }
 
   def reportCountries(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String) = {
@@ -44,7 +44,7 @@ object ReportCountry {
       RegionCsv.printHeader()
     }
 
-    val countryStats = new RegionStatsUtil(holdings, announcements, authorisations)
+    val countryStats = new HoldingStats(holdings, announcements, authorisations)
 
     holdings.keys.par.foreach(cc => RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString))
   }
