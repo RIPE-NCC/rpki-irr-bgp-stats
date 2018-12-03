@@ -57,7 +57,7 @@ object AsnStat {
     val invalids = announcements.filter { a => a.validity == RouteValidity.InvalidAsn || a.validity == RouteValidity.InvalidLength }
 
     def spaceFor(announcements: Seq[BgpValidatedAnnouncement]): BigInteger =
-      StatsUtil.getNumberOfAddresses(announcements.map(_.prefix))
+      StatsUtil.addressesCount(announcements.map(_.prefix))
 
     AsnStat(
       asn,

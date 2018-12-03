@@ -31,8 +31,6 @@ package net.ripe.irrstats.parsing.holdings
 import java.io.File
 
 import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet, Ipv4Address}
-import net.ripe.irrstats.analysis.StatsUtil
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
 
 import scala.collection.mutable
 import scala.io.Source
