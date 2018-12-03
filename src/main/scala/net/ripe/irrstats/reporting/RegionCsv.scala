@@ -32,15 +32,17 @@ import net.ripe.irrstats.analysis.{RegionAdoptionStats, ValidatedAnnouncementSta
 
 object RegionCsv {
 
+  def string(fo: Option[Double]) = fo.map(f => f"$f%1.4f").getOrElse("")
+
   def printHeader(): Unit = println("date, RIR, authorisations, announcements, accuracy announcements, " +
     "fraction valid, fraction invalid length, fraction invalid asn, fraction unknown, " +
     "space announced, accuracy space, " +
     "fraction space valid, fraction space invalid length, fraction space invalid asn, " +
     "fraction space unknown, adoption IPs, IPv4 adoption, IPv6 adoption")
 
-  def reportRegionQuality(region: String, stats: ValidatedAnnouncementStats, dateString: String, adoption: RegionAdoptionStats): Unit = {
+  def printAdoptionHeader(region: String): Unit = println(s"date, $region, IPv4 adoption, IPv6 adoption")
 
-    def string(fo: Option[Double]) = fo.map(f => f"$f%1.4f").getOrElse("")
+  def reportRegionQuality(region: String, stats: ValidatedAnnouncementStats, dateString: String, adoption: RegionAdoptionStats): Unit = {
 
     println(s"$dateString, $region, ${stats.numberOfAuthorisations}, ${stats.combined.count}, ${string(stats.accuracyAnnouncements)}, " +
       s"${string(stats.percentageValid)}, ${string(stats.percentageInvalidLength)}, ${string(stats.percentageInvalidAsn)}, " +
@@ -48,6 +50,10 @@ object RegionCsv {
       s"${string(stats.percentageSpaceValid)}, ${string(stats.percentageSpaceInvalidLength)}, " +
       s"${string(stats.percentageSpaceInvalidAsn)}, ${string(stats.percentageSpaceUnknown)}, ${string(stats
         .percentageAdoptionAddresses)}, ${string(adoption.ipv4Adoption)},  ${string(adoption.ipv6Adoption)}")
+  }
+
+  def reportRegionAdoption(region: String, dateString: String, adoption: RegionAdoptionStats): Unit = {
+    println(s"$dateString, $region,  ${string(adoption.ipv4Adoption)},  ${string(adoption.ipv6Adoption)}")
   }
 
 }

@@ -50,4 +50,14 @@ object ReportCountry {
     countryHolding.keys.par.foreach(cc => RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString, countryStats.regionAdoptionStats(cc)))
   }
 
+  def reportCountryAdoption(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix],
+                          countryHolding: Holdings, quiet: Boolean, dateString: String) = {
+    if (! quiet) {
+      RegionCsv.printAdoptionHeader("Country")
+    }
+
+    val countryStats = new RegionStats(countryHolding, announcements, authorisations)
+
+    countryHolding.keys.par.foreach(cc => RegionCsv.reportRegionAdoption(cc, dateString, countryStats.regionAdoptionStats(cc)))
+  }
 }

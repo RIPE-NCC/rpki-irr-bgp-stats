@@ -55,4 +55,25 @@ object ReportRir {
     })
   }
 
+  def reportAdoption(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings,
+              quiet: Boolean, dateString: String, rirString: String) = {
+
+    if (!quiet) {
+      RegionCsv.printAdoptionHeader("RIR")
+    }
+    
+    val (rirStats, t) = Time.timed(new RegionStats(holdings, announcements, authorisations))
+
+    val rirs = if (rirString == "all") {
+      holdings.keys.filterNot(_.contains("Reserved"))
+    } else {
+      List(rirString)
+    }
+
+    rirs.par.foreach(rir => {
+      val (stats, _) = Time.timed(rirStats.regionAnnouncementStats(rir))
+      RegionCsv.reportRegionAdoption(rir, dateString, rirStats.regionAdoptionStats(rir))
+    })
+  }
+
 }

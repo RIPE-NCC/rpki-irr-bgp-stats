@@ -83,8 +83,10 @@ object Main extends App {
         case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
         case WorldMapMode => ReportWorldMap.report(announcements, authorisations, countryHolding)
         case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHolding, config.countryDetails.get)
+        case CountryAdoptionMode => ReportCountry.reportCountryAdoption(announcements, authorisations, countryHolding, config.quiet, config.date)
         case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
         case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
+        case RirAdoptionMode => ReportRir.reportAdoption(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
         case PerEntityMode => ReportRir.report(announcements, authorisations, entityHoldings, config.quiet, config.date, config.rir)
       }
     }

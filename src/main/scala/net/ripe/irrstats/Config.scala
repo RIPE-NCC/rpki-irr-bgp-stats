@@ -81,6 +81,14 @@ object Config {
       "Accept all more specific announcments for ROUTE ojects (defaults to strict)"
     }
 
+    opt[Unit]("country-adoption") optional() action { (x,c) => c.copy(analysisMode = CountryAdoptionMode)} text {
+      "Do report country adoptions "
+    }
+
+    opt[Unit]("rir-adoption") optional() action { (x,c) => c.copy(analysisMode = RirAdoptionMode)} text {
+      "Do report rir adoptions "
+    }
+
     checkConfig { c =>
       if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt")) failure("option -r must refer roas.csv or route[6].db file") else success
     }
@@ -122,9 +130,13 @@ sealed trait AnalysisMode
 
 case object CountryMode extends AnalysisMode
 
+case object CountryAdoptionMode extends AnalysisMode
+
 case object CountryDetailsMode extends AnalysisMode
 
 case object RirMode extends AnalysisMode
+
+case object RirAdoptionMode extends AnalysisMode
 
 case object WorldMapMode extends AnalysisMode
 
