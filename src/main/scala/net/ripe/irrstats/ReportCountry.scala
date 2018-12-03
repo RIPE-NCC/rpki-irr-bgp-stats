@@ -28,26 +28,26 @@
  */
 package net.ripe.irrstats
 
-import net.ripe.irrstats.analysis.HoldingStats
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
+import net.ripe.irrstats.analysis.RegionStats
+import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.{CountryDetails, RegionCsv}
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
 object ReportCountry {
 
-  def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, countryCode: String) = {
-    val holdingStats = new HoldingStats(holdings, announcements, authorisations)
-    CountryDetails.printCountryAnnouncementReport(countryCode, holdingStats.regionAnnouncementStats(countryCode), holdingStats.adoptionStats(countryCode))
+  def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], countryHolding: Holdings, countryCode: String) = {
+    val countryStats = new RegionStats(countryHolding, announcements, authorisations)
+    CountryDetails.printCountryAnnouncementReport(countryCode, countryStats.regionAnnouncementStats(countryCode), countryStats.regionAdoptionStats(countryCode))
   }
 
-  def reportCountries(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String) = {
+  def reportCountries(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], countryHolding: Holdings, quiet: Boolean, dateString: String) = {
     if (! quiet) {
       RegionCsv.printHeader()
     }
 
-    val countryStats = new HoldingStats(holdings, announcements, authorisations)
+    val countryStats = new RegionStats(countryHolding, announcements, authorisations)
 
-    holdings.keys.par.foreach(cc => RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString, countryStats.adoptionStats(cc)))
+    countryHolding.keys.par.foreach(cc => RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString, countryStats.regionAdoptionStats(cc)))
   }
 
 }

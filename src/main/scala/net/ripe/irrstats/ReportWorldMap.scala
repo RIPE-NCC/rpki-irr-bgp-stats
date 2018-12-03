@@ -28,15 +28,15 @@
  */
 package net.ripe.irrstats
 
-import net.ripe.irrstats.analysis.HoldingStats
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
+import net.ripe.irrstats.analysis.RegionStats
+import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.WorldMapPage
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix, StalenessStat}
 
 object ReportWorldMap {
 
   def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings) = {
-    val regionStatsUtil = new HoldingStats(holdings, announcements, authorisations)
+    val regionStatsUtil = new RegionStats(holdings, announcements, authorisations)
     val countryStats = regionStatsUtil.worldMapStats
     val staleness = regionStatsUtil.worldStaleness
 

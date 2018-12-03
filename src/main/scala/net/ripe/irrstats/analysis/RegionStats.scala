@@ -31,22 +31,22 @@ package net.ripe.irrstats.analysis
 import java.math.BigInteger
 
 import net.ripe.ipresource.IpResourceSet
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, holdingFor}
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
 import StatsUtil._
+import net.ripe.irrstats.parsing.holdings.Holdings._
 
 case class RegionAdoptionStats(region: String, holdings: IpResourceSet, authorisation: IpResourceSet) {
   val ipv4Adoption = safePercentage(ipv4Counts(authorisation), ipv4Counts(holdings))
   val ipv6Adoption = safePercentage(ipv6Counts(authorisation), ipv6Counts(holdings))
 }
 
-class HoldingStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
+class RegionStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
 
   val announcementByRegion: collection.Map[String, Seq[BgpAnnouncement]] =
-    announcements.par.groupBy(ann => holdingFor(ann.prefix, holdings)).mapValues(_.seq).seq
+    announcements.par.groupBy(ann => regionFor(ann.prefix, holdings)).mapValues(_.seq).seq
 
   val authorisationByRegion: collection.Map[String, Seq[RtrPrefix]] =
-    authorisations.par.groupBy(pfx => holdingFor(pfx.prefix, holdings)).mapValues(_.seq).seq
+    authorisations.par.groupBy(pfx => regionFor(pfx.prefix, holdings)).mapValues(_.seq).seq
 
   def regionAnnouncementStats(region: String): ValidatedAnnouncementStats = {
     val announcements = announcementByRegion.getOrElse(region, Seq.empty)
@@ -59,7 +59,7 @@ class HoldingStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], auth
     AnnouncementStats.analyseValidatedAnnouncements(validatedAnnouncements, authorisations.size)
   }
 
-  def adoptionStats(region: String)  = {
+  def regionAdoptionStats(region: String)  = {
     val regionAuthorisation = new IpResourceSet()
 
     authorisationByRegion.getOrElse(region, Seq.empty).map(_.prefix)

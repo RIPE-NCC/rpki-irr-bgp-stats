@@ -31,15 +31,16 @@ package net.ripe.irrstats.parsing.holdings
 import java.io.File
 
 import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet, Ipv4Address}
+import net.ripe.irrstats.parsing.holdings.Holdings._
 
 import scala.collection.mutable
 import scala.io.Source
 
 object Holdings {
-  def read(statsFile: File): Seq[String] = Source.fromFile(statsFile, "ASCII").getLines.toSeq
-}
 
-object ExtendedStatsUtils {
+  type Holdings = Map[String, IpResourceSet]
+
+  def read(statsFile: File): Seq[String] = Source.fromFile(statsFile, "ASCII").getLines.toSeq
 
   def parseIpv4(base: String, addresses: String): IpResourceSet = {
     val baseAddress = Ipv4Address.parse(base)
@@ -55,16 +56,14 @@ object ExtendedStatsUtils {
     case _ => new IpResourceSet() // empty
   }
 
-  type Holdings = Map[String, IpResourceSet]
-
-  def holdingFor(resource: IpResource, holdings: Holdings): String = {
+  def regionFor(resource: IpResource, holdings: Holdings): String = {
     holdings.find(_._2.contains(resource)).map(_._1).getOrElse("?")
   }
 }
 
-object RIRHoldings {
+import Holdings._
 
-  import ExtendedStatsUtils._
+object RIRHoldings {
 
   def parse(statLines: Seq[String]): Holdings = {
 
@@ -116,8 +115,6 @@ object RIRHoldings {
   */
 object CountryHoldings {
 
-  import ExtendedStatsUtils._
-
   def parse(statLines: Seq[String]): Holdings = {
     val countryMap = collection.mutable.Map[String, IpResourceSet]()
     AnalysedHoldings.parse(statLines) { tokens =>
@@ -142,8 +139,6 @@ object CountryHoldings {
   * Finds all the resources 'assigned' by RIRs per country
   */
 object EntityHoldings {
-
-  import ExtendedStatsUtils._
 
   def parse(statLines: Seq[String]): Holdings = {
     val countryMap = collection.mutable.Map[String, IpResourceSet]()

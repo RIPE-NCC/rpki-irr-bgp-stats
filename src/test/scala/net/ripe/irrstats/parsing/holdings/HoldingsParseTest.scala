@@ -32,12 +32,12 @@ import java.io.File
 
 import net.ripe.ipresource.{IpResource, IpResourceSet}
 import org.scalatest.{FunSuite, Matchers}
-
+import Holdings._
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class ExtendedStatsTest extends FunSuite with Matchers {
+class HoldingsParseTest extends FunSuite with Matchers {
   
   test("Should parse IPv4") {
-    ExtendedStatsUtils.parseIpv4("213.154.64.0", "8192") should equal (IpResourceSet.parse("213.154.64.0/19"))
+    parseIpv4("213.154.64.0", "8192") should equal (IpResourceSet.parse("213.154.64.0/19"))
   }
 
   private val file = new File(Thread.currentThread().getContextClassLoader.getResource("extended-delegated-stats.txt").getFile)
@@ -48,8 +48,8 @@ class ExtendedStatsTest extends FunSuite with Matchers {
 
     holdings("apnic").contains(IpResource.parse("1.0.0.0/24")) should be (true)
 
-    ExtendedStatsUtils.holdingFor(IpResource.parse("1.0.0.0/24"), holdings) should equal("apnic")
-    ExtendedStatsUtils.holdingFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
+    regionFor(IpResource.parse("1.0.0.0/24"), holdings) should equal("apnic")
+    regionFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
   }
 
   test("Should parse country holding from extended delegated stats"){
