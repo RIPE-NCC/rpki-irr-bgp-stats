@@ -37,7 +37,7 @@ object ReportCountry {
 
   def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, countryCode: String) = {
     val holdingStats = new HoldingStats(holdings, announcements, authorisations)
-    CountryDetails.printCountryAnnouncementReport(countryCode, holdingStats.regionAnnouncementStats(countryCode), holdingStats.adoption(countryCode))
+    CountryDetails.printCountryAnnouncementReport(countryCode, holdingStats.regionAnnouncementStats(countryCode), holdingStats.adoptionStats(countryCode))
   }
 
   def reportCountries(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String) = {
@@ -47,7 +47,7 @@ object ReportCountry {
 
     val countryStats = new HoldingStats(holdings, announcements, authorisations)
 
-    holdings.keys.par.foreach(cc => RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString, countryStats.adoption(cc)))
+    holdings.keys.par.foreach(cc => RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString, countryStats.adoptionStats(cc)))
   }
 
 }

@@ -28,7 +28,7 @@
  */
 package net.ripe.irrstats.reporting
 
-import net.ripe.irrstats.analysis.ValidatedAnnouncementStats
+import net.ripe.irrstats.analysis.{RegionAdoptionStats, ValidatedAnnouncementStats}
 
 object RegionCsv {
 
@@ -36,9 +36,9 @@ object RegionCsv {
     "fraction valid, fraction invalid length, fraction invalid asn, fraction unknown, " +
     "space announced, accuracy space, " +
     "fraction space valid, fraction space invalid length, fraction space invalid asn, " +
-    "fraction space unknown, adoption IPs, adoption")
+    "fraction space unknown, adoption IPs, IPv4 adoption, IPv6 adoption")
 
-  def reportRegionQuality(region: String, stats: ValidatedAnnouncementStats, dateString: String, adoption: Double): Unit = {
+  def reportRegionQuality(region: String, stats: ValidatedAnnouncementStats, dateString: String, adoption: RegionAdoptionStats): Unit = {
 
     def string(fo: Option[Double]) = fo.map(f => f"$f%1.4f").getOrElse("")
 
@@ -47,7 +47,7 @@ object RegionCsv {
       s"${string(stats.percentageUnknown)}, ${stats.combined.numberOfIps}, ${string(stats.accuracySpace)}, " +
       s"${string(stats.percentageSpaceValid)}, ${string(stats.percentageSpaceInvalidLength)}, " +
       s"${string(stats.percentageSpaceInvalidAsn)}, ${string(stats.percentageSpaceUnknown)}, ${string(stats
-        .percentageAdoptionAddresses)}, ${string(Some(adoption))}")
+        .percentageAdoptionAddresses)}, ${string(adoption.ipv4Adoption)},  ${string(adoption.ipv6Adoption)}")
   }
 
 }

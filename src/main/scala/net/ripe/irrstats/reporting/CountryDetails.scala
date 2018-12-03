@@ -28,12 +28,14 @@
  */
 package net.ripe.irrstats.reporting
 
-import net.ripe.irrstats.analysis.ValidatedAnnouncementStats
+import net.ripe.irrstats.analysis.{RegionAdoptionStats, ValidatedAnnouncementStats}
 import net.ripe.irrstats.route.validation.RouteValidity
 
 object CountryDetails {
 
-  def printCountryAnnouncementReport(cc: String, validatedAnnouncementStats: ValidatedAnnouncementStats, adoption: Double) = {
+  def format(fo: Option[Double]) = fo.map(f => f"$f%1.4f").getOrElse("")
+
+  def printCountryAnnouncementReport(cc: String, validatedAnnouncementStats: ValidatedAnnouncementStats, adoption: RegionAdoptionStats) = {
 
     println(s"Detailed announcement report for country code: ${cc}")
     println("")
@@ -42,7 +44,8 @@ object CountryDetails {
     println(s"   Invalid Length : ${validatedAnnouncementStats.invalidLength.count}" )
     println(s"   Invalid ASN    : ${validatedAnnouncementStats.invalidAsn.count}" )
     println(s"   Unknown        : ${validatedAnnouncementStats.unknown.count}" )
-    println(s"   Adoption       : ${adoption}" )
+    println(s"   IPv4 Adoption  : ${format(adoption.ipv4Adoption)}" )
+    println(s"   IPv6 Adoption  : ${format(adoption.ipv6Adoption)}" )
     println("")
 
 
