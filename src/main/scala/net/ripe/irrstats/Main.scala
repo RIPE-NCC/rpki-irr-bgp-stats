@@ -82,6 +82,7 @@ object Main extends App {
       config.analysisMode match {
         case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
         case WorldMapMode => ReportWorldMap.report(announcements, authorisations, countryHolding)
+        case NROStatsMode => ReportNROStats.report(announcements, authorisations, countryHolding, rirHoldings)
         case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHolding, config.countryDetails.get)
         case CountryAdoptionMode => ReportCountry.reportCountryAdoption(announcements, authorisations, countryHolding, config.quiet, config.date)
         case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
@@ -94,7 +95,7 @@ object Main extends App {
   }
 
   val (announcementTime, roaParseTime, reportTime, ct, rt, et) = Await.result(report, Duration.Inf)
-  println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
+  System.err.println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
 
   System.exit(0) // We're done here
 

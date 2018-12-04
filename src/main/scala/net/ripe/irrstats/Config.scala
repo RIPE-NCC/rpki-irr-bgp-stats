@@ -74,6 +74,9 @@ object Config {
     opt[Unit]('w', "worldmap") optional() action { (x, c) => c.copy(analysisMode = WorldMapMode) } text {
       "Produce an HTML page with country stats projected on a number of world maps"
     }
+    opt[Unit]('n', "nro-stats") optional() action { (x, c) => c.copy(analysisMode = NROStatsMode) } text {
+      "Produce an HTML page with country adoption projected on world maps"
+    }
     opt[Unit]('a', "asn") optional() action { (x, c) => c.copy(analysisMode = AsnMode) } text {
       "Find and report top ASNs"
     }
@@ -139,6 +142,8 @@ case object RirMode extends AnalysisMode
 case object RirAdoptionMode extends AnalysisMode
 
 case object WorldMapMode extends AnalysisMode
+
+case object NROStatsMode extends AnalysisMode
 
 case object AsnMode extends AnalysisMode
 
