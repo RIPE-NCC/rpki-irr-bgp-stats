@@ -35,17 +35,18 @@
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
 
-          google.load('visualization', '1', {packages: ['geochart']});
+          google.load('visualization', '1', {packages: ['geochart', 'table']});
           google.setOnLoadCallback(drawMap);
-;
+
           function drawMap() {
 
             // IPv4 Country Adoption Map
 
             var ipv4_country_adoption = google.visualization.arrayToDataTable([
-              ['Country', 'fraction'],
+              ['Country', '% Adoption'],
               //***IPV4_COUNTRY_ADOPTION***//
             ]);
+            ipv4_country_adoption.sort({column: 1, desc: true});
 
             var ipv4_country_adoption_option = {
               width: 900,
@@ -57,12 +58,16 @@
             var ipv4_country_adoption_chart = new google.visualization.GeoChart(document.getElementById('ipv4_country_adoption_map'));
             ipv4_country_adoption_chart.draw(ipv4_country_adoption, ipv4_country_adoption_option);
 
+            var ipv4_country_adoption_table = new google.visualization.Table(document.getElementById('ipv4_country_adoption_table'));
+            ipv4_country_adoption_table.draw(ipv4_country_adoption,{width:'100%', height:'500px'});
+
             // IPv6 Country Adoption Map
 
             var ipv6_country_adoption = google.visualization.arrayToDataTable([
-              ['Country', 'fraction'],
+              ['Country', '% Adoption'],
               //***IPV6_COUNTRY_ADOPTION***//
             ]);
+            ipv6_country_adoption.sort({column: 1, desc: true});
 
             var ipv6_country_adoption_option = {
               width: 900,
@@ -74,13 +79,23 @@
             var ipv6_country_adoption_chart = new google.visualization.GeoChart(document.getElementById('ipv6_country_adoption_map'));
             ipv6_country_adoption_chart.draw(ipv6_country_adoption, ipv6_country_adoption_option);
 
+            var ipv6_country_adoption_table = new google.visualization.Table(document.getElementById('ipv6_country_adoption_table'));
+            ipv6_country_adoption_table.draw(ipv6_country_adoption,{width:'100%', height:'500px'});
+
 
             // IPv4 RIR Adoption Map
 
             var ipv4_RIR_adoption = google.visualization.arrayToDataTable([
-              ['Region Code', 'Continent', 'fraction'],
+              ['Region Code', 'Continent', '% Adoption'],
               //***IPV4_RIR_ADOPTION***//
             ]);
+
+            var ipv4_RIR_adoption_table_data = google.visualization.arrayToDataTable([
+              ['RIR', '% Adoption'],
+              //***IPV4_RIR_ADOPTION_TABLE***//
+            ]);
+
+            ipv4_RIR_adoption_table_data.sort({column: 1, desc: true});
 
             var ipv4_RIR_adoption_option = {
               width: 900,
@@ -93,13 +108,21 @@
             var ipv4_RIR_adoption_chart = new google.visualization.GeoChart(document.getElementById('ipv4_RIR_adoption_map'));
             ipv4_RIR_adoption_chart.draw(ipv4_RIR_adoption, ipv4_RIR_adoption_option);
 
+            var ipv4_RIR_adoption_table = new google.visualization.Table(document.getElementById('ipv4_RIR_adoption_table'));
+            ipv4_RIR_adoption_table.draw(ipv4_RIR_adoption_table_data, {width:'100%', height:'500px'});
+
             // IPv6 RIR Adoption Map
 
             var ipv6_RIR_adoption = google.visualization.arrayToDataTable([
-              ['Region Code', 'Continent', 'fraction'],
+              ['Region Code', 'Continent', '% Adoption'],
               //***IPV6_RIR_ADOPTION***//
             ]);
 
+            var ipv6_RIR_adoption_table_data = google.visualization.arrayToDataTable([
+              ['RIR', '% Adoption'],
+              //***IPV6_RIR_ADOPTION_TABLE***//
+            ]);
+            ipv6_RIR_adoption_table_data.sort({column: 1, desc: true});
             var ipv6_RIR_adoption_option = {
               width: 900,
               resolution: 'subcontinents',
@@ -110,6 +133,9 @@
 
             var ipv6_RIR_adoption_chart = new google.visualization.GeoChart(document.getElementById('ipv6_RIR_adoption_map'));
             ipv6_RIR_adoption_chart.draw(ipv6_RIR_adoption, ipv6_RIR_adoption_option);
+
+            var ipv6_RIR_adoption_table = new google.visualization.Table(document.getElementById('ipv6_RIR_adoption_table'));
+            ipv6_RIR_adoption_table.draw(ipv6_RIR_adoption_table_data, {width:'100%', height:'500px'});
 
           }
 
@@ -146,23 +172,27 @@
         </p>
 
         <div id="ipv4_country_adoption" class="graph ipv4c">
-            <h1>Fraction of Country IPv4 Adoption (holdings with ROAs)</h1>
-            <div id="ipv4_country_adoption_map"></div>
+            <h1>Country IPv4 Adoption (% issued with ROAs)</h1>
+            <div id="ipv4_country_adoption_map" style="float:left;"></div>
+            <div id="ipv4_country_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
         </div>
 
         <div id="ipv6_country_adoption" class="graph ipv6c">
-            <h1>Fraction of Country IPv6 Adoption (holdings with ROAs)</h1>
-            <div id="ipv6_country_adoption_map"></div>
+            <h1>Country IPv6 Adoption (% issued with ROAs)</h1>
+            <div id="ipv6_country_adoption_map" style="float:left;"></div>
+            <div id="ipv6_country_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
         </div>
 
         <div id="ipv4_RIR_adoption" class="graph ipv4r">
-            <h1>Fraction of RIR IPv4 Adoption (holdings with ROAs)</h1>
-            <div id="ipv4_RIR_adoption_map"></div>
+            <h1>RIR IPv4 Adoption (% issued with ROAs)</h1>
+            <div id="ipv4_RIR_adoption_map" style="float:left;"></div>
+            <div id="ipv4_RIR_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
         </div>
 
         <div id="ipv6_RIR_adoption" class="graph ipv6r">
-            <h1>Fraction of RIR IPv6 Adoption (holdings with ROAs)</h1>
-            <div id="ipv6_RIR_adoption_map"></div>
+            <h1>RIR IPv6 Adoption (% issued with ROAs)</h1>
+            <div id="ipv6_RIR_adoption_map" style="float:left;"></div>
+            <div id="ipv6_RIR_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
         </div>
     </body>
 </html>

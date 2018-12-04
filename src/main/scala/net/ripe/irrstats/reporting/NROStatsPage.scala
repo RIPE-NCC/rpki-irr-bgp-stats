@@ -46,6 +46,8 @@ object NROStatsPage {
         .replace("//***IPV6_COUNTRY_ADOPTION***//", convertValuesToArrayData(ipv6CountryAdoptionValues))
         .replace("//***IPV4_RIR_ADOPTION***//", convertValuesToRIRArrayData(ipv4RIRAdoptionValues))
         .replace("//***IPV6_RIR_ADOPTION***//", convertValuesToRIRArrayData(ipv6RIRAdoptionValues))
+        .replace("//***IPV4_RIR_ADOPTION_TABLE***//", convertValuesToArrayData(ipv4RIRAdoptionValues))
+        .replace("//***IPV6_RIR_ADOPTION_TABLE***//", convertValuesToArrayData(ipv6RIRAdoptionValues))
     }.mkString("\n")
   }
 }
