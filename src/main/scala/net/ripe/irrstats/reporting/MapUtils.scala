@@ -32,12 +32,31 @@ object MapUtils {
 
   val ShowMatchingThreshold = 0.001 // 0.1%
 
+  // Capturing RIR in hardcoded subcontinents code
+  // Subcontinents code supported by geochart: https://developers.google.com/chart/interactive/docs/gallery/geochart#continent-hierarchy-and-codes
+  // We can switch to more granular country code level if this is not good enough to represent RIRs
+  val subcontinents= Map(
+    "apnic" -> List(30,35,53,54,57,61),
+    "afrinic" -> List(11,14,15,17,18),
+    "ripencc" -> List(34,151,154,155,39,143,145),
+    "arin" -> List(21,29),
+    "lacnic" -> List(5,13)
+  )
+
   def findMatchingValuesAboveAdoptionThreshold(adoptionValues: Map[String, Double], matchingValues: Map[String, Double]): Map[String, Double] = {
     matchingValues.filter(mv => adoptionValues.isDefinedAt(mv._1) && adoptionValues.get(mv._1).get > ShowMatchingThreshold)
   }
 
   def convertValuesToArrayData(countryValues: Map[String, Double]) = {
-    countryValues.map { entry => "['" + entry._1 + "', " + f"${entry._2 * 100}%3.2f]" }.mkString(",\n          ")
+    countryValues.map { case entry => "['" + entry._1 + "', " + f"${entry._2 * 100}%3.2f]" }.mkString(",\n          ")
+  }
+
+  def convertValuesToRIRArrayData(rirValues: Map[String, Double]) = {
+    rirValues.flatMap { case (rirRegion, fraction) => subcontinents(rirRegion).flatMap { subContinentCode =>
+       val scode = "%03d" format subContinentCode
+       val fract = "%3.2f" format (fraction*100)
+       Seq(s"['$scode', '${rirRegion.toUpperCase}', $fract]")
+    }}.mkString(",\n          ")
   }
 
 }

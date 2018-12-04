@@ -32,7 +32,11 @@ import MapUtils._
 object NROStatsPage {
 
   // Returns an HTML page as a String with a Google Geomap world map and embedded data
-  def printNROStatsPage(ipv4CountryAdoptionValues: Map[String, Double], ipv6CountryAdoptionValues: Map[String, Double]): String = {
+  def printNROStatsPage(ipv4CountryAdoptionValues: Map[String, Double],
+                        ipv6CountryAdoptionValues: Map[String, Double],
+                        ipv4RIRAdoptionValues: Map[String, Double],
+                        ipv6RIRAdoptionValues: Map[String, Double]
+                       ): String = {
 
     // Yes, I am aware that better template frameworks exist, but I just have one simple thing to do, and prefer no deps. --Tim, 2016
     scala.io.Source.fromInputStream(getClass.getResourceAsStream("/nro-stats-template.html")).getLines().map { line =>
@@ -40,6 +44,8 @@ object NROStatsPage {
       line
         .replace("//***IPV4_COUNTRY_ADOPTION***//", convertValuesToArrayData(ipv4CountryAdoptionValues))
         .replace("//***IPV6_COUNTRY_ADOPTION***//", convertValuesToArrayData(ipv6CountryAdoptionValues))
+        .replace("//***IPV4_RIR_ADOPTION***//", convertValuesToRIRArrayData(ipv4RIRAdoptionValues))
+        .replace("//***IPV6_RIR_ADOPTION***//", convertValuesToRIRArrayData(ipv6RIRAdoptionValues))
     }.mkString("\n")
   }
 }

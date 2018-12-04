@@ -48,7 +48,10 @@ object ReportNROStats {
     val ipv4CountryAdoptionValues = countryAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
     val ipv6CountryAdoptionValues = countryAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
 
-    print(NROStatsPage.printNROStatsPage(ipv4CountryAdoptionValues, ipv6CountryAdoptionValues))
+    val ipv4RIRAdoptionValues = rirAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
+    val ipv6RIRAdoptionValues = rirAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
+
+    print(NROStatsPage.printNROStatsPage(ipv4CountryAdoptionValues, ipv6CountryAdoptionValues, ipv4RIRAdoptionValues, ipv6RIRAdoptionValues))
   }
 
 }
