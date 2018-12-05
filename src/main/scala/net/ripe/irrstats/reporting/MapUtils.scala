@@ -28,6 +28,8 @@
  */
 package net.ripe.irrstats.reporting
 
+import java.math.BigInteger
+
 object MapUtils {
 
   val ShowMatchingThreshold = 0.001 // 0.1%
@@ -57,6 +59,15 @@ object MapUtils {
        val fract = "%3.2f" format (fraction*100)
        Seq(s"['$scode', '${rirRegion.toUpperCase}', $fract]")
     }}.mkString(",\n          ")
+  }
+
+  def convertValuesToBubbleArrayData(countriesData: Map[String, (Double, Int, BigInteger)]) = {
+    countriesData.map {
+      case (country, (adoption, count, size)) => {
+        val fract = "%3.2f" format (adoption*100)
+        s"['$country', $count, $fract, $size, $count]"
+      }}.
+    mkString(",\n          ")
   }
 
 }

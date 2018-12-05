@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package net.ripe.irrstats.reporting
+import java.math.BigInteger
+
 import MapUtils._
 
 object NROStatsPage {
@@ -34,6 +36,8 @@ object NROStatsPage {
   // Returns an HTML page as a String with a Google Geomap world map and embedded data
   def printNROStatsPage(ipv4CountryAdoptionValues: Map[String, Double],
                         ipv6CountryAdoptionValues: Map[String, Double],
+                        ipv4CountryBubbleData: Map[String, (Double, Int, BigInteger)],
+                        ipv6CountryBubbleData: Map[String, (Double, Int, BigInteger)],
                         ipv4RIRAdoptionValues: Map[String, Double],
                         ipv6RIRAdoptionValues: Map[String, Double]
                        ): String = {
@@ -44,6 +48,8 @@ object NROStatsPage {
       line
         .replace("//***IPV4_COUNTRY_ADOPTION***//", convertValuesToArrayData(ipv4CountryAdoptionValues))
         .replace("//***IPV6_COUNTRY_ADOPTION***//", convertValuesToArrayData(ipv6CountryAdoptionValues))
+        .replace("//***IPV4_COUNTRY_ADOPTION_BUBBLE***//", convertValuesToBubbleArrayData(ipv4CountryBubbleData))
+        .replace("//***IPV6_COUNTRY_ADOPTION_BUBBLE***//", convertValuesToBubbleArrayData(ipv6CountryBubbleData))
         .replace("//***IPV4_RIR_ADOPTION***//", convertValuesToRIRArrayData(ipv4RIRAdoptionValues))
         .replace("//***IPV6_RIR_ADOPTION***//", convertValuesToRIRArrayData(ipv6RIRAdoptionValues))
         .replace("//***IPV4_RIR_ADOPTION_TABLE***//", convertValuesToArrayData(ipv4RIRAdoptionValues))

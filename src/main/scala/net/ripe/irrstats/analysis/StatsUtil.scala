@@ -55,9 +55,11 @@ object StatsUtil {
     addressesCount(resourceSet.iterator().asScala.filter(_.getType == resourceType))
   }
 
-  def ipv4Counts(resourceSet : IpResourceSet) : BigInteger = addressCountPerType(resourceSet, IpResourceType.IPv4)
+  def ipv4Count(resourceSet: IpResourceSet) = resourceSet.iterator().asScala.filter(_.getType == IpResourceType.IPv4).size
+  def ipv6Count(resourceSet: IpResourceSet) = resourceSet.iterator().asScala.filter(_.getType == IpResourceType.IPv6).size
 
-  def ipv6Counts(resourceSet : IpResourceSet) : BigInteger = addressCountPerType(resourceSet, IpResourceType.IPv6)
+  def ipv4Size(resourceSet : IpResourceSet) : BigInteger = addressCountPerType(resourceSet, IpResourceType.IPv4)
+  def ipv6Size(resourceSet : IpResourceSet) : BigInteger = addressCountPerType(resourceSet, IpResourceType.IPv6)
 
   def safePercentage(fraction: BigInteger, total: BigInteger): Option[Double] = {
     if (total == BigInteger.ZERO) {

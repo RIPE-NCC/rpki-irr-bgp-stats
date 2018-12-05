@@ -28,6 +28,8 @@
  */
 package net.ripe.irrstats
 
+import java.math.BigInteger
+
 import net.ripe.irrstats.analysis.RegionStats
 import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.NROStatsPage
@@ -45,13 +47,22 @@ object ReportNROStats {
     val countryAdoptions = countryHolding.keys.par.map(cc => (cc, countryStats.regionAdoptionStats(cc))).seq.toMap
     val rirAdoptions = rirHoldings.keys.par.map(cc => (cc, rirStats.regionAdoptionStats(cc))).seq.toMap
 
-    val ipv4CountryAdoptionValues = countryAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
-    val ipv6CountryAdoptionValues = countryAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
+    val ipv4CountryAdoptionValues: Map[String, Double] = countryAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
+    val ipv6CountryAdoptionValues: Map[String, Double] = countryAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
+
+    val ipv4CountryBubbleData: Map[String, (Double, Int, BigInteger)] = countryAdoptions.mapValues(_.ipv4AdoptionBubble)
+    val ipv6CountryBubbleData: Map[String, (Double, Int, BigInteger)] = countryAdoptions.mapValues(_.ipv6AdoptionBubble)
 
     val ipv4RIRAdoptionValues = rirAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
     val ipv6RIRAdoptionValues = rirAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
 
-    print(NROStatsPage.printNROStatsPage(ipv4CountryAdoptionValues, ipv6CountryAdoptionValues, ipv4RIRAdoptionValues, ipv6RIRAdoptionValues))
+    print(NROStatsPage.printNROStatsPage(
+      ipv4CountryAdoptionValues,
+      ipv6CountryAdoptionValues,
+      ipv4CountryBubbleData,
+      ipv6CountryBubbleData,
+      ipv4RIRAdoptionValues,
+      ipv6RIRAdoptionValues))
   }
 
 }

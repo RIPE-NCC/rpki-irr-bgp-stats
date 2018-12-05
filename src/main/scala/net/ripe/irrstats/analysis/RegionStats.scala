@@ -31,13 +31,28 @@ package net.ripe.irrstats.analysis
 import java.math.BigInteger
 
 import net.ripe.ipresource.IpResourceSet
-import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
-import StatsUtil._
+import net.ripe.irrstats.analysis.StatsUtil._
 import net.ripe.irrstats.parsing.holdings.Holdings._
+import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
 
 case class RegionAdoptionStats(region: String, holdings: IpResourceSet, authorisation: IpResourceSet) {
-  val ipv4Adoption = safePercentage(ipv4Counts(authorisation), ipv4Counts(holdings))
-  val ipv6Adoption = safePercentage(ipv6Counts(authorisation), ipv6Counts(holdings))
+
+  val ipv4Authcount = ipv4Count(authorisation)
+  val ipv4HoldingCount = ipv4Count(holdings)
+  val ipv4AuthSize = ipv4Size(authorisation)
+  val ipv4HoldingSize = ipv4Size(holdings)
+
+  val ipv4Adoption = safePercentage(ipv4AuthSize, ipv4HoldingSize)
+
+  val ipv6Authcount = ipv4Count(authorisation)
+  val ipv6HoldingCount = ipv4Count(holdings)
+  val ipv6AuthSize: BigInteger = ipv6Size(authorisation)
+  val ipv6HoldingSize: BigInteger = ipv6Size(holdings)
+  
+  val ipv6Adoption = safePercentage(ipv6AuthSize, ipv6HoldingSize)
+  
+  val ipv4AdoptionBubble = (ipv4Adoption.getOrElse(0.0), ipv4HoldingCount, ipv4HoldingSize)
+  val ipv6AdoptionBubble = (ipv6Adoption.getOrElse(0.0), ipv6HoldingCount, ipv6HoldingSize)
 }
 
 class RegionStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {

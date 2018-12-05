@@ -35,7 +35,7 @@
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript">
 
-          google.load('visualization', '1', {packages: ['geochart', 'table']});
+          google.load('visualization', '1', {packages: ['geochart', 'table', 'corechart']});
           google.setOnLoadCallback(drawMap);
 
           function drawMap() {
@@ -61,6 +61,19 @@
             var ipv4_country_adoption_table = new google.visualization.Table(document.getElementById('ipv4_country_adoption_table'));
             ipv4_country_adoption_table.draw(ipv4_country_adoption,{width:'100%', height:'500px'});
 
+            var ipv4_country_adoption_bubble_data = google.visualization.arrayToDataTable([
+              ['Country', 'Prefix Count', '% Adoption', 'Address Size',  'Counts'],
+              //***IPV4_COUNTRY_ADOPTION_BUBBLE***//
+            ]);
+            var ipv4_country_adoption_bubble = new google.visualization.BubbleChart(document.getElementById('ipv4_country_adoption_bubble'));
+            ipv4_country_adoption_bubble.draw(ipv4_country_adoption_bubble_data, {
+              width: 1500,
+              height: 900,
+              hAxis: {title: 'Prefix Count'},
+              vAxis: {title: '% Adoption'},
+              bubble: {textStyle: {fontSize: 11}}
+            });
+
             // IPv6 Country Adoption Map
 
             var ipv6_country_adoption = google.visualization.arrayToDataTable([
@@ -82,7 +95,19 @@
             var ipv6_country_adoption_table = new google.visualization.Table(document.getElementById('ipv6_country_adoption_table'));
             ipv6_country_adoption_table.draw(ipv6_country_adoption,{width:'100%', height:'500px'});
 
-
+            var ipv6_country_adoption_bubble_data = google.visualization.arrayToDataTable([
+              ['Country', 'Prefix Count', '% Adoption', 'Address Size',  'Counts'],
+              //***IPV6_COUNTRY_ADOPTION_BUBBLE***//
+            ]);
+            var ipv6_country_adoption_bubble = new google.visualization.BubbleChart(document.getElementById('ipv6_country_adoption_bubble'));
+            ipv6_country_adoption_bubble.draw(ipv6_country_adoption_bubble_data, {
+              width: 1500,
+              height: 900,
+              hAxis: {title: 'Prefix Count'},
+              vAxis: {title: '% Adoption'},
+              bubble: {textStyle: {fontSize: 11}}
+            });
+            
             // IPv4 RIR Adoption Map
 
             var ipv4_RIR_adoption = google.visualization.arrayToDataTable([
@@ -154,6 +179,12 @@
                 } else if ("ipv6r" === $(this).attr("value")) {
                   $(".graph").not(".ipv6r").hide();
                   $(".ipv6r").show();
+                } else if ("ipv4b" === $(this).attr("value")) {
+                  $(".graph").not(".ipv4b").hide();
+                  $(".ipv4b").show();
+                } else if ("ipv6b" === $(this).attr("value")) {
+                  $(".graph").not(".ipv6b").hide();
+                  $(".ipv6b").show();
                 }
               });
             }).change();
@@ -164,8 +195,10 @@
 
         <p>Select a graph:
             <select id="type_select_selector">
-                <option value="ipv4c">IPv4 country adoption</option>
-                <option value="ipv6c">IPv6 country adoption</option>
+                <option value="ipv4c">IPv4 country adoption map</option>
+                <option value="ipv6c">IPv6 country adoption map</option>
+                <option value="ipv4b">IPv4 country adoption bubble</option>
+                <option value="ipv6b">IPv6 country adoption bubble</option>
                 <option value="ipv4r">IPv4 RIR adoption</option>
                 <option value="ipv6r">IPv6 RIR adoption</option>
             </select>
@@ -177,10 +210,20 @@
             <div id="ipv4_country_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
         </div>
 
+        <div id="ipv4_country_adoption_b" class="graph ipv4b">
+            <h1>Country IPv4 Adoption (% issued with ROAs)</h1>
+            <div id="ipv4_country_adoption_bubble"></div>
+        </div>
+
         <div id="ipv6_country_adoption" class="graph ipv6c">
             <h1>Country IPv6 Adoption (% issued with ROAs)</h1>
             <div id="ipv6_country_adoption_map" style="float:left;"></div>
             <div id="ipv6_country_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
+        </div>
+
+        <div id="ipv6_country_adoption_b" class="graph ipv6b">
+            <h1>Country IPv6 Adoption (% issued with ROAs)</h1>
+            <div id="ipv6_country_adoption_bubble"></div>
         </div>
 
         <div id="ipv4_RIR_adoption" class="graph ipv4r">
