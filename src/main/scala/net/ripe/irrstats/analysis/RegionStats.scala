@@ -93,8 +93,5 @@ class RegionStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], autho
     )
   }.toMap
 
-  def bigDec(javaBigInteger : BigInteger): BigDecimal = {
-      new BigDecimal(new java.math.BigDecimal(javaBigInteger))
-  }
 }
 
