@@ -62,14 +62,14 @@
             ipv4_country_adoption_table.draw(ipv4_country_adoption,{width:'100%', height:'500px'});
 
             var ipv4_country_adoption_bubble_data = google.visualization.arrayToDataTable([
-              ['Country', 'Prefix Count', '% Adoption', 'Address Size',  'Counts'],
+              ['Country', 'Activation', '% Adoption', 'Address Size',  'Counts'],
               //***IPV4_COUNTRY_ADOPTION_BUBBLE***//
             ]);
             var ipv4_country_adoption_bubble = new google.visualization.BubbleChart(document.getElementById('ipv4_country_adoption_bubble'));
             ipv4_country_adoption_bubble.draw(ipv4_country_adoption_bubble_data, {
               width: 1500,
               height: 900,
-              hAxis: {title: 'Prefix Count'},
+              hAxis: {title: 'Activation'},
               vAxis: {title: '% Adoption'},
               bubble: {textStyle: {fontSize: 11}}
             });
@@ -96,14 +96,14 @@
             ipv6_country_adoption_table.draw(ipv6_country_adoption,{width:'100%', height:'500px'});
 
             var ipv6_country_adoption_bubble_data = google.visualization.arrayToDataTable([
-              ['Country', 'Prefix Count', '% Adoption', 'Address Size',  'Counts'],
+              ['Country', 'Activation', '% Adoption', 'Address Size', 'Counts'],
               //***IPV6_COUNTRY_ADOPTION_BUBBLE***//
             ]);
             var ipv6_country_adoption_bubble = new google.visualization.BubbleChart(document.getElementById('ipv6_country_adoption_bubble'));
             ipv6_country_adoption_bubble.draw(ipv6_country_adoption_bubble_data, {
               width: 1500,
               height: 900,
-              hAxis: {title: 'Prefix Count'},
+              hAxis: {title: 'Activation'},
               vAxis: {title: '% Adoption'},
               bubble: {textStyle: {fontSize: 11}}
             });
@@ -192,50 +192,58 @@
         </script>
     </head>
     <body>
+    <table>
+        <tr >
+            <p>Select a graph:
+                <select id="type_select_selector">
+                    <option value="ipv4c">IPv4 country adoption</option>
+                    <option value="ipv6c">IPv6 country adoption</option>
+                    <option value="ipv4b">IPv4 country adoption vs activation</option>
+                    <option value="ipv6b">IPv6 country adoption vs activation</option>
+                    <option value="ipv4r">IPv4 RIR adoption</option>
+                    <option value="ipv6r">IPv6 RIR adoption</option>
+                </select>
+            <p><b>Adoption %</b> is percentage of address size covered by ROAs within a region.
+                Address size is count of unique IP addresses within aggregated prefix in a region, which can be RIR or Country.</p>
+            <p><b>Activation</b> indicates number active entity within a region. An entity is active in a region if it
+                has created certificate and hold a resource in the region, regardless whether it has created any ROAs.
+            </p>
+        </tr>
+         <tr>
+            <div id="ipv4_country_adoption" class="graph ipv4c">
+                <h3 style="text-align: center">Country IPv4 Adoption</h3>
+                <div id="ipv4_country_adoption_map" style="float:left;"></div>
+                <div id="ipv4_country_adoption_table" style="float:right;width:20%" ></div>
+            </div>
 
-        <p>Select a graph:
-            <select id="type_select_selector">
-                <option value="ipv4c">IPv4 country adoption map</option>
-                <option value="ipv6c">IPv6 country adoption map</option>
-                <option value="ipv4b">IPv4 country adoption bubble</option>
-                <option value="ipv6b">IPv6 country adoption bubble</option>
-                <option value="ipv4r">IPv4 RIR adoption</option>
-                <option value="ipv6r">IPv6 RIR adoption</option>
-            </select>
-        </p>
+            <div id="ipv4_country_adoption_b" class="graph ipv4b">
+                <h3 style="text-align: center">Country IPv4 Adoption vs Activation</h3>
+                <div id="ipv4_country_adoption_bubble"></div>
+            </div>
 
-        <div id="ipv4_country_adoption" class="graph ipv4c">
-            <h1>Country IPv4 Adoption (% issued with ROAs)</h1>
-            <div id="ipv4_country_adoption_map" style="float:left;"></div>
-            <div id="ipv4_country_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
-        </div>
+            <div id="ipv6_country_adoption" class="graph ipv6c">
+                <h3 style="text-align: center">Country IPv6 Adoption </h3>
+                <div id="ipv6_country_adoption_map" style="float:left;"></div>
+                <div id="ipv6_country_adoption_table" style="float:right;width:20%"></div>
+            </div>
 
-        <div id="ipv4_country_adoption_b" class="graph ipv4b">
-            <h1>Country IPv4 Adoption (% issued with ROAs)</h1>
-            <div id="ipv4_country_adoption_bubble"></div>
-        </div>
+            <div id="ipv6_country_adoption_b" class="graph ipv6b">
+                <h3 style="text-align: center">Country IPv6 Adoption vs Activation</h3>
+                <div id="ipv6_country_adoption_bubble"></div>
+            </div>
 
-        <div id="ipv6_country_adoption" class="graph ipv6c">
-            <h1>Country IPv6 Adoption (% issued with ROAs)</h1>
-            <div id="ipv6_country_adoption_map" style="float:left;"></div>
-            <div id="ipv6_country_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
-        </div>
+            <div id="ipv4_RIR_adoption" class="graph ipv4r">
+                <h3 style="text-align: center">RIR IPv4 Adoption </h3>
+                <div id="ipv4_RIR_adoption_map" style="float:left;"></div>
+                <div id="ipv4_RIR_adoption_table" style="float:right;width:20%"></div>
+            </div>
 
-        <div id="ipv6_country_adoption_b" class="graph ipv6b">
-            <h1>Country IPv6 Adoption (% issued with ROAs)</h1>
-            <div id="ipv6_country_adoption_bubble"></div>
-        </div>
-
-        <div id="ipv4_RIR_adoption" class="graph ipv4r">
-            <h1>RIR IPv4 Adoption (% issued with ROAs)</h1>
-            <div id="ipv4_RIR_adoption_map" style="float:left;"></div>
-            <div id="ipv4_RIR_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
-        </div>
-
-        <div id="ipv6_RIR_adoption" class="graph ipv6r">
-            <h1>RIR IPv6 Adoption (% issued with ROAs)</h1>
-            <div id="ipv6_RIR_adoption_map" style="float:left;"></div>
-            <div id="ipv6_RIR_adoption_table" style="float:right;width:300px;text-align:center;margin:auto;"></div>
-        </div>
+            <div id="ipv6_RIR_adoption" class="graph ipv6r">
+                <h3 style="text-align: center">RIR IPv6 Adoption </h3>
+                <div id="ipv6_RIR_adoption_map" style="float:left;"></div>
+                <div id="ipv6_RIR_adoption_table" style="float:right;width:20%"></div>
+            </div>
+         </tr>
+    </table>
     </body>
 </html>

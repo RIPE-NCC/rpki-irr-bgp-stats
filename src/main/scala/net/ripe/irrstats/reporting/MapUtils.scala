@@ -61,11 +61,11 @@ object MapUtils {
     }}.mkString(",\n          ")
   }
 
-  def convertValuesToBubbleArrayData(countriesData: Map[String, (Double, Int, BigInteger)]) = {
+  def convertValuesToBubbleArrayData(countriesData: Map[String, (Double, Int, Int, BigInteger)]) = {
     countriesData.map {
-      case (country, (adoption, count, size)) => {
+      case (country, (adoption, activation, count, size)) => {
         val fract = "%3.2f" format (adoption*100)
-        s"['$country', $count, $fract, $size, $count]"
+        s"['$country', $activation, $fract, $size, $count]"
       }}.
     mkString(",\n          ")
   }

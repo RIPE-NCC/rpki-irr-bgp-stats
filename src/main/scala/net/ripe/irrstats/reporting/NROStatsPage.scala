@@ -36,8 +36,8 @@ object NROStatsPage {
   // Returns an HTML page as a String with a Google Geomap world map and embedded data
   def printNROStatsPage(ipv4CountryAdoptionValues: Map[String, Double],
                         ipv6CountryAdoptionValues: Map[String, Double],
-                        ipv4CountryBubbleData: Map[String, (Double, Int, BigInteger)],
-                        ipv6CountryBubbleData: Map[String, (Double, Int, BigInteger)],
+                        ipv4CountryBubbleData: Map[String, (Double, Int, Int, BigInteger)],
+                        ipv6CountryBubbleData: Map[String, (Double, Int, Int, BigInteger)],
                         ipv4RIRAdoptionValues: Map[String, Double],
                         ipv6RIRAdoptionValues: Map[String, Double]
                        ): String = {

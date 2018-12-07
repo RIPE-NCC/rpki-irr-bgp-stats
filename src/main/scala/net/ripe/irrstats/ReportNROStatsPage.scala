@@ -28,8 +28,6 @@
  */
 package net.ripe.irrstats
 
-import java.math.BigInteger
-
 import net.ripe.ipresource.IpResourceSet
 import net.ripe.irrstats.analysis.RegionStats
 import net.ripe.irrstats.parsing.holdings.Holdings._
@@ -40,7 +38,9 @@ import scala.collection.JavaConverters._
 
 object ReportNROStatsPage {
 
-  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], countryHolding: Holdings,
+  def report(announcements: Seq[BgpAnnouncement],
+             authorisations: Seq[RtrPrefix],
+             countryHolding: Holdings,
              allRirHoldings: Holdings,
              entityCountryHoldings: EntityRegionHoldings,
              entityRirHoldings: EntityRegionHoldings,
@@ -55,14 +55,17 @@ object ReportNROStatsPage {
     val countryAdoptions = countryHolding.keys.par.map(cc => (cc, countryStats.regionAdoptionStats(cc))).seq.toMap
     val rirAdoptions = rirHoldings.keys.par.map(cc => (cc, rirStats.regionAdoptionStats(cc))).seq.toMap
 
-    val ipv4CountryAdoptionValues: Map[String, Double] = countryAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
-    val ipv6CountryAdoptionValues: Map[String, Double] = countryAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
-
-    val ipv4CountryBubbleData: Map[String, (Double, Int, BigInteger)] = countryAdoptions.mapValues(_.ipv4AdoptionBubble)
-    val ipv6CountryBubbleData: Map[String, (Double, Int, BigInteger)] = countryAdoptions.mapValues(_.ipv6AdoptionBubble)
+    val ipv4CountryAdoptionValues = countryAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
+    val ipv6CountryAdoptionValues = countryAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
 
     val ipv4RIRAdoptionValues = rirAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
     val ipv6RIRAdoptionValues = rirAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
+
+    val countryActivation  = regionActivation(entityCountryHoldings, certifiedResources)
+    val rirActivation  = regionActivation(entityRirHoldings, certifiedResources)
+
+    val ipv4CountryBubbleData = countryAdoptions.mapValues(c => (c.ipv4Adoption.getOrElse(0.0), countryActivation.getOrElse(c.region, 0), c.ipv4HoldingCount, c.ipv4HoldingSize))
+    val ipv6CountryBubbleData = countryAdoptions.mapValues(c => (c.ipv6Adoption.getOrElse(0.0), countryActivation.getOrElse(c.region, 0), c.ipv6HoldingCount, c.ipv6HoldingSize))
 
     print(NROStatsPage.printNROStatsPage(
       ipv4CountryAdoptionValues,
@@ -76,21 +79,29 @@ object ReportNROStatsPage {
 
   def reportActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResources : IpResourceSet): Unit = {
 
-    val certifiedEntities = getCertifiedEntities(entityRegionHoldings, certifiedResources)
-    val regionalActiveEntitiesCount = certifiedEntities.groupBy{ case (_, region) => region}.mapValues(_.size)
-
+    val activationData = regionActivation(entityRegionHoldings, certifiedResources).toSeq.sortBy(-_._2)
     println("Region, Active Entity Count")
-    println(regionalActiveEntitiesCount.toSeq.sortBy(-_._2) // sort decreasing
-      .map { case (region, activeCounts) => s"$region,$activeCounts" }
-      .mkString("\n"))
+    println(activationData.map { case (region, activeCounts) => s"$region,$activeCounts" }.mkString("\n"))
   }
 
-  def getCertifiedEntities(entityHoldings: EntityRegionHoldings,
-                           certifiedResources : IpResourceSet) : Set[EntityRegion] = {
-    def anyResourceCertified(entityResources: IpResourceSet) : Boolean =
+  def regionActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResources : IpResourceSet): Map[String, Int] = {
+
+    val certifiedEntities: Set[EntityRegion] = certifiedEntityRegion(entityRegionHoldings, certifiedResources)
+    val regionActivation: Map[String, Int] = certifiedEntities.groupBy{ case (_, region) => region}.mapValues(_.size)
+
+    regionActivation
+  }
+
+  // Compute set of (Entity, Region) pairs that has at least one certified resource.
+  def certifiedEntityRegion(entityRegionHoldings: EntityRegionHoldings,
+                            certifiedResources : IpResourceSet) : Set[EntityRegion] = {
+
+    def hasCertifiedResource(entityResources: IpResourceSet) : Boolean =
       entityResources.iterator().asScala.exists(certifiedResources.contains)
 
-    entityHoldings.mapValues(anyResourceCertified).filter(_._2).keys.toSet
+    entityRegionHoldings.mapValues(hasCertifiedResource).filter{
+      case (_, isCertified) => isCertified
+    }.keys.toSet
   }
 
 }

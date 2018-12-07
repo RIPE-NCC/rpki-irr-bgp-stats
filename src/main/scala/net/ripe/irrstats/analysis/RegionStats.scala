@@ -50,9 +50,6 @@ case class RegionAdoptionStats(region: String, holdings: IpResourceSet, authoris
   val ipv6HoldingSize: BigInteger = ipv6Size(holdings)
   
   val ipv6Adoption = safePercentage(ipv6AuthSize, ipv6HoldingSize)
-  
-  val ipv4AdoptionBubble = (ipv4Adoption.getOrElse(0.0), ipv4HoldingCount, ipv4HoldingSize)
-  val ipv6AdoptionBubble = (ipv6Adoption.getOrElse(0.0), ipv6HoldingCount, ipv6HoldingSize)
 }
 
 class RegionStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
