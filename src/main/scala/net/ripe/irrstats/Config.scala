@@ -55,6 +55,11 @@ object Config {
     } text {
       "Location of a file with either ROA export from the RIPE NCC RPKI Validator (.csv) or route[6] objects (.txt)"
     }
+    opt[File]('f', "certified-resources") required() valueName "<file>" action { (x, c) =>
+      c.copy(certifiedResourceFile = x)
+    } text {
+      "Location of a file with dump of certified resources from RIPE NCC Validator (.csv) file."
+    }
     opt[Unit]('q', "quiet") optional() action { (x, c) => c.copy(quiet = true) } text {
       "Quiet output, just (real) numbers"
     }
@@ -92,6 +97,15 @@ object Config {
       "Do report rir adoptions "
     }
 
+    opt[Unit]("country-activation") optional() action { (x,c) => c.copy(analysisMode = CountryActivationMode)} text {
+      "Do report country activation "
+    }
+
+    opt[Unit]("rir-activation") optional() action { (x,c) => c.copy(analysisMode = RirActivationMode)} text {
+      "Do report rir activation "
+    }
+
+
     checkConfig { c =>
       if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt")) failure("option -r must refer roas.csv or route[6].db file") else success
     }
@@ -107,6 +121,7 @@ object Config {
 case class Config(risDumpFile: File = new File("."),
                   statsFile: File = new File("."),
                   routeAuthorisationFile: File = new File("."),
+                  certifiedResourceFile: File = new File("."),
                   looseRouteObjectValidation: Boolean = true,
                   quiet: Boolean = false,
                   date: String = DateTime.now().toString("YYYYMMdd"),
@@ -147,4 +162,6 @@ case object NROStatsMode extends AnalysisMode
 
 case object AsnMode extends AnalysisMode
 
-case object PerEntityMode extends AnalysisMode
+case object RirActivationMode extends AnalysisMode
+
+case object CountryActivationMode extends AnalysisMode

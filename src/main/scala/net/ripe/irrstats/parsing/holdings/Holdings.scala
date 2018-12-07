@@ -38,7 +38,15 @@ import scala.io.Source
 
 object Holdings {
 
+
+  // Map of region to a set of resources
   type Holdings = Map[String, IpResourceSet]
+
+  // A tuple that can be (OpaqueId, RIR), or (OpaqueId, Country)
+  type EntityRegion = (String, String)
+
+  // Resources belonging to an entity within certain region.
+  type EntityRegionHoldings = Map[EntityRegion, IpResourceSet]
 
   def read(statsFile: File): Seq[String] = Source.fromFile(statsFile, "ASCII").getLines.toSeq
 
@@ -61,7 +69,6 @@ object Holdings {
   }
 }
 
-import Holdings._
 
 object RIRHoldings {
 
@@ -140,21 +147,34 @@ object CountryHoldings {
   */
 object EntityHoldings {
 
-  def parse(statLines: Seq[String]): Holdings = {
-    val countryMap = collection.mutable.Map[String, IpResourceSet]()
+  def parse(statLines: Seq[String]): (EntityRegionHoldings, EntityRegionHoldings) = {
+    val entityCountryMap = mutable.Map[EntityRegion, IpResourceSet]()
+    val entityRIRMap = mutable.Map[EntityRegion, IpResourceSet]()
     AnalysedHoldings.parse(statLines) { tokens =>
-      tokenConsumer(countryMap, tokens)
+      tokenConsumer(entityCountryMap, entityRIRMap, tokens)
     }
-    countryMap.toMap
+    (entityCountryMap.toMap, entityRIRMap.toMap)
   }
 
-  def tokenConsumer(entityMap: mutable.Map[String, IpResourceSet], tokens: Array[String]) = {
+  def tokenConsumer(entityCountryMap: mutable.Map[EntityRegion, IpResourceSet],
+                    entityRIRMap: mutable.Map[EntityRegion, IpResourceSet],
+                    tokens: Array[String]) = {
       if (tokens.length >= 8 && tokens(6) == "assigned") {
+        val rir = tokens(0)
+        val country = tokens(1)
         val entity = tokens(7)
-        if (!entityMap.contains(entity)) {
-          entityMap += (entity -> new IpResourceSet())
+
+        if (!entityCountryMap.contains((entity, country))) {
+          entityCountryMap += ((entity, country) -> new IpResourceSet())
+        } else {
+          entityCountryMap((entity, country)).addAll(parseResourceLine(tokens))
         }
-        entityMap(entity).addAll(parseResourceLine(tokens))
+
+        if (!entityRIRMap.contains((entity, rir))) {
+          entityRIRMap += ((entity, rir) -> new IpResourceSet())
+        } else {
+          entityRIRMap((entity, rir)).addAll(parseResourceLine(tokens))
+        }
       }
   }
 }

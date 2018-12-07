@@ -30,14 +30,22 @@ package net.ripe.irrstats
 
 import java.math.BigInteger
 
+import net.ripe.ipresource.IpResourceSet
 import net.ripe.irrstats.analysis.RegionStats
 import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.NROStatsPage
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
-object ReportNROStats {
+import scala.collection.JavaConverters._
 
-  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], countryHolding: Holdings, allRirHoldings: Holdings) = {
+object ReportNROStatsPage {
+
+  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], countryHolding: Holdings,
+             allRirHoldings: Holdings,
+             entityCountryHoldings: EntityRegionHoldings,
+             entityRirHoldings: EntityRegionHoldings,
+             certifiedResources : IpResourceSet
+            ) = {
 
     val rirHoldings = allRirHoldings.filterNot(_._1.contains("Reserved"))
 
@@ -63,6 +71,26 @@ object ReportNROStats {
       ipv6CountryBubbleData,
       ipv4RIRAdoptionValues,
       ipv6RIRAdoptionValues))
+  }
+
+
+  def reportActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResources : IpResourceSet): Unit = {
+
+    val certifiedEntities = getCertifiedEntities(entityRegionHoldings, certifiedResources)
+    val regionalActiveEntitiesCount = certifiedEntities.groupBy{ case (_, region) => region}.mapValues(_.size)
+
+    println("Region, Active Entity Count")
+    println(regionalActiveEntitiesCount.toSeq.sortBy(-_._2) // sort decreasing
+      .map { case (region, activeCounts) => s"$region,$activeCounts" }
+      .mkString("\n"))
+  }
+
+  def getCertifiedEntities(entityHoldings: EntityRegionHoldings,
+                           certifiedResources : IpResourceSet) : Set[EntityRegion] = {
+    def anyResourceCertified(entityResources: IpResourceSet) : Boolean =
+      entityResources.iterator().asScala.exists(certifiedResources.contains)
+
+    entityHoldings.mapValues(anyResourceCertified).filter(_._2).keys.toSet
   }
 
 }

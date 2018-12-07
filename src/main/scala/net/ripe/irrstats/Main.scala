@@ -28,6 +28,7 @@
  */
 package net.ripe.irrstats
 
+import net.ripe.irrstats.parsing.certifiedresource.CertifiedResourceParser
 import net.ripe.irrstats.parsing.holdings.{CountryHoldings, EntityHoldings, Holdings, RIRHoldings}
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.parsing.roas.RoaUtil
@@ -71,30 +72,38 @@ object Main extends App {
   val countryHoldingsF = Future(Time.timed(CountryHoldings.parse(holdingsLines)))
   val entityHoldingsF = Future(Time.timed(EntityHoldings.parse(holdingsLines)))
 
+  val certifiedResourceF = Future{
+    Time.timed {
+      CertifiedResourceParser.parse(config.certifiedResourceFile)
+    }
+  }
+
   val report = for {
-    (countryHolding, ct)              <- countryHoldingsF
-    (rirHoldings, rt)                 <- rirHoldingsF
-    (entityHoldings, et)              <- entityHoldingsF
-    (announcements, announcementTime) <- announcementsF
-    (authorisations, roaParseTime)    <- roasF
+    (countryHolding, ct)                                <- countryHoldingsF
+    (rirHoldings, rt)                                   <- rirHoldingsF
+    ((entityCountryHoldings, entityRIRHOldings), et)    <- entityHoldingsF
+    (announcements, announcementTime)                   <- announcementsF
+    (authorisations, roaParseTime)                      <- roasF
+    (certifiedResources, certParseTime)                 <- certifiedResourceF
   } yield {
     val (_, reportTime) = Time.timed {
       config.analysisMode match {
         case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
         case WorldMapMode => ReportWorldMap.report(announcements, authorisations, countryHolding)
-        case NROStatsMode => ReportNROStats.report(announcements, authorisations, countryHolding, rirHoldings)
         case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHolding, config.countryDetails.get)
         case CountryAdoptionMode => ReportCountry.reportCountryAdoption(announcements, authorisations, countryHolding, config.quiet, config.date)
         case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
         case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
         case RirAdoptionMode => ReportRir.reportAdoption(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
-        case PerEntityMode => ReportRir.report(announcements, authorisations, entityHoldings, config.quiet, config.date, config.rir)
+        case NROStatsMode => ReportNROStatsPage.report(announcements, authorisations, countryHolding, rirHoldings, entityCountryHoldings, entityRIRHOldings, certifiedResources)
+        case RirActivationMode => ReportNROStatsPage.reportActivation(entityRIRHOldings, certifiedResources)
+        case CountryActivationMode => ReportNROStatsPage.reportActivation(entityCountryHoldings, certifiedResources)
       }
     }
-    (announcementTime, roaParseTime, reportTime, ct, rt, et)
+    (announcementTime, roaParseTime, reportTime, ct, rt, et, certParseTime)
   }
 
-  val (announcementTime, roaParseTime, reportTime, ct, rt, et) = Await.result(report, Duration.Inf)
+  val (announcementTime, roaParseTime, reportTime, ct, rt, et, certParseTime) = Await.result(report, Duration.Inf)
   System.err.println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
 
   System.exit(0) // We're done here
