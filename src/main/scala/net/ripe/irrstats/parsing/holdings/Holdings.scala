@@ -166,15 +166,13 @@ object EntityHoldings {
 
         if (!entityCountryMap.contains((entity, country))) {
           entityCountryMap += ((entity, country) -> new IpResourceSet())
-        } else {
-          entityCountryMap((entity, country)).addAll(parseResourceLine(tokens))
         }
+        entityCountryMap((entity, country)).addAll(parseResourceLine(tokens))
 
         if (!entityRIRMap.contains((entity, rir))) {
           entityRIRMap += ((entity, rir) -> new IpResourceSet())
-        } else {
-          entityRIRMap((entity, rir)).addAll(parseResourceLine(tokens))
         }
+        entityRIRMap((entity, rir)).addAll(parseResourceLine(tokens))
       }
   }
 }

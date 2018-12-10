@@ -60,4 +60,21 @@ class HoldingsParseTest extends FunSuite with Matchers {
 
   }
 
+  test("Should parse entity holding from extended delegated stats"){
+    val (entityCountryHoldings: EntityRegionHoldings, _) = EntityHoldings.parse(Holdings.read(file))
+    val countryHoldings = CountryHoldings.parse(Holdings.read(file))
+
+    val entityCountryCombined = entityCountryHoldings.groupBy { case ((_, country), _) => country }
+      .mapValues { entry =>
+        val combined = new IpResourceSet()
+        entry.values.foreach(combined.addAll)
+        combined
+      }
+
+    // EntityRegion parser when grouped per country should be consistent with country holding parser.
+    countryHoldings.keys.foreach{ country =>
+      entityCountryCombined(country) should be(countryHoldings(country))
+    }
+
+  }
 }
