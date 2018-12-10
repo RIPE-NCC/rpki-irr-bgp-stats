@@ -26,53 +26,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats
+package net.ripe.irrstats.analysis
 
-import net.ripe.irrstats.analysis.RegionStats
-import net.ripe.irrstats.parsing.holdings.Holdings._
-import net.ripe.irrstats.reporting.RegionCsv
-import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
+import net.ripe.ipresource.IpResourceSet
+import net.ripe.irrstats.parsing.holdings.Holdings.{EntityRegion, EntityRegionHoldings}
+import scala.collection.JavaConverters._
 
-object ReportRir {
+object ActivationStats {
 
-  def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String, rirString: String) = {
+  // Compute set of (Entity, Region) pairs that has at least one certified resource.
+  def certifiedEntityRegion(entityRegionHoldings: EntityRegionHoldings,
+                            certifiedResources : IpResourceSet) : Set[EntityRegion] = {
 
-    if (!quiet) {
-      RegionCsv.printHeader()
-    }
+    def hasCertifiedResource(entityResources: IpResourceSet) : Boolean =
+      entityResources.iterator().asScala.exists(certifiedResources.contains)
 
-    val (rirStats, t) = Time.timed(new RegionStats(holdings, announcements, authorisations))
-
-    val rirs = if (rirString == "all") {
-      holdings.keys
-    } else {
-      List(rirString)
-    }
-
-    rirs.par.foreach(rir => {
-      val (stats, _) = Time.timed(rirStats.regionAnnouncementStats(rir))
-      RegionCsv.reportRegionQuality(rir, stats, dateString, rirStats.regionAdoptionStats(rir))
-    })
+    entityRegionHoldings.mapValues(hasCertifiedResource).filter{
+      case (_, isCertified) => isCertified
+    }.keys.toSet
   }
 
-  def reportAdoption(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings,
-              quiet: Boolean, dateString: String, rirString: String) = {
+  def regionActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResources : IpResourceSet): Map[String, Int] = {
 
-    if (!quiet) {
-      RegionCsv.printAdoptionHeader("RIR")
-    }
-    
-    val (rirStats, t) = Time.timed(new RegionStats(holdings, announcements, authorisations))
+    val certifiedEntities: Set[EntityRegion] = certifiedEntityRegion(entityRegionHoldings, certifiedResources)
+    val regionActivation: Map[String, Int] = certifiedEntities.groupBy{ case (_, region) => region}.mapValues(_.size)
 
-    val rirs = if (rirString == "all") {
-      holdings.keys.filterNot(_.contains("Reserved"))
-    } else {
-      List(rirString)
-    }
-
-    rirs.map(rir => rirStats.regionAdoptionStats(rir)).foreach { regionStat =>
-      RegionCsv.reportRegionAdoption(regionStat.region, dateString, regionStat)
-    }
+    regionActivation
   }
-
 }

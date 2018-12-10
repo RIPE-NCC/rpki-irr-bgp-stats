@@ -43,7 +43,7 @@ object StatsUtil {
   }
 
   def addressesCount(resourceSet: IpResourceSet): BigInteger =
-    addressesCount(resourceSet.iterator().asScala)
+    addressesCount(disjointRanges(resourceSet))
 
   private def addressesCount(ipResources: Iterator[IpResource]): BigInteger = {
     ipResources.foldLeft(BigInteger.ZERO)((r, c) => {
@@ -52,14 +52,14 @@ object StatsUtil {
   }
 
   def addressCountPerType(resourceSet: IpResourceSet, resourceType: IpResourceType): BigInteger = {
-    addressesCount(resourceSet.iterator().asScala.filter(_.getType == resourceType))
+    addressesCount(disjointRanges(resourceSet).filter(_.getType == resourceType))
   }
 
-  def ipv4Count(resourceSet: IpResourceSet) = resourceSet.iterator().asScala.filter(_.getType == IpResourceType.IPv4).size
-  def ipv6Count(resourceSet: IpResourceSet) = resourceSet.iterator().asScala.filter(_.getType == IpResourceType.IPv6).size
+  def ipv4DisjointRangesCounts(resourceSet: IpResourceSet): Int = disjointRanges(resourceSet).count(_.getType == IpResourceType.IPv4)
+  def ipv6DisjointRangesCounts(resourceSet: IpResourceSet): Int = disjointRanges(resourceSet).count(_.getType == IpResourceType.IPv6)
 
-  def ipv4Size(resourceSet : IpResourceSet) : BigInteger = addressCountPerType(resourceSet, IpResourceType.IPv4)
-  def ipv6Size(resourceSet : IpResourceSet) : BigInteger = addressCountPerType(resourceSet, IpResourceType.IPv6)
+  def ipv4AddressSize(resourceSet : IpResourceSet): BigInteger = addressCountPerType(resourceSet, IpResourceType.IPv4)
+  def ipv6AddressSize(resourceSet : IpResourceSet): BigInteger = addressCountPerType(resourceSet, IpResourceType.IPv6)
 
   def safePercentage(fraction: BigInteger, total: BigInteger): Option[Double] = {
     if (total == BigInteger.ZERO) {
@@ -71,5 +71,7 @@ object StatsUtil {
 
   def safePercentage(fraction: Int, total: Int): Option[Double] =
     safePercentage(BigInteger.valueOf(fraction), BigInteger.valueOf(total))
+
+  private def disjointRanges(resourceSet: IpResourceSet): Iterator[IpResource] = resourceSet.iterator().asScala
 
 }

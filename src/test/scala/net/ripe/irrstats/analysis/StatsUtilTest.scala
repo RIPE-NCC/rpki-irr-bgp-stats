@@ -50,4 +50,30 @@ class StatsUtilTest extends FunSuite with Matchers {
     StatsUtil.addressesCount(prefixes) should equal(BigInteger.valueOf(256 + 512))
   }
 
+  test("Should count number of Ipv4 and its address size") {
+    val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.0.0.0/23", "10.1.0.0/23")
+    val set = new IpResourceSet()
+    prefixes.foreach(set.add)
+    StatsUtil.ipv4DisjointRangesCounts(set) should be(2)
+    StatsUtil.ipv4AddressSize(set) should be(new BigInteger("1024"))
+  }
+
+  test("Should count number of Ipv6 and its address size") {
+    val prefixes: Seq[IpRange] = List("2001:200::/32", "2001:200:e101::/48")
+    val set = new IpResourceSet()
+
+    prefixes.foreach(set.add)
+
+    // Those two prefixes will be merged and counted as one big /32
+    StatsUtil.ipv6DisjointRangesCounts(set) should be(1)
+    val slash32 = new BigInteger("2").pow(128 - 32)
+    StatsUtil.ipv6AddressSize(set) should be(slash32)
+  }
+
+  test("Should calculate safe percentage") {
+    StatsUtil.safePercentage(BigInteger.ONE, BigInteger.TEN) should be(Some(0.1))
+    StatsUtil.safePercentage(BigInteger.ONE, BigInteger.ZERO) should be(None)
+    StatsUtil.safePercentage(2, 10) should be(Some(0.2))
+    StatsUtil.safePercentage(2, 0) should be(None)
+  }
 }
