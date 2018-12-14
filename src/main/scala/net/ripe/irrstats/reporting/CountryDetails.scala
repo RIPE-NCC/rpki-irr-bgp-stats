@@ -48,8 +48,6 @@ object CountryDetails {
     println(s"   IPv6 Adoption  : ${format(adoption.ipv6Adoption)}" )
     println("")
 
-
-
     val invalidLengths = validatedAnnouncementStats.announcements.filter(_.validity == RouteValidity.InvalidLength)
     if (invalidLengths.size > 0 ) {
       println("Details on invalid length:")
@@ -67,9 +65,6 @@ object CountryDetails {
       }
       println("")
     }
-
-
-
 
   }
 

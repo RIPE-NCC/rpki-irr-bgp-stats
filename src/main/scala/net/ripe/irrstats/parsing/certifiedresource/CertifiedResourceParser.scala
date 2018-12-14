@@ -45,7 +45,7 @@ object CertifiedResourceParser {
     Source
     .fromFile(certifiedResourceFile, "iso-8859-1")
     .getLines.drop(1)
-    .map(IpRange.parse)
+    .map(line => IpRange.parse(line.replaceAll("\"","")))
     .foldLeft(new IpResourceSet()) {
       case (result, iprange) => result.add(iprange); result}
 }
