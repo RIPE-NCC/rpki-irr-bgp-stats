@@ -29,21 +29,24 @@
 package net.ripe.irrstats.analysis
 
 import net.ripe.ipresource.IpResourceSet
+import net.ripe.irrstats.analysis.StatsUtil._
 import net.ripe.irrstats.parsing.holdings.Holdings.{EntityRegion, EntityRegionHoldings}
-import scala.collection.JavaConverters._
 
 object ActivationStats {
 
   // Compute set of (Entity, Region) pairs that has at least one certified resource.
   def certifiedEntityRegion(entityRegionHoldings: EntityRegionHoldings,
-                            certifiedResources : IpResourceSet) : Set[EntityRegion] = {
+                            certifiedSet : IpResourceSet) : Set[EntityRegion] = {
 
-    def hasCertifiedResource(entityResources: IpResourceSet) : Boolean =
-      entityResources.iterator().asScala.exists(certifiedResources.contains)
+    def hasCertifiedResource(resourceSet: IpResourceSet) : Boolean =
+      resourceSet.resources().exists(certifiedSet.contains)
 
-    entityRegionHoldings.mapValues(hasCertifiedResource).filter{
-      case (_, isCertified) => isCertified
-    }.keys.toSet
+    // Before this mapValues we have EntityRegion -> IPResourceSet,
+    // now we know which entity region pair having at least one certified resource.
+    val entityRegionToCertified: Map[EntityRegion, Boolean] = entityRegionHoldings.mapValues(hasCertifiedResource)
+
+    // Now we filter  those entityRegion keys that is certified, converted it to set.
+    entityRegionToCertified.filter{ case (_, isCertified) => isCertified}.keys.toSet
   }
 
   def regionActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResources : IpResourceSet): Map[String, Int] = {

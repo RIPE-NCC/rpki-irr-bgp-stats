@@ -32,6 +32,7 @@ import java.math.BigInteger
 
 import net.ripe.ipresource.{IpRange, IpResourceSet}
 import org.scalatest.{Matchers, FunSuite}
+import StatsUtil._
 
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class StatsUtilTest extends FunSuite with Matchers {
@@ -42,32 +43,31 @@ class StatsUtilTest extends FunSuite with Matchers {
 
   test("Should count overlapping IP addresses in prefixes only once") {
     val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.0.0.0/23")
-    StatsUtil.addressesCount(prefixes) should equal(BigInteger.valueOf(512))
+    val set = new IpResourceSet().addAll(prefixes)
+    set.addressesSize() should equal(BigInteger.valueOf(512))
   }
 
   test("Should count IP addresses in different prefixes") {
     val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.1.0.0/23")
-    StatsUtil.addressesCount(prefixes) should equal(BigInteger.valueOf(256 + 512))
+    val set = new IpResourceSet().addAll(prefixes)
+    set.addressesSize() should equal(BigInteger.valueOf(256 + 512))
   }
 
   test("Should count number of Ipv4 and its address size") {
     val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.0.0.0/23", "10.1.0.0/23")
-    val set = new IpResourceSet()
-    prefixes.foreach(set.add)
-    StatsUtil.ipv4DisjointRangesCounts(set) should be(2)
-    StatsUtil.ipv4AddressSize(set) should be(new BigInteger("1024"))
+    val set = new IpResourceSet().addAll(prefixes)
+    set.ipv4ResourcesCounts() should be(2)
+    set.ipv4AddressSize() should be(new BigInteger("1024"))
   }
 
   test("Should count number of Ipv6 and its address size") {
     val prefixes: Seq[IpRange] = List("2001:200::/32", "2001:200:e101::/48")
-    val set = new IpResourceSet()
-
-    prefixes.foreach(set.add)
+    val set = new IpResourceSet().addAll(prefixes)
 
     // Those two prefixes will be merged and counted as one big /32
-    StatsUtil.ipv6DisjointRangesCounts(set) should be(1)
+    set.ipv6ResourcesCounts() should be(1)
     val slash32 = new BigInteger("2").pow(128 - 32)
-    StatsUtil.ipv6AddressSize(set) should be(slash32)
+    set.ipv6AddressSize() should be(slash32)
   }
 
   test("Should calculate safe percentage") {

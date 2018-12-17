@@ -37,18 +37,18 @@ import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValid
 
 case class RegionAdoptionStats(region: String, holdings: IpResourceSet, authorisation: IpResourceSet) {
 
-  val ipv4AuthCount = ipv4DisjointRangesCounts(authorisation)
-  val ipv4HoldingCount = ipv4DisjointRangesCounts(holdings)
+  val ipv4AuthCount = authorisation.ipv4ResourcesCounts()
+  val ipv4HoldingCount = holdings.ipv4ResourcesCounts()
 
-  val ipv4AuthSize = ipv4AddressSize(authorisation)
-  val ipv4HoldingSize = ipv4AddressSize(holdings)
+  val ipv4AuthSize = authorisation.ipv4AddressSize()
+  val ipv4HoldingSize = holdings.ipv4AddressSize()
 
   val ipv4Adoption = safePercentage(ipv4AuthSize, ipv4HoldingSize)
 
-  val ipv6Authcount = ipv4DisjointRangesCounts(authorisation)
-  val ipv6HoldingCount = ipv4DisjointRangesCounts(holdings)
-  val ipv6AuthSize: BigInteger = ipv6AddressSize(authorisation)
-  val ipv6HoldingSize: BigInteger = ipv6AddressSize(holdings)
+  val ipv6Authcount = authorisation.ipv4ResourcesCounts()
+  val ipv6HoldingCount = holdings.ipv4ResourcesCounts()
+  val ipv6AuthSize: BigInteger = authorisation.ipv6AddressSize()
+  val ipv6HoldingSize: BigInteger = holdings.ipv6AddressSize()
   
   val ipv6Adoption = safePercentage(ipv6AuthSize, ipv6HoldingSize)
 }
