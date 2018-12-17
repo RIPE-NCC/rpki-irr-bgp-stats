@@ -59,15 +59,19 @@ print "\nGetting certified resources from validator 3";
 my $certified_resources = "https://rpki-validator.prepdev.ripe.net/api/rpki-objects/certified.csv";
 system("curl -X GET --header 'Accept: text/csv'  $certified_resources -o certified.csv 2>/dev/null");
 
-system("$rpki_irr_bgp_stats_bin -b $todays_stat_dir/risdump-ipv4.txt -s $todays_stat_dir/nro-ext-stats.txt -r $todays_stat_dir/all-roas.csv -f $todays_stat_dir/certified.csv --rir-adoption | column -s',' -t  > $todays_stat_dir/adoption.txt  2>/dev/null");
-system("$rpki_irr_bgp_stats_bin -b $todays_stat_dir/risdump-ipv4.txt -s $todays_stat_dir/nro-ext-stats.txt -r $todays_stat_dir/all-roas.csv -f $todays_stat_dir/certified.csv --rir-activation | column -s',' -t > $todays_stat_dir/activation.txt  2>/dev/null");
+system("$rpki_irr_bgp_stats_bin -b $todays_stat_dir/risdump-ipv4.txt -s $todays_stat_dir/nro-ext-stats.txt -r $todays_stat_dir/all-roas.csv -f $todays_stat_dir/certified.csv --country-adoption | column -s',' -t  > $todays_stat_dir/country-adoption.txt  2>/dev/null");
+system("$rpki_irr_bgp_stats_bin -b $todays_stat_dir/risdump-ipv4.txt -s $todays_stat_dir/nro-ext-stats.txt -r $todays_stat_dir/all-roas.csv -f $todays_stat_dir/certified.csv --country-activation | column -s',' -t > $todays_stat_dir/country-activation.txt  2>/dev/null");
+system("$rpki_irr_bgp_stats_bin -b $todays_stat_dir/risdump-ipv4.txt -s $todays_stat_dir/nro-ext-stats.txt -r $todays_stat_dir/all-roas.csv -f $todays_stat_dir/certified.csv --rir-adoption | column -s',' -t  > $todays_stat_dir/rir-adoption.txt  2>/dev/null");
+system("$rpki_irr_bgp_stats_bin -b $todays_stat_dir/risdump-ipv4.txt -s $todays_stat_dir/nro-ext-stats.txt -r $todays_stat_dir/all-roas.csv -f $todays_stat_dir/certified.csv --rir-activation | column -s',' -t > $todays_stat_dir/rir-activation.txt  2>/dev/null");
 system("$rpki_irr_bgp_stats_bin -b $todays_stat_dir/risdump-ipv4.txt -s $todays_stat_dir/nro-ext-stats.txt -r $todays_stat_dir/all-roas.csv -f $todays_stat_dir/certified.csv -n > $todays_stat_dir/nro-stats.html 2>/dev/null");
 
 # Export rsync password in RSYNC_PASSWORD
 my $rsync_target = "rpki\@dragonstone.ripe.net::rpki";
 
-system("rsync $todays_stat_dir/adoption.txt $rsync_target");
-system("rsync $todays_stat_dir/activation.txt $rsync_target");
+system("rsync $todays_stat_dir/country-adoption.txt $rsync_target");
+system("rsync $todays_stat_dir/country-activation.txt $rsync_target");
+system("rsync $todays_stat_dir/rir-adoption.txt $rsync_target");
+system("rsync $todays_stat_dir/rir-activation.txt $rsync_target");
 system("rsync $todays_stat_dir/nro-stats.html $rsync_target");
 
 exit;
