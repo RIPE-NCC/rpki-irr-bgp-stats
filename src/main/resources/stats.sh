@@ -38,8 +38,6 @@ CERTIFIED_RESOURCES_URL=https://rpki-validator.prepdev.ripe.net/api/rpki-objects
 DD=`date +%Y/%m/%d`
 
 for TAL in 'afrinic.tal' 'arin.tal' 'lacnic.tal' 'ripencc.tal' 'localcert.tal' 'apnic.tal' ; do
-    echo $TAL
-
     TAL_STATS_DIR="$BASE_DATA_DIR/$TAL"
     TODAYS_STAT_DIR="$TAL_STATS_DIR/$DD"
     mkdir -p "$TODAYS_STAT_DIR"
