@@ -1,15 +1,11 @@
-function create_todays_stat_dir() {
-   local year=`date +%Y`; 
-   local mnth=`date +%m`; 
-   local day=`date +%d`; 
-   echo "Base $1"
-   eval "$2=$1/$year/$mnth/$day"
-}
+#!/usr/bin/env bash
 
 rpki_stats_bin='/home/awibisono/cert-stats/irrstats-0.1-SNAPSHOT/rpki-irr-bgp-stats'
 stats_dir='/home/awibisono/cert-stats/nro-stat'
 
-create_todays_stat_dir $stats_dir todays_stat_dir
+DD=`date +%Y/%m/%d`
+
+todays_stat_dir="$stats_dir/$DD"
 
 echo "Creating todays dir $todays_stat_dir"
 mkdir -p $todays_stat_dir
