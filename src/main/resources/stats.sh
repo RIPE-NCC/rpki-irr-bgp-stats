@@ -69,5 +69,7 @@ rsync_if_not_empty country-adoption.csv
 rsync_if_not_empty country-activation.txt 
 rsync_if_not_empty country-activation.csv
 rsync_if_not_empty rir-adoption.txt 
+rsync_if_not_empty rir-adoption.csv
+rsync_if_not_empty rir-activation.txt 
 rsync_if_not_empty rir-activation.csv
 rsync_if_not_empty nro-stats.html 
