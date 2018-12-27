@@ -37,37 +37,37 @@ object MapUtils {
   // Capturing RIR in hardcoded subcontinents code
   // Subcontinents code supported by geochart: https://developers.google.com/chart/interactive/docs/gallery/geochart#continent-hierarchy-and-codes
   // We can switch to more granular country code level if this is not good enough to represent RIRs
-  val subcontinents= Map(
-    "apnic" -> List(30,35,53,54,57,61),
-    "afrinic" -> List(11,14,15,17,18),
-    "ripencc" -> List(34,151,154,155,39,143,145),
-    "arin" -> List(21,29),
-    "lacnic" -> List(5,13)
+  val subcontinents = Map(
+    "apnic" -> List(30, 35, 53, 54, 57, 61),
+    "afrinic" -> List(11, 14, 15, 17, 18),
+    "ripencc" -> List(34, 151, 154, 155, 39, 143, 145),
+    "arin" -> List(21, 29),
+    "lacnic" -> List(5, 13)
   )
 
   def findMatchingValuesAboveAdoptionThreshold(adoptionValues: Map[String, Double], matchingValues: Map[String, Double]): Map[String, Double] = {
-    matchingValues.filter(mv => adoptionValues.isDefinedAt(mv._1) && adoptionValues.get(mv._1).get > ShowMatchingThreshold)
+    matchingValues.filter { case (k, _) => adoptionValues.isDefinedAt(k) && adoptionValues(k) > ShowMatchingThreshold }
   }
 
-  def convertValuesToArrayData(countryValues: Map[String, Double]) = {
-    countryValues.map { case entry => "['" + entry._1 + "', " + f"${entry._2 * 100}%3.2f]" }.mkString(",\n          ")
+  def convertValuesToArrayData(countryValues: Map[String, Double]): String = {
+    countryValues.map { case (k, v) => "['" + k + "', " + f"${v * 100}%3.2f]" }.mkString(",\n          ")
   }
 
-  def convertValuesToRIRArrayData(rirValues: Map[String, Double]) = {
-    rirValues.flatMap { case (rirRegion, fraction) => subcontinents(rirRegion).flatMap { subContinentCode =>
-       val scode = "%03d" format subContinentCode
-       val fract = "%3.2f" format (fraction*100)
-       Seq(s"['$scode', '${rirRegion.toUpperCase}', $fract]")
-    }}.mkString(",\n          ")
+  def convertValuesToRIRArrayData(rirValues: Map[String, Double]): String = {
+    rirValues.flatMap { case (rirRegion, fraction) =>
+      subcontinents(rirRegion).flatMap { subContinentCode =>
+        val scode = "%03d" format subContinentCode
+        val fract = "%3.2f" format (fraction * 100)
+        Seq(s"['$scode', '${rirRegion.toUpperCase}', $fract]")
+      }
+    }.mkString(",\n          ")
   }
 
-  def convertValuesToBubbleArrayData(countriesData: Map[String, (Double, Int, Int, BigInteger)]) = {
-    countriesData.map {
-      case (country, (adoption, activation, count, size)) => {
-        val fract = "%3.2f" format (adoption*100)
-        s"['$country', $activation, $fract, $size, $count]"
-      }}.
-    mkString(",\n          ")
+  def convertValuesToBubbleArrayData(countriesData: Map[String, (Double, Int, Int, BigInteger)]): String = {
+    countriesData.map { case (country, (adoption, activation, count, size)) =>
+      val fract = "%3.2f" format (adoption * 100)
+      s"['$country', $activation, $fract, $size, $count]"
+    }.mkString(",\n          ")
   }
 
 }
