@@ -45,7 +45,7 @@ nro_ext_stats="https://www.nro.net/wp-content/uploads/apnic-uploads/delegated-ex
 
 function exit_if_no_file() {
   if [ ! -s $1 ]; then
-    echo "Oops, file $1 wasn't downloaded, cannot continue"
+    echo "Oops, file $1 wasn't downloaded, cannot continue" 1>&2
     exit 1;
   fi
 }
