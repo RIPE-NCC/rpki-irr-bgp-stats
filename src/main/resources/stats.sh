@@ -31,7 +31,6 @@
 
 rpki_stats_bin='/home/app-admin/cert-stats/world-stats/irrstats-0.1-SNAPSHOT/rpki-irr-bgp-stats'
 stats_dir='/ncc/archive2/certstats/rpki-bgp'
-
 DD=`date +%Y/%m/%d`
 
 today_dir="$stats_dir/$DD"
@@ -45,7 +44,7 @@ nro_ext_stats="https://www.nro.net/wp-content/uploads/apnic-uploads/delegated-ex
 
 function exit_if_no_file() {
   if [ ! -s $1 ]; then
-    echo "Oops, file $1 wasn't downloaded, cannot continue"
+    echo "Oops, file $1 wasn't downloaded, cannot continue" 1>&2
     exit 1;
   fi
 }
@@ -89,7 +88,7 @@ echo "Generating rir activation"
 $rpki_stats_bin $common_args --rir-activation  > $today_dir/rir-activation.csv
 cat $today_dir/rir-activation.csv | column -s',' -t > $today_dir/rir-activation.txt
 
-echo "Generating web page"
+echo "Generating nro-stats web page"
 $rpki_stats_bin $common_args -n > $today_dir/nro-stats.html
 
 echo "Generating world roas"

@@ -29,10 +29,19 @@
 package net.ripe.irrstats.reporting
 
 import MapUtils._
+
 object WorldMapPage {
 
   // Returns an HTML page as a String with a Google Geomap world map and embedded data
-  def printWorldMapHtmlPage(prefixesAdoptionValues: Map[String, Double], prefixesValidValues: Map[String, Double], prefixesMatchingValues: Map[String, Double], adoptionValues: Map[String, Double], validValues: Map[String, Double], matchingValues: Map[String, Double], stalenessValues: Map[String, Double], usefulnessValues: Map[String, Double], usefulspaceValues: Map[String, Double]): String = {
+  def printWorldMapHtmlPage(prefixesAdoptionValues: Map[String, Double],
+                            prefixesValidValues: Map[String, Double],
+                            prefixesMatchingValues: Map[String, Double],
+                            adoptionValues: Map[String, Double],
+                            validValues: Map[String, Double],
+                            matchingValues: Map[String, Double],
+                            stalenessValues: Map[String, Double],
+                            usefulnessValues: Map[String, Double],
+                            usefulspaceValues: Map[String, Double]): String = {
 
     // Yes, I am aware that better template frameworks exist, but I just have one simple thing to do, and prefer no deps.
     scala.io.Source.fromInputStream(getClass.getResourceAsStream("/worldmap-template.html")).getLines().map { line =>
