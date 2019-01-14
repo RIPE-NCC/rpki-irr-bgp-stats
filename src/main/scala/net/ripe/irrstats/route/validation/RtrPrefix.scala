@@ -28,14 +28,17 @@
  */
 package net.ripe.irrstats.route.validation
 
+import java.math.BigInteger
+
 import net.ripe.ipresource.{Asn, IpRange}
 import NumberResources._
-
 import scalaz.Reducer
 
 case class RtrPrefix(asn: Asn, prefix: IpRange, maxPrefixLength: Option[Int] = None) {
   def interval = NumberResourceInterval(prefix.getStart, prefix.getEnd)
   def effectiveMaxPrefixLength = maxPrefixLength.getOrElse(prefix.getPrefixLength)
+
+  def size = prefix.getEnd.getValue.subtract(prefix.getStart.getValue)
 }
 
 object RtrPrefix {
@@ -46,5 +49,7 @@ object RtrPrefix {
     override def unit(prefix: RtrPrefix) = prefix.interval
   }
 
+  def accumulateSize(prefixes : Seq[RtrPrefix]) =
+    prefixes.map(_.size).foldLeft(BigInteger.ZERO)((res, next) => res.add(next))
 }
 

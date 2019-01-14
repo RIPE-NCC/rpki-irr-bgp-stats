@@ -28,25 +28,32 @@
  */
 package net.ripe.irrstats.analysis
 
-import java.math.BigInteger
+import net.ripe.ipresource.IpResourceSet
+import net.ripe.irrstats.analysis.StatsUtil._
+import net.ripe.irrstats.parsing.holdings.Holdings.{EntityRegion, EntityRegionHoldings}
 
-import net.ripe.ipresource.{IpRange, IpResourceSet}
-import org.scalatest.{Matchers, FunSuite}
+object ActivationStats {
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class AnnouncementStatsTest extends FunSuite with Matchers {
+  // Compute set of (Entity, Region) pairs that has at least one certified resource.
+  def certifiedEntityRegion(entityRegionHoldings: EntityRegionHoldings,
+                            certifiedSet : IpResourceSet) : Set[EntityRegion] = {
 
-  import scala.language.implicitConversions
-  implicit def stringToIpRange(s: String): IpRange = IpRange.parse(s)
+    def hasCertifiedResource(resourceSet: IpResourceSet) : Boolean =
+      resourceSet.resources().exists(certifiedSet.contains)
 
-  test("Should count overlapping IP addresses in prefixes only once") {
-    val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.0.0.0/23")
-    AnnouncementStats.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(512))
+    // Before this mapValues we have EntityRegion -> IPResourceSet,
+    // now we know which entity region pair having at least one certified resource.
+    val entityRegionToCertified: Map[EntityRegion, Boolean] = entityRegionHoldings.mapValues(hasCertifiedResource)
+
+    // Now we filter  those entityRegion keys that is certified, converted it to set.
+    entityRegionToCertified.filter{ case (_, isCertified) => isCertified}.keys.toSet
   }
 
-  test("Should count IP addresses in different prefixes") {
-    val prefixes: Seq[IpRange] = List("10.0.0.0/24", "10.1.0.0/23")
-    AnnouncementStats.getNumberOfAddresses(prefixes) should equal (BigInteger.valueOf(256 + 512))
-  }
+  def regionActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResources : IpResourceSet): Map[String, Int] = {
 
+    val certifiedEntities: Set[EntityRegion] = certifiedEntityRegion(entityRegionHoldings, certifiedResources)
+    val regionActivation: Map[String, Int] = certifiedEntities.groupBy{ case (_, region) => region}.mapValues(_.size)
+
+    regionActivation
+  }
 }

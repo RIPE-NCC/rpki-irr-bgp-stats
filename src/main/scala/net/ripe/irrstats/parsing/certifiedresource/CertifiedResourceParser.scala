@@ -26,47 +26,26 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package net.ripe.irrstats.analysis
+package net.ripe.irrstats.parsing.certifiedresource
 
-import java.math.BigInteger
+import java.io.File
 
-import net.ripe.ipresource.Asn
-import net.ripe.irrstats.route.validation._
+import net.ripe.ipresource.{IpRange, IpResourceSet}
 
-import scala.collection.immutable.Iterable
+import scala.io.Source
 
-object AsnStatsAnalyser {
-  private def announcementsPerAsn(announcements: Seq[BgpValidatedAnnouncement]): Map[Asn, Seq[BgpValidatedAnnouncement]] = announcements.groupBy { ann => ann.asn }
-
-  def statsPerAsn(announcements: Seq[BgpValidatedAnnouncement]): Iterable[AsnStat] = {
-    announcementsPerAsn(announcements).map {
-      case (asn, an) => AsnStat.fromAnnouncements(asn, an)
-    }
-  }
-
-}
-
-case class AsnStat(asn: Asn,
-                   numberOfAnnouncements: Int, numberValidAnnouncements: Int, numberInvalidAnnouncements: Int,
-                   spaceAnnounced: BigInteger, spaceValid: BigInteger, spaceInvalid: BigInteger)
-
-object AsnStat {
-  def fromAnnouncements(asn: Asn, announcements: Seq[BgpValidatedAnnouncement]): AsnStat = {
-
-    val valids = announcements.filter { a => a.validity == RouteValidity.Valid }
-    val invalids = announcements.filter { a => a.validity == RouteValidity.InvalidAsn || a.validity == RouteValidity.InvalidLength }
-
-    def spaceFor(announcements: Seq[BgpValidatedAnnouncement]): BigInteger =
-      StatsUtil.addressesCount(announcements.map(_.prefix))
-
-    AsnStat(
-      asn,
-      announcements.size,
-      valids.size,
-      invalids.size,
-      spaceFor(announcements),
-      spaceFor(valids),
-      spaceFor(invalids)
-    )
-  }
+// Assume format:
+// Resource
+// prefix1
+// prefix2
+// prefix3
+// ...
+object CertifiedResourceParser {
+  def parse(certifiedResourceFile: File): IpResourceSet =
+    Source
+    .fromFile(certifiedResourceFile, "iso-8859-1")
+    .getLines.drop(1)
+    .map(line => IpRange.parse(line.replaceAll("\"","")))
+    .foldLeft(new IpResourceSet()) {
+      case (result, iprange) => result.add(iprange); result}
 }

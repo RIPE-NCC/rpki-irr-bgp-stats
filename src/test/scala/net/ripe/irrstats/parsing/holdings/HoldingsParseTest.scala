@@ -32,30 +32,49 @@ import java.io.File
 
 import net.ripe.ipresource.{IpResource, IpResourceSet}
 import org.scalatest.{FunSuite, Matchers}
-
+import Holdings._
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class ExtendedStatsTest extends FunSuite with Matchers {
+class HoldingsParseTest extends FunSuite with Matchers {
   
   test("Should parse IPv4") {
-    ExtendedStatsUtils.parseIpv4("213.154.64.0", "8192") should equal (IpResourceSet.parse("213.154.64.0/19"))
+    parseIpv4("213.154.64.0", "8192") should equal (IpResourceSet.parse("213.154.64.0/19"))
   }
+
+  private val file = new File(Thread.currentThread().getContextClassLoader.getResource("extended-delegated-stats.txt").getFile)
 
   test("Should parse extended delegated stats") {
 
-    val holdings = RIRHoldings.parse(new File(Thread.currentThread().getContextClassLoader().getResource("extended-delegated-stats.txt").getFile))
+    val holdings = RIRHoldings.parse(Holdings.read(file))
 
-    holdings.get("apnic").get.contains(IpResource.parse("1.0.0.0/24")) should be (true)
+    holdings("apnic").contains(IpResource.parse("1.0.0.0/24")) should be (true)
 
-    ExtendedStatsUtils.regionFor(IpResource.parse("1.0.0.0/24"), holdings) should equal("apnic")
-    ExtendedStatsUtils.regionFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
+    regionFor(IpResource.parse("1.0.0.0/24"), holdings) should equal("apnic")
+    regionFor(IpResource.parse("2.0.0.0/20"), holdings) should equal("ripencc")
   }
 
   test("Should parse country holding from extended delegated stats"){
-    val holdings = CountryHoldings.parse(new File(Thread.currentThread().getContextClassLoader().getResource("extended-delegated-stats.txt").getFile))
+    val holdings = CountryHoldings.parse(Holdings.read(file))
 
     val countries = holdings.keySet
     countries should be (Set("US", "AU", "GB", "FR", "EU", "IT", "JP", "CN"))
 
   }
 
+  test("Should parse entity holding from extended delegated stats"){
+    val (entityCountryHoldings: EntityRegionHoldings, _) = EntityHoldings.parse(Holdings.read(file))
+    val countryHoldings = CountryHoldings.parse(Holdings.read(file))
+
+    val entityCountryCombined = entityCountryHoldings.groupBy { case ((_, country), _) => country }
+      .mapValues { entry =>
+        val combined = new IpResourceSet()
+        entry.values.foreach(combined.addAll)
+        combined
+      }
+
+    // EntityRegion parser when grouped per country should be consistent with country holding parser.
+    countryHoldings.keys.foreach{ country =>
+      entityCountryCombined(country) should be(countryHoldings(country))
+    }
+
+  }
 }

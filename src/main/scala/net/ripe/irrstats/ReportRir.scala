@@ -28,8 +28,8 @@
  */
 package net.ripe.irrstats
 
-import net.ripe.irrstats.analysis.RegionStatsUtil
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
+import net.ripe.irrstats.analysis.RegionStats
+import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.RegionCsv
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
@@ -41,7 +41,7 @@ object ReportRir {
       RegionCsv.printHeader()
     }
 
-    val (rirStats, t) = Time.timed(new RegionStatsUtil(holdings, announcements, authorisations))
+    val (rirStats, t) = Time.timed(new RegionStats(holdings, announcements, authorisations))
 
     val rirs = if (rirString == "all") {
       holdings.keys
@@ -51,8 +51,28 @@ object ReportRir {
 
     rirs.par.foreach(rir => {
       val (stats, _) = Time.timed(rirStats.regionAnnouncementStats(rir))
-      RegionCsv.reportRegionQuality(rir, stats, dateString)
+      RegionCsv.reportRegionQuality(rir, stats, dateString, rirStats.regionAdoptionStats(rir))
     })
+  }
+
+  def reportAdoption(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings,
+              quiet: Boolean, dateString: String, rirString: String) = {
+
+    if (!quiet) {
+      RegionCsv.printAdoptionHeader("RIR")
+    }
+    
+    val (rirStats, t) = Time.timed(new RegionStats(holdings, announcements, authorisations))
+
+    val rirs = if (rirString == "all") {
+      holdings.keys.filterNot(_.contains("Reserved"))
+    } else {
+      List(rirString)
+    }
+
+    rirs.map(rir => rirStats.regionAdoptionStats(rir)).foreach { regionStat =>
+      RegionCsv.reportRegionAdoption(regionStat.region, dateString, regionStat)
+    }
   }
 
 }

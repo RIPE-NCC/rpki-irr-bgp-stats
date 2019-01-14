@@ -28,20 +28,42 @@
  */
 package net.ripe.irrstats.analysis
 
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.{Holdings, regionFor}
+import java.math.BigInteger
+
+import net.ripe.ipresource.IpResourceSet
+import net.ripe.irrstats.analysis.StatsUtil._
+import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
 
-class RegionStatsUtil(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
+case class RegionAdoptionStats(region: String, holdings: IpResourceSet, authorisation: IpResourceSet) {
 
-  val announcementsByRegion: Map[String, Seq[BgpAnnouncement]] = announcements.groupBy(ann => regionFor(ann.prefix, holdings))
-  val authorisationsByRegion: Map[String, Seq[RtrPrefix]] = authorisations.groupBy(pfx => regionFor(pfx.prefix, holdings))
+  val ipv4AuthCount = authorisation.ipv4ResourcesCounts()
+  val ipv4HoldingCount = holdings.ipv4ResourcesCounts()
 
-  implicit val actorSystem = akka.actor.ActorSystem()
+  val ipv4AuthSize = authorisation.ipv4AddressSize()
+  val ipv4HoldingSize = holdings.ipv4AddressSize()
+
+  val ipv4Adoption = safePercentage(ipv4AuthSize, ipv4HoldingSize)
+
+  val ipv6Authcount = authorisation.ipv4ResourcesCounts()
+  val ipv6HoldingCount = holdings.ipv4ResourcesCounts()
+  val ipv6AuthSize: BigInteger = authorisation.ipv6AddressSize()
+  val ipv6HoldingSize: BigInteger = holdings.ipv6AddressSize()
+  
+  val ipv6Adoption = safePercentage(ipv6AuthSize, ipv6HoldingSize)
+}
+
+class RegionStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix]) {
+
+  val announcementByRegion: collection.Map[String, Seq[BgpAnnouncement]] =
+    announcements.par.groupBy(ann => regionFor(ann.prefix, holdings)).mapValues(_.seq).seq
+
+  val authorisationByRegion: collection.Map[String, Seq[RtrPrefix]] =
+    authorisations.par.groupBy(pfx => regionFor(pfx.prefix, holdings)).mapValues(_.seq).seq
 
   def regionAnnouncementStats(region: String): ValidatedAnnouncementStats = {
-
-    val announcements = announcementsByRegion.getOrElse(region, Seq.empty)
-    val authorisations = authorisationsByRegion.getOrElse(region, Seq.empty)
+    val announcements = announcementByRegion.getOrElse(region, Seq.empty)
+    val authorisations = authorisationByRegion.getOrElse(region, Seq.empty)
 
     val validator = new BgpAnnouncementValidator()
     validator.startUpdate(announcements, authorisations)
@@ -50,14 +72,25 @@ class RegionStatsUtil(holdings: Holdings, announcements: Seq[BgpAnnouncement], a
     AnnouncementStats.analyseValidatedAnnouncements(validatedAnnouncements, authorisations.size)
   }
 
+  def regionAdoptionStats(region: String)  = {
+    val regionAuthorisation = new IpResourceSet()
+
+    authorisationByRegion.getOrElse(region, Seq.empty).map(_.prefix)
+      .foreach(regionAuthorisation.add)
+
+    val regionHolding: IpResourceSet = holdings(region)
+
+    RegionAdoptionStats(region, regionHolding, regionAuthorisation)
+  }
+
   def worldMapStats: Iterable[WorldMapCountryStat] = holdings.keys.par.map { cc =>
     WorldMapCountryStat.fromCcAndStats(cc, regionAnnouncementStats(cc))
   }.seq
 
   def worldStaleness: Map[String, StalenessStat] = holdings.keys.map { region =>
     region -> new BgpAnnouncementValidator().staleness(
-      announcementsByRegion.getOrElse(region, Seq.empty),
-      authorisationsByRegion.getOrElse(region, Seq.empty)
+      announcementByRegion.getOrElse(region, Seq.empty),
+      authorisationByRegion.getOrElse(region, Seq.empty)
     )
   }.toMap
 

@@ -28,25 +28,36 @@
  */
 package net.ripe.irrstats
 
-import net.ripe.irrstats.analysis.RegionStatsUtil
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
+import net.ripe.irrstats.analysis.RegionStats
+import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.{CountryDetails, RegionCsv}
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
 object ReportCountry {
 
-  def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, countryCode: String) = {
-    CountryDetails.printCountryAnnouncementReport(countryCode, new RegionStatsUtil(holdings, announcements, authorisations).regionAnnouncementStats(countryCode))
+  def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], countryHolding: Holdings, countryCode: String) = {
+    val countryStats = new RegionStats(countryHolding, announcements, authorisations)
+    CountryDetails.printCountryAnnouncementReport(countryCode, countryStats.regionAnnouncementStats(countryCode), countryStats.regionAdoptionStats(countryCode))
   }
 
-  def reportCountries(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String) = {
+  def reportCountries(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], countryHolding: Holdings, quiet: Boolean, dateString: String) = {
     if (! quiet) {
       RegionCsv.printHeader()
     }
 
-    val countryStats = new RegionStatsUtil(holdings, announcements, authorisations)
+    val countryStats = new RegionStats(countryHolding, announcements, authorisations)
 
-    holdings.keys.par.foreach(cc => RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString))
+    countryHolding.keys.par.foreach(cc => RegionCsv.reportRegionQuality(cc, countryStats.regionAnnouncementStats(cc), dateString, countryStats.regionAdoptionStats(cc)))
   }
 
+  def reportCountryAdoption(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix],
+                          countryHolding: Holdings, quiet: Boolean, dateString: String) = {
+    if (! quiet) {
+      RegionCsv.printAdoptionHeader("Country")
+    }
+
+    val countryStats = new RegionStats(countryHolding, announcements, authorisations)
+
+    countryHolding.keys.par.foreach(cc => RegionCsv.reportRegionAdoption(cc, dateString, countryStats.regionAdoptionStats(cc)))
+  }
 }

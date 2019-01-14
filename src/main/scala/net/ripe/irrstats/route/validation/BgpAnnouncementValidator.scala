@@ -107,7 +107,7 @@ object BgpAnnouncementValidator {
     prefix.maxPrefixLength.getOrElse(prefix.prefix.getPrefixLength) < announced.prefix.getPrefixLength
 }
 
-class BgpAnnouncementValidator(implicit actorSystem: akka.actor.ActorSystem) extends Logging {
+class BgpAnnouncementValidator() extends Logging {
 
   private val _validatedAnnouncements = Ref(IndexedSeq.empty[BgpValidatedAnnouncement])
 

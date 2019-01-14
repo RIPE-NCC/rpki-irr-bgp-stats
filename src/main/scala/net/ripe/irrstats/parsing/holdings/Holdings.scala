@@ -31,12 +31,24 @@ package net.ripe.irrstats.parsing.holdings
 import java.io.File
 
 import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet, Ipv4Address}
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
+import net.ripe.irrstats.parsing.holdings.Holdings._
 
+import scala.collection.mutable
 import scala.io.Source
 
+object Holdings {
 
-object ExtendedStatsUtils {
+
+  // Map of region to a set of resources
+  type Holdings = Map[String, IpResourceSet]
+
+  // A tuple that can be (OpaqueId, RIR), or (OpaqueId, Country)
+  type EntityRegion = (String, String)
+
+  // Resources belonging to an entity within certain region.
+  type EntityRegionHoldings = Map[EntityRegion, IpResourceSet]
+
+  def read(statsFile: File): Seq[String] = Source.fromFile(statsFile, "ASCII").getLines.toSeq
 
   def parseIpv4(base: String, addresses: String): IpResourceSet = {
     val baseAddress = Ipv4Address.parse(base)
@@ -52,19 +64,16 @@ object ExtendedStatsUtils {
     case _ => new IpResourceSet() // empty
   }
 
-  type Holdings = Map[String, IpResourceSet]
-
   def regionFor(resource: IpResource, holdings: Holdings): String = {
     holdings.find(_._2.contains(resource)).map(_._1).getOrElse("?")
   }
 }
 
-object RIRHoldings extends AnalysedHoldings {
 
-  import ExtendedStatsUtils._
+object RIRHoldings {
 
-  override def parse(statsFile: File): Holdings = {
-    
+  def parse(statLines: Seq[String]): Holdings = {
+
     val afrinic = new IpResourceSet()
     val afrinicReserved = new IpResourceSet()
     val apnic = new IpResourceSet()
@@ -75,10 +84,8 @@ object RIRHoldings extends AnalysedHoldings {
     val lacnicReserved = new IpResourceSet()
     val ripencc = new IpResourceSet()
     val ripenccReserved = new IpResourceSet()
-    
-    // Huge file, so prefer to parse line by line to save memory
-    Source.fromFile(statsFile, "ASCII").getLines.foreach { line =>
-      val tokens = line.split('|')
+
+    AnalysedHoldings.parse(statLines) { tokens =>
 
       if (tokens.length >= 7) {
         tokens(6) match {
@@ -103,46 +110,77 @@ object RIRHoldings extends AnalysedHoldings {
       }
     }
 
-    
-    Map( "afrinic" -> afrinic, "apnic" -> apnic, "arin" -> arin, "lacnic" -> lacnic, "ripencc" -> ripencc,
-         "afrinicReserved" -> afrinicReserved, "apnicReserved" -> apnicReserved, "arinReserved" -> arinReserved, "lacnicReserved" -> lacnicReserved, "ripenccReserved" -> ripenccReserved )
+    Map("afrinic" -> afrinic, "apnic" -> apnic, "arin" -> arin, "lacnic" -> lacnic, "ripencc" -> ripencc,
+      "afrinicReserved" -> afrinicReserved, "apnicReserved" -> apnicReserved, "arinReserved" -> arinReserved, "lacnicReserved" -> lacnicReserved, "ripenccReserved" -> ripenccReserved)
   }
-  
 
-  
+
 }
 
 /**
   * Finds all the resources 'assigned' by RIRs per country
   */
-object CountryHoldings extends AnalysedHoldings {
+object CountryHoldings {
 
-  import ExtendedStatsUtils._
-
-  override def parse(statsFile: File): Holdings = {
-
+  def parse(statLines: Seq[String]): Holdings = {
     val countryMap = collection.mutable.Map[String, IpResourceSet]()
-
-    // Huge file, so prefer to parse line by line to save memory
-    Source.fromFile(statsFile, "ASCII").getLines.foreach { line =>
-      val tokens = line.split('|')
-
-      if (tokens.length >= 7 && tokens(6) == "assigned") {
-        val cc = tokens(1)
-
-        if (!countryMap.contains(cc)) {
-          countryMap += (cc -> new IpResourceSet())
-        }
-
-        countryMap(cc).addAll(parseResourceLine(tokens))
-      }
+    AnalysedHoldings.parse(statLines) { tokens =>
+      tokenConsumer(countryMap, tokens)
     }
+    countryMap.toMap
+  }
 
-    countryMap.toMap // make this immutable when we're done
+  def tokenConsumer(countryMap: mutable.Map[String, IpResourceSet], tokens: Array[String]) = {
+    if (tokens.length >= 7 && tokens(6) == "assigned") {
+      val cc = tokens(1)
+      if (!countryMap.contains(cc)) {
+        countryMap += (cc -> new IpResourceSet())
+      }
+      countryMap(cc).addAll(parseResourceLine(tokens))
+    }
   }
 }
 
 
-sealed trait AnalysedHoldings {
-  def parse(statsFile: File): Holdings = ???
+/**
+  * Finds all the resources 'assigned' by RIRs per country
+  */
+object EntityHoldings {
+
+  def parse(statLines: Seq[String]): (EntityRegionHoldings, EntityRegionHoldings) = {
+    val entityCountryMap = mutable.Map[EntityRegion, IpResourceSet]()
+    val entityRIRMap = mutable.Map[EntityRegion, IpResourceSet]()
+    AnalysedHoldings.parse(statLines) { tokens =>
+      tokenConsumer(entityCountryMap, entityRIRMap, tokens)
+    }
+    (entityCountryMap.toMap, entityRIRMap.toMap)
+  }
+
+  def tokenConsumer(entityCountryMap: mutable.Map[EntityRegion, IpResourceSet],
+                    entityRIRMap: mutable.Map[EntityRegion, IpResourceSet],
+                    tokens: Array[String]) = {
+      if (tokens.length >= 8 && tokens(6) == "assigned") {
+        val rir = tokens(0)
+        val country = tokens(1)
+        val entity = tokens(7)
+
+        if (!entityCountryMap.contains((entity, country))) {
+          entityCountryMap += ((entity, country) -> new IpResourceSet())
+        }
+        entityCountryMap((entity, country)).addAll(parseResourceLine(tokens))
+
+        if (!entityRIRMap.contains((entity, rir))) {
+          entityRIRMap += ((entity, rir) -> new IpResourceSet())
+        }
+        entityRIRMap((entity, rir)).addAll(parseResourceLine(tokens))
+      }
+  }
+}
+
+object AnalysedHoldings {
+  def parse[T](statLines: Seq[String])(consumeTokens: Array[String] => T): Unit =
+    statLines.foreach { line =>
+      consumeTokens(line.split('|'))
+    }
+
 }

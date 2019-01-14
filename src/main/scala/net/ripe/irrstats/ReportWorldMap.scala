@@ -28,17 +28,17 @@
  */
 package net.ripe.irrstats
 
-import net.ripe.irrstats.analysis.RegionStatsUtil
-import net.ripe.irrstats.parsing.holdings.ExtendedStatsUtils.Holdings
+import net.ripe.irrstats.analysis.RegionStats
+import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.WorldMapPage
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix, StalenessStat}
 
 object ReportWorldMap {
 
   def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings) = {
-    val regionStatsUtil = new RegionStatsUtil(holdings, announcements, authorisations)
-    val countryStats = regionStatsUtil.worldMapStats
-    val staleness = regionStatsUtil.worldStaleness
+    val regionStats = new RegionStats(holdings, announcements, authorisations)
+    val countryStats = regionStats.worldMapStats
+    val staleness = regionStats.worldStaleness
 
     val prefixesAdoptionValues = countryStats.withFilter(cs => cs.prefixesAdoption.isDefined).map { cs => cs.countryCode -> cs.prefixesAdoption.get }.toMap
     val prefixesValidValues = countryStats.withFilter(cs => cs.prefixesValid.isDefined).map { cs => cs.countryCode -> cs.prefixesValid.get }.toMap

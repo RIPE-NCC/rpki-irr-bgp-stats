@@ -1,0 +1,249 @@
+<!--
+
+    Copyright (c) 2015-2107 RIPE NCC
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+      - Redistributions of source code must retain the above copyright notice,
+        this list of conditions and the following disclaimer.
+      - Redistributions in binary form must reproduce the above copyright notice,
+        this list of conditions and the following disclaimer in the documentation
+        and/or other materials provided with the distribution.
+      - Neither the name of this software, nor the names of its contributors, nor
+        the names of the contributors' employers may be used to endorse or promote
+        products derived from this software without specific prior written
+        permission.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+    ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+    LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+    CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+    SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+    INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
+
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="https://www.ripe.net/jquery.js"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+
+          google.load('visualization', '1', {packages: ['geochart', 'table', 'corechart']});
+          google.setOnLoadCallback(drawMap);
+
+          function drawMap() {
+
+            // IPv4 Country Adoption Map
+
+            var ipv4_country_adoption = google.visualization.arrayToDataTable([
+              ['Country', '% Adoption'],
+              //***IPV4_COUNTRY_ADOPTION***//
+            ]);
+            ipv4_country_adoption.sort({column: 1, desc: true});
+
+            var ipv4_country_adoption_option = {
+              width: 900,
+              keepAspectRatio: true,
+              title: 'Country IPv4 adoption',
+              colorAxis: { colors: ['#ff0000','#ce0000','#b60000','#0011ff','#050096']}
+            };
+
+            var ipv4_country_adoption_chart = new google.visualization.GeoChart(document.getElementById('ipv4_country_adoption_map'));
+            ipv4_country_adoption_chart.draw(ipv4_country_adoption, ipv4_country_adoption_option);
+
+            var ipv4_country_adoption_table = new google.visualization.Table(document.getElementById('ipv4_country_adoption_table'));
+            ipv4_country_adoption_table.draw(ipv4_country_adoption,{width:'100%', height:'500px'});
+
+            var ipv4_country_adoption_bubble_data = google.visualization.arrayToDataTable([
+              ['Country', 'Activation', '% Adoption', 'Address Size',  'Counts'],
+              //***IPV4_COUNTRY_ADOPTION_BUBBLE***//
+            ]);
+            var ipv4_country_adoption_bubble = new google.visualization.BubbleChart(document.getElementById('ipv4_country_adoption_bubble'));
+            ipv4_country_adoption_bubble.draw(ipv4_country_adoption_bubble_data, {
+              width: 1500,
+              height: 900,
+              hAxis: {title: 'Activation'},
+              vAxis: {title: '% Adoption'},
+              bubble: {textStyle: {fontSize: 11}}
+            });
+
+            // IPv6 Country Adoption Map
+
+            var ipv6_country_adoption = google.visualization.arrayToDataTable([
+              ['Country', '% Adoption'],
+              //***IPV6_COUNTRY_ADOPTION***//
+            ]);
+            ipv6_country_adoption.sort({column: 1, desc: true});
+
+            var ipv6_country_adoption_option = {
+              width: 900,
+              keepAspectRatio: true,
+              title: 'Country IPv6 adoption',
+              colorAxis: { colors: ['#ff0000','#ce0000','#b60000','#0011ff','#050096']}
+            };
+
+            var ipv6_country_adoption_chart = new google.visualization.GeoChart(document.getElementById('ipv6_country_adoption_map'));
+            ipv6_country_adoption_chart.draw(ipv6_country_adoption, ipv6_country_adoption_option);
+
+            var ipv6_country_adoption_table = new google.visualization.Table(document.getElementById('ipv6_country_adoption_table'));
+            ipv6_country_adoption_table.draw(ipv6_country_adoption,{width:'100%', height:'500px'});
+
+            var ipv6_country_adoption_bubble_data = google.visualization.arrayToDataTable([
+              ['Country', 'Activation', '% Adoption', 'Address Size', 'Counts'],
+              //***IPV6_COUNTRY_ADOPTION_BUBBLE***//
+            ]);
+            var ipv6_country_adoption_bubble = new google.visualization.BubbleChart(document.getElementById('ipv6_country_adoption_bubble'));
+            ipv6_country_adoption_bubble.draw(ipv6_country_adoption_bubble_data, {
+              width: 1500,
+              height: 900,
+              hAxis: {title: 'Activation'},
+              vAxis: {title: '% Adoption'},
+              bubble: {textStyle: {fontSize: 11}}
+            });
+            
+            // IPv4 RIR Adoption Map
+
+            var ipv4_RIR_adoption = google.visualization.arrayToDataTable([
+              ['Region Code', 'Continent', '% Adoption'],
+              //***IPV4_RIR_ADOPTION***//
+            ]);
+
+            var ipv4_RIR_adoption_table_data = google.visualization.arrayToDataTable([
+              ['RIR', '% Adoption'],
+              //***IPV4_RIR_ADOPTION_TABLE***//
+            ]);
+
+            ipv4_RIR_adoption_table_data.sort({column: 1, desc: true});
+
+            var ipv4_RIR_adoption_option = {
+              width: 900,
+              resolution: 'subcontinents',
+              keepAspectRatio: true,
+              title: 'RIR IPv4 adoption',
+              colorAxis: { colors: ['#ff0000','#ce0000','#b60000','#0011ff','#050096']}
+            };
+
+            var ipv4_RIR_adoption_chart = new google.visualization.GeoChart(document.getElementById('ipv4_RIR_adoption_map'));
+            ipv4_RIR_adoption_chart.draw(ipv4_RIR_adoption, ipv4_RIR_adoption_option);
+
+            var ipv4_RIR_adoption_table = new google.visualization.Table(document.getElementById('ipv4_RIR_adoption_table'));
+            ipv4_RIR_adoption_table.draw(ipv4_RIR_adoption_table_data, {width:'100%', height:'500px'});
+
+            // IPv6 RIR Adoption Map
+
+            var ipv6_RIR_adoption = google.visualization.arrayToDataTable([
+              ['Region Code', 'Continent', '% Adoption'],
+              //***IPV6_RIR_ADOPTION***//
+            ]);
+
+            var ipv6_RIR_adoption_table_data = google.visualization.arrayToDataTable([
+              ['RIR', '% Adoption'],
+              //***IPV6_RIR_ADOPTION_TABLE***//
+            ]);
+            ipv6_RIR_adoption_table_data.sort({column: 1, desc: true});
+            var ipv6_RIR_adoption_option = {
+              width: 900,
+              resolution: 'subcontinents',
+              keepAspectRatio: true,
+              title: 'RIR IPv6 adoption',
+              colorAxis: { colors: ['#ff0000','#ce0000','#b60000','#0011ff','#050096']}
+            };
+
+            var ipv6_RIR_adoption_chart = new google.visualization.GeoChart(document.getElementById('ipv6_RIR_adoption_map'));
+            ipv6_RIR_adoption_chart.draw(ipv6_RIR_adoption, ipv6_RIR_adoption_option);
+
+            var ipv6_RIR_adoption_table = new google.visualization.Table(document.getElementById('ipv6_RIR_adoption_table'));
+            ipv6_RIR_adoption_table.draw(ipv6_RIR_adoption_table_data, {width:'100%', height:'500px'});
+
+          }
+
+          $(document).ready(function() {
+            $("select").change(function() {
+              $(this).find("option:selected").each(function() {
+                if ("ipv4c" === $(this).attr("value")) {
+                  $(".graph").not(".ipv4c").hide();
+                  $(".ipv4c").show();
+                } else if ("ipv6c" === $(this).attr("value")) {
+                  $(".graph").not(".ipv6c").hide();
+                  $(".ipv6c").show();
+                } else if ("ipv4r" === $(this).attr("value")) {
+                  $(".graph").not(".ipv4r").hide();
+                  $(".ipv4r").show();
+                } else if ("ipv6r" === $(this).attr("value")) {
+                  $(".graph").not(".ipv6r").hide();
+                  $(".ipv6r").show();
+                } else if ("ipv4b" === $(this).attr("value")) {
+                  $(".graph").not(".ipv4b").hide();
+                  $(".ipv4b").show();
+                } else if ("ipv6b" === $(this).attr("value")) {
+                  $(".graph").not(".ipv6b").hide();
+                  $(".ipv6b").show();
+                }
+              });
+            }).change();
+          });
+        </script>
+    </head>
+    <body>
+    <table>
+        <tr >
+            <p>Select a graph:
+                <select id="type_select_selector">
+                    <option value="ipv4c">IPv4 country adoption</option>
+                    <option value="ipv6c">IPv6 country adoption</option>
+                    <option value="ipv4b">IPv4 country adoption vs activation</option>
+                    <option value="ipv6b">IPv6 country adoption vs activation</option>
+                    <option value="ipv4r">IPv4 RIR adoption</option>
+                    <option value="ipv6r">IPv6 RIR adoption</option>
+                </select>
+            <p><b>Adoption %</b> is percentage of address size covered by ROAs within a region.
+                Address size is count of unique IP addresses within aggregated prefix in a region, which can be RIR or Country.</p>
+            <p><b>Activation</b> indicates number active entity within a region. An entity is active in a region if it
+                has created certificate and hold a resource in the region, regardless whether it has created any ROAs.
+            </p>
+        </tr>
+         <tr>
+            <div id="ipv4_country_adoption" class="graph ipv4c">
+                <h3 style="text-align: center">Country IPv4 Adoption</h3>
+                <div id="ipv4_country_adoption_map" style="float:left;"></div>
+                <div id="ipv4_country_adoption_table" style="float:right;width:20%" ></div>
+            </div>
+
+            <div id="ipv4_country_adoption_b" class="graph ipv4b">
+                <h3 style="text-align: center">Country IPv4 Adoption vs Activation</h3>
+                <div id="ipv4_country_adoption_bubble"></div>
+            </div>
+
+            <div id="ipv6_country_adoption" class="graph ipv6c">
+                <h3 style="text-align: center">Country IPv6 Adoption </h3>
+                <div id="ipv6_country_adoption_map" style="float:left;"></div>
+                <div id="ipv6_country_adoption_table" style="float:right;width:20%"></div>
+            </div>
+
+            <div id="ipv6_country_adoption_b" class="graph ipv6b">
+                <h3 style="text-align: center">Country IPv6 Adoption vs Activation</h3>
+                <div id="ipv6_country_adoption_bubble"></div>
+            </div>
+
+            <div id="ipv4_RIR_adoption" class="graph ipv4r">
+                <h3 style="text-align: center">RIR IPv4 Adoption </h3>
+                <div id="ipv4_RIR_adoption_map" style="float:left;"></div>
+                <div id="ipv4_RIR_adoption_table" style="float:right;width:20%"></div>
+            </div>
+
+            <div id="ipv6_RIR_adoption" class="graph ipv6r">
+                <h3 style="text-align: center">RIR IPv6 Adoption </h3>
+                <div id="ipv6_RIR_adoption_map" style="float:left;"></div>
+                <div id="ipv6_RIR_adoption_table" style="float:right;width:20%"></div>
+            </div>
+         </tr>
+    </table>
+    </body>
+</html>

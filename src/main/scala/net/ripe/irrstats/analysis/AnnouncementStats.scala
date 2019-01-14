@@ -30,10 +30,9 @@ package net.ripe.irrstats.analysis
 
 import java.math.BigInteger
 
-import net.ripe.ipresource.{IpRange, IpResourceSet}
+import net.ripe.irrstats.analysis.StatsUtil._
 import net.ripe.irrstats.route.validation.{BgpValidatedAnnouncement, RouteValidity}
 
-import scala.collection.JavaConverters._
 
 case class WorldMapCountryStat(countryCode: String,
                                prefixesAdoption: Option[Double], prefixesValid: Option[Double], prefixesMatching: Option[Double],
@@ -59,17 +58,6 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
                                       numberOfAuthorisations: Int
                                      ) {
 
-  private def safePercentage(fraction: BigInteger, total: BigInteger): Option[Double] = {
-    if (total == BigInteger.ZERO) {
-      None
-    } else {
-      Some(fraction.doubleValue / total.doubleValue)
-    }
-  }
-
-  private def safePercentage(fraction: Int, total: Int): Option[Double] =
-    safePercentage(BigInteger.valueOf(fraction), BigInteger.valueOf(total))
-
   private def safePercentageIpSpace(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.numberOfIps, combined.numberOfIps)
   private def safePercentageAnnouncements(fraction: ValidatedAnnouncementStat) = safePercentage(fraction.count, combined.count)
 
@@ -81,8 +69,10 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
   def percentageInvalidAsn: Option[Double] = safePercentageAnnouncements(invalidAsn)
 
   def percentageUnknown: Option[Double] = safePercentageAnnouncements(unknown)
-  def percentageAdoptionCount: Option[Double] = safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
-  def percentageAdoptionAddresses: Option[Double] = safePercentage(valid.numberOfIps.add(invalidAsn.numberOfIps).add(invalidLength.numberOfIps), combined.numberOfIps)
+  def percentageAdoptionCount: Option[Double] =
+    safePercentage(valid.count + invalidAsn.count + invalidLength.count, combined.count)
+  def percentageAdoptionAddresses: Option[Double] =
+    safePercentage(valid.numberOfIps.add(invalidAsn.numberOfIps).add(invalidLength.numberOfIps), combined.numberOfIps)
 
   def percentageSpaceValid: Option[Double] = safePercentageIpSpace(valid)
   def percentageSpaceInvalidLength: Option[Double] = safePercentageIpSpace(invalidLength)
@@ -93,13 +83,6 @@ case class ValidatedAnnouncementStats(announcements: Seq[BgpValidatedAnnouncemen
 
 object AnnouncementStats {
 
-  def getNumberOfAddresses(prefixes: Seq[IpRange]): BigInteger = {
-    val resourceSet = new IpResourceSet()
-    prefixes.foreach(pfx => resourceSet.addAll(new IpResourceSet(pfx)))
-    resourceSet.iterator().asScala.foldLeft(BigInteger.ZERO)((r, c) => {
-      r.add(c.getEnd.getValue.subtract(c.getStart.getValue).add(BigInteger.ONE))
-    })
-  }
 
   def analyseValidatedAnnouncements(announcements: Seq[BgpValidatedAnnouncement], numberOfAuthorisations: Int): ValidatedAnnouncementStats = {
 
@@ -110,13 +93,13 @@ object AnnouncementStats {
 
     ValidatedAnnouncementStats(
       announcements = announcements,
-      combined = ValidatedAnnouncementStat(announcements.size, getNumberOfAddresses(announcements.map(_.prefix))),
+      combined = ValidatedAnnouncementStat(announcements.size, addressesCount(announcements.map(_.prefix))),
       covered = ValidatedAnnouncementStat(valid.size + invalidLength. size + invalidAsn.size,
-                                          getNumberOfAddresses(valid.map(_.prefix) ++ invalidLength.map(_.prefix) ++ invalidAsn.map(_.prefix))),
-      valid = ValidatedAnnouncementStat(valid.size, getNumberOfAddresses(valid.map(_.prefix))),
-      invalidLength = ValidatedAnnouncementStat(invalidLength.size, getNumberOfAddresses(invalidLength.map(_.prefix))),
-      invalidAsn = ValidatedAnnouncementStat(invalidAsn.size, getNumberOfAddresses(invalidAsn.map(_.prefix))),
-      unknown = ValidatedAnnouncementStat(unknown.size, getNumberOfAddresses(unknown.map(_.prefix))),
+                                          addressesCount(valid.map(_.prefix) ++ invalidLength.map(_.prefix) ++ invalidAsn.map(_.prefix))),
+      valid = ValidatedAnnouncementStat(valid.size, addressesCount(valid.map(_.prefix))),
+      invalidLength = ValidatedAnnouncementStat(invalidLength.size, addressesCount(invalidLength.map(_.prefix))),
+      invalidAsn = ValidatedAnnouncementStat(invalidAsn.size, addressesCount(invalidAsn.map(_.prefix))),
+      unknown = ValidatedAnnouncementStat(unknown.size, addressesCount(unknown.map(_.prefix))),
       numberOfAuthorisations = numberOfAuthorisations
     )
   }
