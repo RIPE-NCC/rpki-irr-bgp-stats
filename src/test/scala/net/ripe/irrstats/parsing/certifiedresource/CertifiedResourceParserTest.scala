@@ -37,13 +37,16 @@ import scala.collection.JavaConverters._
 @org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
 class CertifiedResourceParserTest extends FunSuite with Matchers {
 
-  test("Should parse certified.csv") {
+  test("Should parse map certified.csv") {
     val roaTestFile = new File(Thread.currentThread().getContextClassLoader().getResource("certified.csv").getFile)
-    val certifiedResources = CertifiedResourceParser.parse(roaTestFile).iterator().asScala.map(_.toString).toSet
+    val certifiedResources = CertifiedResourceParser.parseMap(roaTestFile)
 
-    certifiedResources should contain ("1.0.1.0/24")
-    certifiedResources should contain ("2001:200::/35")
-    certifiedResources should contain ("2.0.0.0/20")
+    val ski1 = certifiedResources("CN=CN1").asScala.map(_.toString).toSet
+    val ski2 = certifiedResources("SN=1, CN=2").asScala.map(_.toString).toSet
+
+    ski1 should contain ("200.10.154.0/24")
+    ski1 should contain ("2801:0:210::/48")
+    ski2 should contain ("103.107.236.0/22")
   }
 
 }
