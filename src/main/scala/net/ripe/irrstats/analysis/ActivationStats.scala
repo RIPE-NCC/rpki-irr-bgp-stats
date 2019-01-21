@@ -29,31 +29,43 @@
 package net.ripe.irrstats.analysis
 
 import net.ripe.ipresource.IpResourceSet
+import net.ripe.irrstats.Time
 import net.ripe.irrstats.analysis.StatsUtil._
-import net.ripe.irrstats.parsing.holdings.Holdings.{EntityRegion, EntityRegionHoldings}
+import net.ripe.irrstats.parsing.holdings.Holdings.{CertificateResources, EntityRegion, EntityRegionHoldings}
+
+import scala.collection.mutable
 
 object ActivationStats {
 
-  // Compute set of (Entity, Region) pairs that has at least one certified resource.
-  def certifiedEntityRegion(entityRegionHoldings: EntityRegionHoldings,
-                            certifiedSet : IpResourceSet) : Set[EntityRegion] = {
+  def regionActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResourcesMap: CertificateResources): Map[String, Int] = {
+    val certSubjectAndEntityRegionListMap  = mutable.Map[String, List[EntityRegion]]().withDefaultValue(List())
+    var counter = 0
+    val total = entityRegionHoldings.size
 
-    def hasCertifiedResource(resourceSet: IpResourceSet) : Boolean =
-      resourceSet.resources().exists(certifiedSet.contains)
+    def checkAndUpdateSubject( entityRegion: EntityRegion, resources: IpResourceSet): Unit = {
+         certifiedResourcesMap.par.foreach { case (subject, certifiedResources) =>
+           if(certifiedResources.hasCommonResourceWith(resources))
+             certSubjectAndEntityRegionListMap(subject) ::= entityRegion
+         }
+    }
 
-    // Before this mapValues we have EntityRegion -> IPResourceSet,
-    // now we know which entity region pair having at least one certified resource.
-    val entityRegionToCertified: Map[EntityRegion, Boolean] = entityRegionHoldings.mapValues(hasCertifiedResource)
+    val (activationResult, time) = Time.timed {
+      entityRegionHoldings.par.foreach {
+        case (entityRegion, resources) => {
+          counter += 1
+          if (counter % 100 == 0) System.err.println(s"Entity processed : $counter out of $total")
+          checkAndUpdateSubject(entityRegion, resources)
+        }
+      }
 
-    // Now we filter  those entityRegion keys that is certified, converted it to set.
-    entityRegionToCertified.filter{ case (_, isCertified) => isCertified}.keys.toSet
-  }
+      val entityRegionsWithCertifiedWithSingleCertSubject = certSubjectAndEntityRegionListMap.filter(_._2.size == 1).values.map(_.head)
+      val regionActivation = entityRegionsWithCertifiedWithSingleCertSubject.groupBy(_._2).mapValues(_.size)
 
-  def regionActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResources : IpResourceSet): Map[String, Int] = {
+      regionActivation
+    }
 
-    val certifiedEntities: Set[EntityRegion] = certifiedEntityRegion(entityRegionHoldings, certifiedResources)
-    val regionActivation: Map[String, Int] = certifiedEntities.groupBy{ case (_, region) => region}.mapValues(_.size)
+    System.err.println(s"Elapsed time for activation calculation $time")
+    activationResult
 
-    regionActivation
   }
 }
