@@ -76,4 +76,25 @@ class StatsUtilTest extends FunSuite with Matchers {
     StatsUtil.safePercentage(2, 10) should be(Some(0.2))
     StatsUtil.safePercentage(2, 0) should be(None)
   }
+
+  test("Should check if two resources set has common resources."){
+    val prefixes1: Seq[IpRange] = List("10.0.0.0/24", "11.0.0.0/24", "12.0.0.0/24")
+    val set1 = new IpResourceSet().addAll(prefixes1)
+
+    val prefixes2: Seq[IpRange] = List("10.0.0.0/24", "13.0.0.0/24")
+    val set2 = new IpResourceSet().addAll(prefixes2)
+
+    val prefixes3: Seq[IpRange] = List("13.0.0.0/23")
+    val set3 = new IpResourceSet().addAll(prefixes3)
+
+    set1.hasCommonResourceWith(set2) should be(true)
+    set2.hasCommonResourceWith(set1) should be(true)
+
+    set1.hasCommonResourceWith(set3) should be(false)
+    set3.hasCommonResourceWith(set1) should be(false)
+
+    set3.hasCommonResourceWith(set2) should be(true)
+    set2.hasCommonResourceWith(set3) should be(true)
+  }
+
 }
