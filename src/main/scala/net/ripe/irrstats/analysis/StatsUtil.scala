@@ -125,14 +125,16 @@ object StatsUtil {
 
     def hasCommonResourceWith(thatSet: IpResourceSet): Boolean = {
 
+      def nextOrNull(iter : Iterator[IpResource]) = if (iter.hasNext) iter.next else null
+
       // These iterators are sorter by IpResource range end.
       val thatIter: Iterator[IpResource] = thatSet.resources()
+
       val thisIter: Iterator[IpResource] = resources()
 
-      var thatResource = thatIter.next()
-      var thisResource = thisIter.next()
+      var thatResource = nextOrNull(thatIter)
 
-      def nextOrNull(iter : Iterator[IpResource]) = if (iter.hasNext) iter.next else null
+      var thisResource = nextOrNull(thisIter)
 
       // Same logic as in IpResourceSet.retainAll, we just terminate successfully if there is any intersection.
       while (thatResource != null && thisResource != null) {

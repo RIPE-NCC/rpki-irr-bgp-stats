@@ -46,6 +46,7 @@ class CertifiedResourceParserTest extends FunSuite with Matchers {
 
     ski1 should contain ("200.10.154.0/24")
     ski1 should contain ("2801:0:210::/48")
+    ski1 should contain ("AS12345")
     ski2 should contain ("103.107.236.0/22")
   }
 

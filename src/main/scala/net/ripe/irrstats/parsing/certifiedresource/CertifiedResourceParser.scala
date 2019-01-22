@@ -56,20 +56,17 @@ object CertifiedResourceParser {
         val ski = skiResource(0).replaceAll("\"","")
         val ranges = skiResource(1).trim.replaceAll("\"","").split(",").map(_.trim)
         ranges.foreach { range =>
-          if(!range.startsWith("AS")){
-            try {
-              val resource = IpRange.parse(range)
-              if(!result.contains(ski)) {
-                result(ski) = new IpResourceSet()
-              }
-              result(ski).add(resource)
-            } catch {
-              case e => System.err.println(s"Failed parsing $line")
+          try {
+            val resource = IpResourceSet.parse(range)
+            if (!result.contains(ski)) {
+              result(ski) = new IpResourceSet()
             }
-
+            result(ski).addAll(resource)
+          } catch {
+            case e => System.err.println(s"Failed parsing $line")
           }
-
         }
+
       })
     System.err.println("Done parsing Certificates")
     result.toMap
