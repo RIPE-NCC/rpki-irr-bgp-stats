@@ -33,19 +33,22 @@ import net.ripe.irrstats.Time
 import net.ripe.irrstats.analysis.StatsUtil._
 import net.ripe.irrstats.parsing.holdings.Holdings.{CertificateResources, EntityRegion, EntityRegionHoldings}
 
-import scala.collection.mutable
+import scala.collection.parallel.mutable
 
 object ActivationStats {
 
-  def regionActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResourcesMap: CertificateResources): Map[String, Int] = {
-    val certSubjectAndEntityRegionListMap  = mutable.Map[String, List[EntityRegion]]().withDefaultValue(List())
+  def regionActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResourcesMap: CertificateResources) = {
     var counter = 0
     val total = entityRegionHoldings.size
 
+    val certSubjectAndEntityRegionListMap  = mutable.ParHashMap[String, List[EntityRegion]]().withDefaultValue(List())
+
     def checkAndUpdateSubject( entityRegion: EntityRegion, resources: IpResourceSet): Unit = {
          certifiedResourcesMap.par.foreach { case (subject, certifiedResources) =>
-           if(certifiedResources.hasCommonResourceWith(resources))
-             certSubjectAndEntityRegionListMap(subject) ::= entityRegion
+           if(certifiedResources.hasCommonResourceWith(resources)) {
+             val updatedList = entityRegion :: certSubjectAndEntityRegionListMap(subject)
+             certSubjectAndEntityRegionListMap.updated(subject, updatedList)
+           }
          }
     }
 
@@ -65,7 +68,7 @@ object ActivationStats {
     }
 
     System.err.println(s"Elapsed time for activation calculation $time")
-    activationResult
+    activationResult.seq
 
   }
 }

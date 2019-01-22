@@ -81,9 +81,9 @@ class ActivationStatsTest extends FunSuite with Matchers {
   )
 
   test("Should calculate activation ") {
-    val activation: Map[String, Int] = ActivationStats.regionActivation(entityRegionHoldings, certifiedSet)
+    val activation = ActivationStats.regionActivation(entityRegionHoldings, certifiedSet)
 
     activation("ID") should be(1)
-    activation.keySet should contain only ("ID")
+    activation.keySet should contain only "ID"
   }
 }
