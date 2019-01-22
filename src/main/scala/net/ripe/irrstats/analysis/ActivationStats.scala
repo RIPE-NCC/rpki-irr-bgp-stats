@@ -53,7 +53,7 @@ object ActivationStats {
     }
 
     val (activationResult, time) = Time.timed {
-      entityRegionHoldings.par.foreach {
+      entityRegionHoldings.foreach {
         case (entityRegion, resources) => {
           counter += 1
           if (counter % 100 == 0) System.err.println(s"Entity processed : $counter out of $total")

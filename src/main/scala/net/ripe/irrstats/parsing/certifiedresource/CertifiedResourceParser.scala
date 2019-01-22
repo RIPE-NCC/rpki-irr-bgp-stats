@@ -63,7 +63,7 @@ object CertifiedResourceParser {
             }
             result(ski).addAll(resource)
           } catch {
-            case e => System.err.println(s"Failed parsing $line")
+            case e : Throwable => System.err.println(s"Failed parsing $line")
           }
         }
 
