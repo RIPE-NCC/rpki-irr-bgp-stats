@@ -31,12 +31,16 @@
 
 rpki_stats_bin='/home/app-admin/cert-stats/world-stats/irrstats-0.1-SNAPSHOT/rpki-irr-bgp-stats'
 stats_dir='/ncc/archive2/certstats/rpki-bgp'
+stats_dir_nro='/ncc/archive2/certstats/rpki-bgp-nro'
+
 DD=`date +%Y/%m/%d`
 
 today_dir="$stats_dir/$DD"
+today_dir_nro="$stats_dir_nro/$DD"
 
-echo "Creating todays dir $today_dir"
+echo "Creating todays dirs $today_dir and $today_dir_nro"
 mkdir -p $today_dir
+mkdir -p $today_dir_nro
 
 ipv4_bgp_dump="http://www.ris.ripe.net/dumps/riswhoisdump.IPv4.gz";
 validator_url="https://rpki-validator.prepdev.ripe.net"
@@ -44,7 +48,7 @@ nro_ext_stats="https://www.nro.net/wp-content/uploads/apnic-uploads/delegated-ex
 
 function exit_if_no_file() {
   if [ ! -s $1 ]; then
-    echo "Oops, file $1 wasn't downloaded, cannot continue" 1>&2
+    echo "Oops, file $1 wasn't downloaded, cannot continue"
     exit 1;
   fi
 }
@@ -65,57 +69,58 @@ all_roas="$validator_url/api/export.csv"
 wget --quiet --header="Accept: text/csv" -O all-roas.csv $all_roas
 exit_if_no_file all-roas.csv
 
-echo "Getting certified resources from validator 3";
-certified_resources="$validator_url/api/rpki-objects/certified.csv"
-wget --quiet --header="Accept: text/csv" -O certified.csv $certified_resources
-exit_if_no_file certified.csv
 
-common_args="-b $today_dir/risdump-ipv4.txt -s $today_dir/nro-ext-stats.txt -r $today_dir/all-roas.csv -f $today_dir/certified.csv"
+echo "Getting certified resources from validator 3";
+certified_resources="$validator_url/api/rpki-objects/certificates.csv"
+wget --quiet --header="Accept: text/csv" -O $today_dir_nro/certificates.csv $certified_resources
+exit_if_no_file $today_dir_nro/certificates.csv
+
+common_args="-b $today_dir/risdump-ipv4.txt -s $today_dir/nro-ext-stats.txt -r $today_dir/all-roas.csv -f $today_dir_nro/certificates.csv"
 
 echo "Generating country adoption"
-$rpki_stats_bin $common_args --country-adoption > $today_dir/country-adoption.csv
-cat $today_dir/country-adoption.csv | column -s',' -t  > $today_dir/country-adoption.txt
+$rpki_stats_bin $common_args --country-adoption > $today_dir_nro/country-adoption.csv
+cat $today_dir_nro/country-adoption.csv | column -s',' -t  > $today_dir_nro/country-adoption.txt
 
 echo "Generating country activation"
-$rpki_stats_bin $common_args --country-activation > $today_dir/country-activation.csv
-cat $today_dir/country-activation.csv | column -s',' -t > $today_dir/country-activation.txt
+$rpki_stats_bin $common_args --country-activation > $today_dir_nro/country-activation.csv
+cat $today_dir_nro/country-activation.csv | column -s',' -t > $today_dir_nro/country-activation.txt
 
 echo "Generating rir adoption"
-$rpki_stats_bin $common_args --rir-adoption > $today_dir/rir-adoption.csv
-cat $today_dir/rir-adoption.csv | column -s',' -t  > $today_dir/rir-adoption.txt
+$rpki_stats_bin $common_args --rir-adoption > $today_dir_nro/rir-adoption.csv
+cat $today_dir_nro/rir-adoption.csv | column -s',' -t  > $today_dir_nro/rir-adoption.txt
 
 echo "Generating rir activation"
-$rpki_stats_bin $common_args --rir-activation  > $today_dir/rir-activation.csv
-cat $today_dir/rir-activation.csv | column -s',' -t > $today_dir/rir-activation.txt
+$rpki_stats_bin $common_args --rir-activation  > $today_dir_nro/rir-activation.csv
+cat $today_dir_nro/rir-activation.csv | column -s',' -t > $today_dir_nro/rir-activation.txt
 
-echo "Generating nro-stats web page"
-$rpki_stats_bin $common_args -n > $today_dir/nro-stats.html
+echo "Generating web page"
+$rpki_stats_bin $common_args -n > $today_dir_nro/nro-stats.html
 
 echo "Generating world roas"
 $rpki_stats_bin $common_args -w > $today_dir/world-roas.html
-cp $todays_stat_dir/world-roas.html /export/certcontent/static/statistics/world-roas.html
+cp $today_dir/world-roas.html /export/certcontent/static/statistics/world-roas.html
 
+# Export rsync password in RSYNC_PASSWORD !!! set it up for env variable of whoever doing cron jobs for this (most likely app-admin)
 rsync_target="rpki@dragonstone.ripe.net::rpki"
 
-# Fill in nro RSYNC Password!!
 export RSYNC_PASSWORD=
 
 function rsync_if_not_empty() {
-    if [ -s $today_dir/$1 ]
+    if [ -s $1 ]
     then
-        rsync $today_dir/$1 $rsync_target
+        rsync $1 $rsync_target
         echo "Successfully rsynced $1"
     else
         echo "Failed to create $1, not rsyincing to NRO"
     fi
 }
 
-rsync_if_not_empty country-adoption.txt
-rsync_if_not_empty country-adoption.csv
-rsync_if_not_empty country-activation.txt
-rsync_if_not_empty country-activation.csv
-rsync_if_not_empty rir-adoption.txt
-rsync_if_not_empty rir-adoption.csv
-rsync_if_not_empty rir-activation.txt
-rsync_if_not_empty rir-activation.csv
-rsync_if_not_empty nro-stats.html
+rsync_if_not_empty $today_dir_nro/country-adoption.txt
+rsync_if_not_empty $today_dir_nro/country-adoption.csv
+rsync_if_not_empty $today_dir_nro/country-activation.txt
+rsync_if_not_empty $today_dir_nro/country-activation.csv
+rsync_if_not_empty $today_dir_nro/rir-adoption.txt
+rsync_if_not_empty $today_dir_nro/rir-adoption.csv
+rsync_if_not_empty $today_dir_nro/rir-activation.txt
+rsync_if_not_empty $today_dir_nro/rir-activation.csv
+rsync_if_not_empty $today_dir_nro/nro-stats.html
