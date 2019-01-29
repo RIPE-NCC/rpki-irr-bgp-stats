@@ -70,21 +70,20 @@ class ActivationStatsTest extends FunSuite with Matchers {
     case (res, next) => res.add(next); res
   }
 
-  val certified: Seq[IpRange] = List("10.0.0.0/23", "2001:200::/33")
-  val certifiedSet: IpResourceSet = toSet(certified)
+  val certifiedSet = Map("CNTWCert" -> toSet(List("10.0.0.0/16", "11.0.0.0/16")),
+                         "IDCert" -> toSet(List("12.0.0.0/16")))
+
 
   val entityRegionHoldings: EntityRegionHoldings = Map(
-    ("entity0", "US")->toSet(List("10.0.1.0/24")),  // certified
-    ("entity1", "US")->toSet(List("2001:200::/32")), // not certified
-    ("entity2", "UK")->toSet(List("10.0.0.0/23")), // certified
-    ("entity3", "UK")->toSet(List("2001:200::/33")) // certified
+    ("entity0", "CN")->toSet(List("10.0.0.0/24")), // certified by CNTWCert
+    ("entity1", "TW")->toSet(List("11.0.0.0/24")), // certified by CNTWCert aslo so CNTWCert will be discarded
+    ("entity2", "ID")->toSet(List("12.0.0.0/24"))  // certified and only one for IDCert
   )
 
-  test("Should calculate adoption ") {
-    val activation: Map[String, Int] = ActivationStats.regionActivation(entityRegionHoldings,certifiedSet)
+  test("Should calculate activation ") {
+    val activation = ActivationStats.regionActivation(entityRegionHoldings, certifiedSet)
 
-    activation("US") should be(1)
-    activation("UK") should be(2)
+    activation("ID") should be(1)
+    activation.keySet should contain only "ID"
   }
-
 }

@@ -72,19 +72,18 @@ object Main extends App {
   val countryHoldingsF = Future(Time.timed(CountryHoldings.parse(holdingsLines)))
   val entityHoldingsF = Future(Time.timed(EntityHoldings.parse(holdingsLines)))
 
-  val certifiedResourceF = Future{
+  val certifiedResourceMap = Future{
     Time.timed {
-      CertifiedResourceParser.parse(config.certifiedResourceFile)
+      CertifiedResourceParser.parseMap(config.certifiedResourceFile)
     }
   }
-
   val report = for {
     (countryHolding, ct)                                <- countryHoldingsF
     (rirHoldings, rt)                                   <- rirHoldingsF
     ((entityCountryHoldings, entityRIRHOldings), et)    <- entityHoldingsF
     (announcements, announcementTime)                   <- announcementsF
     (authorisations, roaParseTime)                      <- roasF
-    (certifiedResources, certParseTime)                 <- certifiedResourceF
+    (certifiedResourcesMap, certParseTime)                 <- certifiedResourceMap
   } yield {
     val (_, reportTime) = Time.timed {
       config.analysisMode match {
@@ -95,9 +94,9 @@ object Main extends App {
         case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
         case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
         case RirAdoptionMode => ReportRir.reportAdoption(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
-        case NROStatsMode => ReportNROStatsPage.report(announcements, authorisations, countryHolding, rirHoldings, entityCountryHoldings, entityRIRHOldings, certifiedResources)
-        case RirActivationMode => ReportNROStatsPage.reportActivation(entityRIRHOldings, certifiedResources)
-        case CountryActivationMode => ReportNROStatsPage.reportActivation(entityCountryHoldings, certifiedResources)
+        case NROStatsMode => ReportNROStatsPage.report(announcements, authorisations, countryHolding, rirHoldings, entityCountryHoldings, entityRIRHOldings, certifiedResourcesMap)
+        case RirActivationMode => ReportNROStatsPage.reportActivation(entityRIRHOldings, certifiedResourcesMap)
+        case CountryActivationMode => ReportNROStatsPage.reportActivation(entityCountryHoldings, certifiedResourcesMap)
       }
     }
     (announcementTime, roaParseTime, reportTime, ct, rt, et, certParseTime)

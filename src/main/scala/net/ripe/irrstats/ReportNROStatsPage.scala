@@ -42,7 +42,7 @@ object ReportNROStatsPage {
              allRirHoldings: Holdings,
              entityCountryHoldings: EntityRegionHoldings,
              entityRirHoldings: EntityRegionHoldings,
-             certifiedResources : IpResourceSet
+             certifiedResourcesMap: Map[String, IpResourceSet]
             ) = {
 
     val rirHoldings = allRirHoldings.filterNot(_._1.contains("Reserved"))
@@ -59,8 +59,8 @@ object ReportNROStatsPage {
     val ipv4RIRAdoptionValues = rirAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
     val ipv6RIRAdoptionValues = rirAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
 
-    val countryActivation  = ActivationStats.regionActivation(entityCountryHoldings, certifiedResources)
-    val rirActivation  = ActivationStats.regionActivation(entityRirHoldings, certifiedResources)
+    val countryActivation  = ActivationStats.regionActivation(entityCountryHoldings, certifiedResourcesMap)
+    val rirActivation  = ActivationStats.regionActivation(entityRirHoldings, certifiedResourcesMap)
 
     val ipv4CountryBubbleData = countryAdoptions.mapValues(c => (c.ipv4Adoption.getOrElse(0.0), countryActivation.getOrElse(c.region, 0), c.ipv4HoldingCount, c.ipv4HoldingSize))
     val ipv6CountryBubbleData = countryAdoptions.mapValues(c => (c.ipv6Adoption.getOrElse(0.0), countryActivation.getOrElse(c.region, 0), c.ipv6HoldingCount, c.ipv6HoldingSize))
@@ -75,7 +75,7 @@ object ReportNROStatsPage {
   }
 
 
-  def reportActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResources : IpResourceSet): Unit = {
+  def reportActivation(entityRegionHoldings: EntityRegionHoldings, certifiedResources: Map[String, IpResourceSet]): Unit = {
 
     val activationData = ActivationStats.regionActivation(entityRegionHoldings, certifiedResources).toSeq.sortBy(-_._2)
     println("Region, Active Entity Count")

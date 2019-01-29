@@ -30,8 +30,9 @@ package net.ripe.irrstats.parsing.certifiedresource
 
 import java.io.File
 
-import net.ripe.ipresource.{IpRange, IpResourceSet}
+import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet}
 
+import scala.collection.mutable
 import scala.io.Source
 
 // Assume format:
@@ -41,11 +42,33 @@ import scala.io.Source
 // prefix3
 // ...
 object CertifiedResourceParser {
-  def parse(certifiedResourceFile: File): IpResourceSet =
+
+  def parseMap(certifiedResourceFile: File): Map[String, IpResourceSet] = {
+
+    val result = mutable.Map[String, IpResourceSet]()
+
+    System.err.println("Start parsing Certificates")
     Source
-    .fromFile(certifiedResourceFile, "iso-8859-1")
-    .getLines.drop(1)
-    .map(line => IpRange.parse(line.replaceAll("\"","")))
-    .foldLeft(new IpResourceSet()) {
-      case (result, iprange) => result.add(iprange); result}
+      .fromFile(certifiedResourceFile, "iso-8859-1")
+      .getLines.drop(1)
+      .foreach(line => {
+        val skiResource: Array[String] = line.split("\",\"")
+        val ski = skiResource(0).replaceAll("\"","")
+        val ranges = skiResource(1).trim.replaceAll("\"","").split(",").map(_.trim)
+        ranges.foreach { range =>
+          try {
+            val resource = IpResourceSet.parse(range)
+            if (!result.contains(ski)) {
+              result(ski) = new IpResourceSet()
+            }
+            result(ski).addAll(resource)
+          } catch {
+            case e : Throwable => System.err.println(s"Failed parsing $line")
+          }
+        }
+
+      })
+    System.err.println("Done parsing Certificates")
+    result.toMap
+  }
 }

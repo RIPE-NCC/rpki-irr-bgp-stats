@@ -57,6 +57,7 @@
 package net.ripe.irrstats.analysis
 
 import java.math.BigInteger
+import java.util
 
 import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet, IpResourceType}
 
@@ -120,7 +121,36 @@ object StatsUtil {
       resources.foldLeft(BigInteger.ZERO)((r, c) => {
         r.add(c.getEnd.getValue.subtract(c.getStart.getValue).add(BigInteger.ONE))
       })
-  }
+
+
+    def hasCommonResourceWith(thatSet: IpResourceSet): Boolean = {
+
+      def nextOrNull(iter : Iterator[IpResource]) = if (iter.hasNext) iter.next else null
+
+      // These iterators are sorter by IpResource range end.
+      val thatIter: Iterator[IpResource] = thatSet.resources()
+
+      val thisIter: Iterator[IpResource] = resources()
+
+      var thatResource = nextOrNull(thatIter)
+
+      var thisResource = nextOrNull(thisIter)
+
+      // Same logic as in IpResourceSet.retainAll, we just terminate successfully if there is any intersection.
+      while (thatResource != null && thisResource != null) {
+
+        if (thatResource.intersect(thisResource) != null) return true
+
+        val compareTo = thisResource.getEnd.compareTo(thatResource.getEnd)
+
+        if (compareTo <= 0) thisResource = nextOrNull(thisIter)
+        if (compareTo >= 0) thatResource = nextOrNull(thatIter)
+      }
+
+      false
+    }
+
+    }
 
 }
 
