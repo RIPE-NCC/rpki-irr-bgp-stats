@@ -68,22 +68,24 @@ object Main extends App {
 
   // lazy vals are only initialised when used for the first time,
   // so there is no performance penalty defining all of the following
-  val rirHoldingsF = Future(Time.timed(RIRHoldings.parse(holdingsLines)))
-  val countryHoldingsF = Future(Time.timed(CountryHoldings.parse(holdingsLines)))
-  val entityHoldingsF = Future(Time.timed(EntityHoldings.parse(holdingsLines)))
+  lazy val rirHoldingsF = Future(Time.timed(RIRHoldings.parse(holdingsLines)))
+  lazy val countryHoldingsF = Future(Time.timed(CountryHoldings.parse(holdingsLines)))
+  lazy val ripeCountryHoldingsF = Future(Time.timed(CountryHoldings.parse(holdingsLines.filter(_.contains("ripencc")))))
+  lazy val entityHoldingsF = Future(Time.timed(EntityHoldings.parse(holdingsLines)))
 
-  val certifiedResourceMap = Future{
+  lazy val certifiedResourceMap = Future{
     Time.timed {
       CertifiedResourceParser.parseMap(config.certifiedResourceFile)
     }
   }
   val report = for {
     (countryHolding, ct)                                <- countryHoldingsF
+    (ripeCountryHolding, ct)                            <- ripeCountryHoldingsF
     (rirHoldings, rt)                                   <- rirHoldingsF
     ((entityCountryHoldings, entityRIRHOldings), et)    <- entityHoldingsF
     (announcements, announcementTime)                   <- announcementsF
     (authorisations, roaParseTime)                      <- roasF
-    (certifiedResourcesMap, certParseTime)                 <- certifiedResourceMap
+    (certifiedResourcesMap, certParseTime)              <- certifiedResourceMap
   } yield {
     val (_, reportTime) = Time.timed {
       config.analysisMode match {
@@ -92,6 +94,7 @@ object Main extends App {
         case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHolding, config.countryDetails.get)
         case CountryAdoptionMode => ReportCountry.reportCountryAdoption(announcements, authorisations, countryHolding, config.quiet, config.date)
         case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
+        case RipeCountryRoaMode => ReportCountry.reportRIPECountryRoas(ripeCountryHolding, authorisations)
         case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
         case RirAdoptionMode => ReportRir.reportAdoption(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
         case NROStatsMode => ReportNROStatsPage.report(announcements, authorisations, countryHolding, rirHoldings, entityCountryHoldings, entityRIRHOldings, certifiedResourcesMap)

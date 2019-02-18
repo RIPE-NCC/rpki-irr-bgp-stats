@@ -105,6 +105,10 @@ object Config {
       "Do report rir activation "
     }
 
+    opt[Unit]("ripe-country-roa") optional() action { (x, c) => c.copy(analysisMode = RipeCountryRoaMode) } text {
+      "Do a report of roa counts for RIPE region only"
+    }
+
 
     checkConfig { c =>
       if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt")) failure("option -r must refer roas.csv or route[6].db file") else success
@@ -147,6 +151,8 @@ case object RouteObjectDbDump extends RouteAuthorisationDumpType
 sealed trait AnalysisMode
 
 case object CountryMode extends AnalysisMode
+
+case object RipeCountryRoaMode extends AnalysisMode
 
 case object CountryAdoptionMode extends AnalysisMode
 
