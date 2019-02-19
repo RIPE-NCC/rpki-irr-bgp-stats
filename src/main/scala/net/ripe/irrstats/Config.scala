@@ -55,10 +55,11 @@ object Config {
     } text {
       "Location of a file with either ROA export from the RIPE NCC RPKI Validator (.csv) or route[6] objects (.txt)"
     }
-    opt[File]('f', "certified-resources") required() valueName "<file>" action { (x, c) =>
+    opt[File]('f', "certified-resources") optional() valueName "<file>" action { (x, c) =>
       c.copy(certifiedResourceFile = x)
     } text {
-      "Location of a file with dump of certified resources from RIPE NCC Validator (.csv) file."
+      "Location of a file with dump of certified resources from RIPE NCC Validator (.csv) file. Needed for activation" +
+        " related analyis"
     }
     opt[Unit]('q', "quiet") optional() action { (x, c) => c.copy(quiet = true) } text {
       "Quiet output, just (real) numbers"
@@ -86,7 +87,7 @@ object Config {
       "Find and report top ASNs"
     }
     opt[Unit]('l', "loose") optional() action { (x, c) => c.copy(looseRouteObjectValidation = true) } text {
-      "Accept all more specific announcments for ROUTE ojects (defaults to strict)"
+      "Accept all more specific announcements for ROUTE ojects (defaults to strict)"
     }
 
     opt[Unit]("country-adoption") optional() action { (x,c) => c.copy(analysisMode = CountryAdoptionMode)} text {
@@ -111,7 +112,12 @@ object Config {
 
 
     checkConfig { c =>
-      if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt")) failure("option -r must refer roas.csv or route[6].db file") else success
+      if (!c.routeAuthorisationFile.getName.endsWith(".csv") && !c.routeAuthorisationFile.getName.endsWith(".txt"))
+        failure("option -r must refer roas.csv or route[6].db file")
+      else
+      if(!c.certifiedResourceFile.isFile && (c.analysisMode == RirActivationMode || c.analysisMode == CountryActivationMode || c.analysisMode == NROStatsMode))
+        failure("option -f or --certified-resources is needed for  activation related analysis ")
+      else success
     }
 
   }

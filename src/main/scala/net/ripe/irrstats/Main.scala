@@ -73,41 +73,74 @@ object Main extends App {
   lazy val ripeCountryHoldingsF = Future(Time.timed(CountryHoldings.parse(holdingsLines.filter(_.contains("ripencc")))))
   lazy val entityHoldingsF = Future(Time.timed(EntityHoldings.parse(holdingsLines)))
 
-  lazy val certifiedResourceMap = Future{
-    Time.timed {
-      CertifiedResourceParser.parseMap(config.certifiedResourceFile)
-    }
+  config.analysisMode match {
+    case RirActivationMode | CountryActivationMode | NROStatsMode =>
+      startActivationAnalysis()
+    case _ =>
+      startAdoptionAnalysis()
   }
-  val report = for {
-    (countryHolding, ct)                                <- countryHoldingsF
-    (ripeCountryHolding, ct)                            <- ripeCountryHoldingsF
-    (rirHoldings, rt)                                   <- rirHoldingsF
-    ((entityCountryHoldings, entityRIRHOldings), et)    <- entityHoldingsF
-    (announcements, announcementTime)                   <- announcementsF
-    (authorisations, roaParseTime)                      <- roasF
-    (certifiedResourcesMap, certParseTime)              <- certifiedResourceMap
-  } yield {
-    val (_, reportTime) = Time.timed {
-      config.analysisMode match {
-        case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
-        case WorldMapMode => ReportWorldMap.report(announcements, authorisations, countryHolding)
-        case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHolding, config.countryDetails.get)
-        case CountryAdoptionMode => ReportCountry.reportCountryAdoption(announcements, authorisations, countryHolding, config.quiet, config.date)
-        case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
-        case RipeCountryRoaMode => ReportCountry.reportRIPECountryRoas(ripeCountryHolding, authorisations)
-        case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
-        case RirAdoptionMode => ReportRir.reportAdoption(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
-        case NROStatsMode => ReportNROStatsPage.report(announcements, authorisations, countryHolding, rirHoldings, entityCountryHoldings, entityRIRHOldings, certifiedResourcesMap)
-        case RirActivationMode => ReportNROStatsPage.reportActivation(entityRIRHOldings, certifiedResourcesMap)
-        case CountryActivationMode => ReportNROStatsPage.reportActivation(entityCountryHoldings, certifiedResourcesMap)
+
+  // These ones does not need certificates files.
+  def startAdoptionAnalysis(): Unit = {
+    val report = for {
+      (announcements, announcementTime) <- announcementsF
+      (authorisations, roaParseTime) <- roasF
+      (countryHolding, _) <- countryHoldingsF
+      (rirHoldings, _) <- rirHoldingsF
+      (ripeCountryHolding, _) <- ripeCountryHoldingsF
+    } yield {
+      val (_, reportTime) = Time.timed {
+        config.analysisMode match {
+          case AsnMode => ReportAsn.report(announcements, authorisations, config.quiet)
+          case WorldMapMode => ReportWorldMap.report(announcements, authorisations, countryHolding)
+          case CountryDetailsMode => ReportCountry.reportCountryDetails(announcements, authorisations, countryHolding, config.countryDetails.get)
+          case CountryAdoptionMode => ReportCountry.reportCountryAdoption(announcements, authorisations, countryHolding, config.quiet, config.date)
+          case CountryMode => ReportCountry.reportCountries(announcements, authorisations, countryHolding, config.quiet, config.date)
+          case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
+          case RirAdoptionMode => ReportRir.reportAdoption(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
+          case RipeCountryRoaMode => ReportCountry.reportRIPECountryRoas(ripeCountryHolding, authorisations)
+        }
+      }
+      (announcementTime, roaParseTime, reportTime)
+    }
+
+    val (announcementTime, roaParseTime, reportTime) = Await.result(report, Duration.Inf)
+    System.err.println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
+
+    System.exit(0) // We're done here
+  }
+
+
+  def startActivationAnalysis(): Unit = {
+    lazy val certifiedResourceMap = Future {
+      Time.timed {
+        CertifiedResourceParser.parseMap(config.certifiedResourceFile)
       }
     }
-    (announcementTime, roaParseTime, reportTime, ct, rt, et, certParseTime)
+    val report = for {
+      (announcements, announcementTime) <- announcementsF
+      (authorisations, roaParseTime) <- roasF
+      (countryHolding, _) <- countryHoldingsF
+      (rirHoldings, _) <- rirHoldingsF
+      ((entityCountryHoldings, entityRIRHOldings), _) <- entityHoldingsF
+
+      (certifiedResourcesMap, certParseTime) <- certifiedResourceMap
+    } yield {
+      val (_, reportTime) = Time.timed {
+        config.analysisMode match {
+
+          case RirActivationMode => ReportNROStatsPage.reportActivation(entityRIRHOldings, certifiedResourcesMap)
+          case CountryActivationMode => ReportNROStatsPage.reportActivation(entityCountryHoldings, certifiedResourcesMap)
+          case NROStatsMode => ReportNROStatsPage.report(announcements, authorisations, countryHolding, rirHoldings, entityCountryHoldings, entityRIRHOldings, certifiedResourcesMap)
+        }
+      }
+      (announcementTime, roaParseTime, reportTime,  certParseTime)
+    }
+
+    val (announcementTime, roaParseTime, reportTime,  certParseTime) = Await.result(report, Duration.Inf)
+    System.err.println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, cert parse time ${certParseTime}ms, report generation time ${reportTime}ms")
+
+    System.exit(0) // We're done here
   }
-
-  val (announcementTime, roaParseTime, reportTime, ct, rt, et, certParseTime) = Await.result(report, Duration.Inf)
-  System.err.println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
-
-  System.exit(0) // We're done here
 
 }
