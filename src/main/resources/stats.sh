@@ -43,7 +43,7 @@ mkdir -p $today_dir
 mkdir -p $today_dir_nro
 
 ipv4_bgp_dump="http://www.ris.ripe.net/dumps/riswhoisdump.IPv4.gz";
-validator_url="https://rpki-validator.prepdev.ripe.net"
+validator_url="https://rpki-validator.ripe.net"
 nro_ext_stats="https://www.nro.net/wp-content/uploads/apnic-uploads/delegated-extended"
 
 function exit_if_no_file() {
@@ -99,6 +99,10 @@ $rpki_stats_bin $common_args -n > $today_dir_nro/nro-stats.html
 echo "Generating world roas"
 $rpki_stats_bin $common_args -w > $today_dir/world-roas.html
 cp $today_dir/world-roas.html /export/certcontent/static/statistics/world-roas.html
+
+echo "Generating country roa counts for ripe on date $DD "
+$rpki_stats_bin $common_args --ripe-country-roa > $today_dir_nro/ripe-country-roa.csv
+cat $today_dir_nro/ripe-country-roa.csv | column -s',' -t  > $today_dir_nro/ripe-country-roa.txt
 
 # Export rsync password in RSYNC_PASSWORD !!! set it up for env variable of whoever doing cron jobs for this (most likely app-admin)
 rsync_target="rpki@dragonstone.ripe.net::rpki"
