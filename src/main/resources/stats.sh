@@ -78,12 +78,12 @@ exit_if_no_file $today_dir_nro/certificates.csv
 common_args="-b $today_dir/risdump-ipv4.txt -s $today_dir/nro-ext-stats.txt -r $today_dir/all-roas.csv -f $today_dir_nro/certificates.csv"
 
 echo "Generating country adoption"
-$rpki_stats_bin $common_args --country-adoption > $today_dir_nro/country-adoption.csv
-cat $today_dir_nro/country-adoption.csv | column -s',' -t  > $today_dir_nro/country-adoption.txt
+$rpki_stats_bin $common_args --country-adoption > $today_dir_nro/economy-adoption.csv
+cat $today_dir_nro/economy-adoption.csv | column -s',' -t  > $today_dir_nro/economy-adoption.txt
 
 echo "Generating country activation"
-$rpki_stats_bin $common_args --country-activation > $today_dir_nro/country-activation.csv
-cat $today_dir_nro/country-activation.csv | column -s',' -t > $today_dir_nro/country-activation.txt
+$rpki_stats_bin $common_args --country-activation > $today_dir_nro/economy-activation.csv
+cat $today_dir_nro/economy-activation.csv | column -s',' -t > $today_dir_nro/economy-activation.txt
 
 echo "Generating rir adoption"
 $rpki_stats_bin $common_args --rir-adoption > $today_dir_nro/rir-adoption.csv
@@ -119,10 +119,10 @@ function rsync_if_not_empty() {
     fi
 }
 
-rsync_if_not_empty $today_dir_nro/country-adoption.txt
-rsync_if_not_empty $today_dir_nro/country-adoption.csv
-rsync_if_not_empty $today_dir_nro/country-activation.txt
-rsync_if_not_empty $today_dir_nro/country-activation.csv
+rsync_if_not_empty $today_dir_nro/economy-adoption.txt
+rsync_if_not_empty $today_dir_nro/economy-adoption.csv
+rsync_if_not_empty $today_dir_nro/economy-activation.txt
+rsync_if_not_empty $today_dir_nro/economy-activation.csv
 rsync_if_not_empty $today_dir_nro/rir-adoption.txt
 rsync_if_not_empty $today_dir_nro/rir-adoption.csv
 rsync_if_not_empty $today_dir_nro/rir-activation.txt
