@@ -55,7 +55,7 @@ object ReportCountry {
     val roaCountsPerCountryAll: collection.Map[String, Int] =
       authorisations.par.groupBy(pfx => regionFor(pfx.prefix, ripeHoldings)).mapValues(_.seq).seq.mapValues(_.size)
 
-    println("Country Code, #Roas")
+    println("Economy, #Roas")
 
     // Holdings are limited to RIPE, while ROAs are from all region.
     // For some of the Roas we would not know who hold it (regionFor above would return "?").
@@ -70,7 +70,7 @@ object ReportCountry {
   def reportCountryAdoption(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix],
                           countryHolding: Holdings, quiet: Boolean, dateString: String) = {
     if (! quiet) {
-      RegionCsv.printAdoptionHeader("Country")
+      RegionCsv.printAdoptionHeader("Economy")
     }
 
     val countryStats = new RegionStats(countryHolding, announcements, authorisations)
