@@ -257,40 +257,6 @@
         var stale_chart = new google.visualization.GeoChart(document.getElementById('stale_worldmap'));
         stale_chart.draw(stale_data, stale_options);
 
-        // Usefulness (prefix based)
-
-        var usefulness_data = google.visualization.arrayToDataTable([
-          ['Country', '%'],
-          ***COUNTRY_USEFULNESS***
-        ]);
-
-        var usefulness_options = {
-                width: 900,
-                keepAspectRatio: true,
-                title: 'Usefulness (valid prefix * quality * (1 - stale)',
-                colorAxis: { values:[0,100] }
-        };
-
-        var usefulness_chart = new google.visualization.GeoChart(document.getElementById('usefulness_worldmap'));
-        usefulness_chart.draw(usefulness_data, usefulness_options);
-
-        // Usefulness (space based)
-
-        var usefulspace_data = google.visualization.arrayToDataTable([
-          ['Country', '%'],
-          ***COUNTRY_USEFULSPACE***
-        ]);
-
-        var usefulspace_options = {
-                width: 900,
-                keepAspectRatio: true,
-                title: 'Usefulness (space)',
-                colorAxis: { values:[0,100] }
-        };
-
-        var usefulspace_chart = new google.visualization.GeoChart(document.getElementById('usefulspace_worldmap'));
-        usefulspace_chart.draw(usefulspace_data, usefulspace_options);
-
       };
 
       $(document).ready(function() {
@@ -318,12 +284,6 @@
                     } else if ($(this).attr("value")=="sta") {
                         $(".graph").not(".sta").hide();
                         $(".sta").show();
-                    } else if ($(this).attr("value")=="use") {
-                        $(".graph").not(".use").hide();
-                        $(".use").show();
-                    } else if ($(this).attr("value")=="uss") {
-                        $(".graph").not(".uss").hide();
-                        $(".uss").show();
                     } else { // default
                         $(".graph").not(".saw").hide();
                         $(".saw").show();
@@ -1178,8 +1138,6 @@
                                     <option value="pvw">IPv4 prefixes valid</option>
                                     <option value="pmw">IPv4 prefixes valid as fraction of covered</option>
                                     <option value="sta">Fraction stale authorisation</option>
-                                    <option value="use">Usefulness (prefixes)</option>
-                                    <option value="uss">Usefulness (space)</option>
                                 </select>
                             </p>
 
@@ -1209,14 +1167,6 @@
 
                             <div id="stale" class="graph sta">
                                 <div id="stale_worldmap"></div>
-                            </div>
-
-                            <div id="usefulness" class="graph use">
-                                <div id="usefulness_worldmap"></div>
-                            </div>
-
-                            <div id="usefulspace" class="graph uss">
-                                <div id="usefulspace_worldmap"></div>
                             </div>
 
                             <!-- Start of footer STARTFOOTERMARKER -->
