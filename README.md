@@ -85,16 +85,6 @@ https://lirportal.ripe.net/certification/content/static/statistics/world-roas.ht
 The committed code also does some additional analyis: it evaluates the staleness of authorisations, meaning
 that it assumes that an authorisation for which no announcement is seen, is stale.
 
-Furthermore it introduces a 'usefulness' metric, defined as:
-
-  u = fraction valid * accuracy * (1 - staleness)
-
-But is debatable of course what does means and whether this is what the real world would consider 'useful'..
-The idea was that the overall figure can never be bigger than any of the three components, and that these
-components are most and equally important. If all are '1' than the result is also '1' -> 100%
-
-This is not used yet on the daily world map stats, but could be..
-
 
 ### Country details report
 

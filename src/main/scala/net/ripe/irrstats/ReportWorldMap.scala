@@ -49,29 +49,7 @@ object ReportWorldMap {
 
     val stalenessValues = staleness.withFilter(_._2.authorisations.nonEmpty).map { case (region, stat) => region -> stat.fraction }
 
-    val usefulnessValues = {
-      val regions = prefixesValidValues.withFilter(_._2 > 0).map(_._1)
-
-      regions.map { region =>
-        val valid: Double = prefixesValidValues.getOrElse(region, 0)
-        val quality: Double = prefixesMatchingValues.getOrElse(region, 0)
-        val relevance: Double = 1 - staleness.getOrElse(region, StalenessStat(List.empty, List.empty)).fraction
-        region -> (valid * quality * relevance)
-      }.toMap
-    }
-
-    val usefulnessSpaceValues = {
-      val regions = validValues.filter(_._2 > 0).keys
-
-      regions.map { region =>
-        val valid: Double = validValues.getOrElse(region, 0)
-        val quality: Double = matchingValues.getOrElse(region, 0)
-        val relevance: Double = 1 - staleness.getOrElse(region, StalenessStat(List.empty, List.empty)).fraction
-        region -> (valid * quality * relevance)
-      }.toMap
-    }
-
-    print(WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues, stalenessValues, usefulnessValues, usefulnessSpaceValues))
+    print(WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues, stalenessValues))
   }
 
 }
