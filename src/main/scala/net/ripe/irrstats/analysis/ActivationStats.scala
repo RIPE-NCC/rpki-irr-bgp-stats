@@ -28,6 +28,7 @@
  */
 package net.ripe.irrstats.analysis
 
+import grizzled.slf4j.Logging
 import net.ripe.ipresource.IpResourceSet
 import net.ripe.irrstats.Time
 import net.ripe.irrstats.analysis.StatsUtil._
@@ -35,7 +36,7 @@ import net.ripe.irrstats.parsing.holdings.Holdings.{CertificateResources, Entity
 
 import scala.collection.parallel.immutable.ParIterable
 
-object ActivationStats {
+object ActivationStats extends Logging {
 
   case class EntityRegionSubject(entity:String, region:String, subject:String)
 
@@ -54,7 +55,7 @@ object ActivationStats {
       val entityRegionSubjects = entityRegionHoldings.toSeq.par.flatMap {
         case (entityRegion, resources) =>
           counter += 1
-          if (counter % 100 == 0) System.err.println(s"Entity processed : $counter out of ${entityRegionHoldings.size}")
+          if (counter % 100 == 0) logger.debug(s"Entity processed : $counter out of ${entityRegionHoldings.size}")
           collectCoveringCertifiedSubjects(entityRegion, resources)
       }
 
@@ -66,7 +67,7 @@ object ActivationStats {
         .mapValues(_.size)        // So we count the size.
     }
 
-    System.err.println(s"Elapsed time for activation calculation $time")
+    logger.info(s"Elapsed time for activation calculation $time")
     activationResult.seq          // All data structure was par data structure so we go back to sequential.
 
   }
