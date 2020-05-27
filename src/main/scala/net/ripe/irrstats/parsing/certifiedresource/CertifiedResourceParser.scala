@@ -30,6 +30,7 @@ package net.ripe.irrstats.parsing.certifiedresource
 
 import java.io.File
 
+import grizzled.slf4j.Logging
 import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet}
 
 import scala.collection.mutable
@@ -41,13 +42,13 @@ import scala.io.Source
 // prefix2
 // prefix3
 // ...
-object CertifiedResourceParser {
+object CertifiedResourceParser extends Logging {
 
   def parseMap(certifiedResourceFile: File): Map[String, IpResourceSet] = {
 
     val result = mutable.Map[String, IpResourceSet]()
 
-    System.err.println("Start parsing Certificates")
+    logger.info("Start parsing Certificates")
     Source
       .fromFile(certifiedResourceFile, "iso-8859-1")
       .getLines.drop(1)
@@ -63,12 +64,12 @@ object CertifiedResourceParser {
             }
             result(ski).addAll(resource)
           } catch {
-            case e : Throwable => System.err.println(s"Failed parsing $line")
+            case e : Throwable => logger.error(s"Failed parsing $line")
           }
         }
 
       })
-    System.err.println("Done parsing Certificates")
+    logger.info("Done parsing Certificates")
     result.toMap
   }
 }

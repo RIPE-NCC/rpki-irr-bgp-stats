@@ -28,6 +28,7 @@
  */
 package net.ripe.irrstats
 
+import grizzled.slf4j.Logging
 import net.ripe.irrstats.parsing.certifiedresource.CertifiedResourceParser
 import net.ripe.irrstats.parsing.holdings.{CountryHoldings, EntityHoldings, Holdings, RIRHoldings}
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
@@ -38,7 +39,7 @@ import net.ripe.irrstats.route.validation.RtrPrefix
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
-object Main extends App {
+object Main extends App with Logging{
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -105,7 +106,7 @@ object Main extends App {
     }
 
     val (announcementTime, roaParseTime, reportTime) = Await.result(report, Duration.Inf)
-    System.err.println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
+    logger.info(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, report generation time ${reportTime}ms")
 
     System.exit(0) // We're done here
   }
