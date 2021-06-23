@@ -34,7 +34,7 @@ import net.ripe.irrstats.parsing.holdings.{CountryHoldings, EntityHoldings, Hold
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.parsing.roas.RoaUtil
 import net.ripe.irrstats.parsing.route.RouteParser
-import net.ripe.irrstats.route.validation.RtrPrefix
+import net.ripe.irrstats.route.validation.{BgpAnnouncementValidator, RouteValidity, RtrPrefix}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
@@ -65,7 +65,7 @@ object Main extends App with Logging{
   }
 
 
-  val (holdingsLines, ht) = Time.timed(Holdings.read(config.statsFile))
+  lazy val (holdingsLines, ht) = Time.timed(Holdings.read(config.statsFile))
 
   // lazy vals are only initialised when used for the first time,
   // so there is no performance penalty defining all of the following
@@ -74,11 +74,15 @@ object Main extends App with Logging{
   lazy val ripeCountryHoldingsF = Future(Time.timed(CountryHoldings.parse(holdingsLines.filter(_.contains("ripencc")))))
   lazy val entityHoldingsF = Future(Time.timed(EntityHoldings.parse(holdingsLines)))
 
+
+
   config.analysisMode match {
     case RirActivationMode | CountryActivationMode | NROStatsMode =>
       startActivationAnalysis()
-    case _ =>
+    case AsnMode | WorldMapMode | CountryDetailsMode | CountryAdoptionMode | CountryMode | RirAdoptionMode | RipeCountryRoaMode =>
       startAdoptionAnalysis()
+    case InvalidAnalysisMode =>
+      startInvalidAnalysis()
   }
 
   // These ones does not need certificates files.
@@ -142,6 +146,20 @@ object Main extends App with Logging{
     System.err.println(s"Announcement parse ${announcementTime}ms, roa parse time ${roaParseTime}ms, cert parse time ${certParseTime}ms, report generation time ${reportTime}ms")
 
     System.exit(0) // We're done here
+  }
+
+  def startInvalidAnalysis(): Unit = {
+
+    val announcements  = RisDumpUtil.parseDumpFile(config.risDumpFile)
+    val authorisations = RoaUtil.parse(config.routeAuthorisationFile)
+    val validator = new BgpAnnouncementValidator()
+    validator.startUpdate(announcements, authorisations)
+    val validatedAnnouncements = validator.validatedAnnouncements
+    validatedAnnouncements.filter(v => v.validity == RouteValidity.InvalidAsn || v.validity == RouteValidity.InvalidLength)
+      .foreach (va => {
+      println(s"${va.asn}, ${va.prefix}, ${va.validity}")
+    })
+
   }
 
 }

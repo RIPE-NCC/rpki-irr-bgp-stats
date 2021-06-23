@@ -45,7 +45,7 @@ object Config {
     } text {
       "Location of a RIS Dump style file with BGP announcements "
     }
-    opt[File]('s', "extended-delegated-stats") required() valueName "<file>" action { (x, c) =>
+    opt[File]('s', "extended-delegated-stats") optional() valueName "<file>" action { (x, c) =>
       c.copy(statsFile = x)
     } text {
       "Location of a copy of the NRO extended delegated stats"
@@ -108,6 +108,10 @@ object Config {
 
     opt[Unit]("ripe-country-roa") optional() action { (x, c) => c.copy(analysisMode = RipeCountryRoaMode) } text {
       "Do a report of roa counts for RIPE region only"
+    }
+
+    opt[Unit]("invalid-announcements") optional() action { (x, c) => c.copy(analysisMode = InvalidAnalysisMode) } text {
+      "Produce invalid announcement list"
     }
 
 
@@ -177,3 +181,5 @@ case object AsnMode extends AnalysisMode
 case object RirActivationMode extends AnalysisMode
 
 case object CountryActivationMode extends AnalysisMode
+
+case object InvalidAnalysisMode extends AnalysisMode
