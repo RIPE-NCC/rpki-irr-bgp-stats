@@ -34,6 +34,7 @@ import net.ripe.irrstats.Time
 import net.ripe.irrstats.analysis.StatsUtil._
 import net.ripe.irrstats.parsing.holdings.Holdings.{CertificateResources, EntityRegion, EntityRegionHoldings}
 
+import scala.collection.parallel.CollectionConverters._
 import scala.collection.parallel.immutable.ParIterable
 
 object ActivationStats extends Logging {

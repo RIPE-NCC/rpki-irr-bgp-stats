@@ -34,6 +34,8 @@ import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.NROStatsPage
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
+import scala.collection.parallel.CollectionConverters._
+
 object ReportNROStatsPage {
 
   def report(announcements: Seq[BgpAnnouncement],

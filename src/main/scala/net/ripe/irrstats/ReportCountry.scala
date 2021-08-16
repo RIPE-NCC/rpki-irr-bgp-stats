@@ -33,6 +33,8 @@ import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.{CountryDetails, RegionCsv}
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
+import scala.collection.parallel.CollectionConverters._
+
 object ReportCountry {
 
   def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], countryHolding: Holdings, countryCode: String) = {
@@ -52,14 +54,14 @@ object ReportCountry {
 
   def reportRIPECountryRoas(ripeHoldings: Holdings, authorisations:Seq[RtrPrefix]) = {
 
-    val roaCountsPerCountryAll: collection.Map[String, Int] =
+    val roaCountsPerCountryAll =
       authorisations.par.groupBy(pfx => regionFor(pfx.prefix, ripeHoldings)).mapValues(_.seq).seq.mapValues(_.size)
 
     println("Economy, #Roas")
 
     // Holdings are limited to RIPE, while ROAs are from all region.
     // For some of the Roas we would not know who hold it (regionFor above would return "?").
-    val roaCountsPerCountryInRIPE = roaCountsPerCountryAll - "?"
+    val roaCountsPerCountryInRIPE = roaCountsPerCountryAll -- Seq("?")
 
     roaCountsPerCountryInRIPE.toSeq.sortBy(-_._2).foreach{
       case (country, roaCount) => println(s"$country, $roaCount")

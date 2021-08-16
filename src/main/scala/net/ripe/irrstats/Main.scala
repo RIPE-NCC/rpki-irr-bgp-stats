@@ -36,6 +36,7 @@ import net.ripe.irrstats.parsing.roas.RoaUtil
 import net.ripe.irrstats.parsing.route.RouteParser
 import net.ripe.irrstats.route.validation.RtrPrefix
 
+import scala.collection.parallel.CollectionConverters._
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 

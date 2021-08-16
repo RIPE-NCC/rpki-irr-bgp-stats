@@ -35,6 +35,8 @@ import net.ripe.irrstats.analysis.StatsUtil._
 import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, BgpAnnouncementValidator, RtrPrefix, StalenessStat}
 
+import scala.collection.parallel.CollectionConverters._
+
 case class RegionAdoptionStats(region: String, holdings: IpResourceSet, authorisation: IpResourceSet) {
 
   val ipv4AuthCount = authorisation.ipv4ResourcesCounts()
@@ -49,7 +51,7 @@ case class RegionAdoptionStats(region: String, holdings: IpResourceSet, authoris
   val ipv6HoldingCount = holdings.ipv4ResourcesCounts()
   val ipv6AuthSize: BigInteger = authorisation.ipv6AddressSize()
   val ipv6HoldingSize: BigInteger = holdings.ipv6AddressSize()
-  
+
   val ipv6Adoption = safePercentage(ipv6AuthSize, ipv6HoldingSize)
 }
 
@@ -95,4 +97,3 @@ class RegionStats(holdings: Holdings, announcements: Seq[BgpAnnouncement], autho
   }.toMap
 
 }
-

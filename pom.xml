@@ -13,8 +13,8 @@
         <jodatime.version>2.10.10</jodatime.version>
         <slf4j.version>1.7.32</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
-        <scala.version>2.11.12</scala.version>
-        <scala.binary.version>2.11</scala.binary.version>
+        <scala.version>2.13.6</scala.version>
+        <scala.binary.version>2.13</scala.binary.version>
         <main.class>net.ripe.irrstats.Main</main.class>
     </properties>
 
@@ -72,6 +72,11 @@
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
             <version>${scala.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-parallel-collections_${scala.binary.version}</artifactId>
+            <version>1.0.3</version>
         </dependency>
 
         <dependency>
@@ -243,8 +248,6 @@
                                 <arg>-unchecked</arg>
                                 <arg>-feature</arg>
                                 <arg>-Xlint</arg>
-                                <arg>-Xmax-classfile-name</arg>
-                                <arg>130</arg>
                                 <arg>-encoding</arg>
                                 <arg>UTF-8</arg>
                             </args>
