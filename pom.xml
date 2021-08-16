@@ -65,8 +65,7 @@
         <dependency>
             <groupId>org.joda</groupId>
             <artifactId>joda-convert</artifactId>
-            <version>1.6</version>
-            <scope>compile</scope>
+            <version>2.2.1</version>
         </dependency>
 
         <dependency>
