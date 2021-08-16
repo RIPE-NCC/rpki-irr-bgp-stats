@@ -55,17 +55,16 @@ object ReportNROStatsPage {
     val countryAdoptions = countryHolding.keys.par.map(cc => (cc, countryStats.regionAdoptionStats(cc))).seq.toMap
     val rirAdoptions = rirHoldings.keys.par.map(cc => (cc, rirStats.regionAdoptionStats(cc))).seq.toMap
 
-    val ipv4CountryAdoptionValues = countryAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
-    val ipv6CountryAdoptionValues = countryAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
+    val ipv4CountryAdoptionValues = countryAdoptions.view.mapValues(_.ipv4Adoption.getOrElse(0.0))
+    val ipv6CountryAdoptionValues = countryAdoptions.view.mapValues(_.ipv6Adoption.getOrElse(0.0))
 
-    val ipv4RIRAdoptionValues = rirAdoptions.mapValues(_.ipv4Adoption.getOrElse(0.0))
-    val ipv6RIRAdoptionValues = rirAdoptions.mapValues(_.ipv6Adoption.getOrElse(0.0))
+    val ipv4RIRAdoptionValues = rirAdoptions.view.mapValues(_.ipv4Adoption.getOrElse(0.0))
+    val ipv6RIRAdoptionValues = rirAdoptions.view.mapValues(_.ipv6Adoption.getOrElse(0.0))
 
     val countryActivation  = ActivationStats.regionActivation(entityCountryHoldings, certifiedResourcesMap)
-    val rirActivation  = ActivationStats.regionActivation(entityRirHoldings, certifiedResourcesMap)
 
-    val ipv4CountryBubbleData = countryAdoptions.mapValues(c => (c.ipv4Adoption.getOrElse(0.0), countryActivation.getOrElse(c.region, 0), c.ipv4HoldingCount, c.ipv4HoldingSize))
-    val ipv6CountryBubbleData = countryAdoptions.mapValues(c => (c.ipv6Adoption.getOrElse(0.0), countryActivation.getOrElse(c.region, 0), c.ipv6HoldingCount, c.ipv6HoldingSize))
+    val ipv4CountryBubbleData = countryAdoptions.view.mapValues(c => (c.ipv4Adoption.getOrElse(0.0), countryActivation.getOrElse(c.region, 0), c.ipv4HoldingCount, c.ipv4HoldingSize))
+    val ipv6CountryBubbleData = countryAdoptions.view.mapValues(c => (c.ipv6Adoption.getOrElse(0.0), countryActivation.getOrElse(c.region, 0), c.ipv6HoldingCount, c.ipv6HoldingSize))
 
     print(NROStatsPage.printNROStatsPage(
       ipv4CountryAdoptionValues,

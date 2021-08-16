@@ -55,13 +55,13 @@ object ReportCountry {
   def reportRIPECountryRoas(ripeHoldings: Holdings, authorisations:Seq[RtrPrefix]) = {
 
     val roaCountsPerCountryAll =
-      authorisations.par.groupBy(pfx => regionFor(pfx.prefix, ripeHoldings)).mapValues(_.seq).seq.mapValues(_.size)
+      authorisations.par.groupBy(pfx => regionFor(pfx.prefix, ripeHoldings)).mapValues(_.seq).seq.view.mapValues(_.size).to(Map)
 
     println("Economy, #Roas")
 
     // Holdings are limited to RIPE, while ROAs are from all region.
     // For some of the Roas we would not know who hold it (regionFor above would return "?").
-    val roaCountsPerCountryInRIPE = roaCountsPerCountryAll -- Seq("?")
+    val roaCountsPerCountryInRIPE = roaCountsPerCountryAll - "?"
 
     roaCountsPerCountryInRIPE.toSeq.sortBy(-_._2).foreach{
       case (country, roaCount) => println(s"$country, $roaCount")

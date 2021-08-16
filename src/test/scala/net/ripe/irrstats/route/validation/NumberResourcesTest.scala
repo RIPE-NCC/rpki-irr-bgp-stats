@@ -66,17 +66,17 @@ class NumberResourcesTest extends funsuite.AnyFunSuite with should.Matchers {
 
   test("Empty NumberResourceIntervalTree should be empty") {
     val subject = NumberResourceIntervalTree.empty[RtrPrefix]
-    subject should be('empty)
+    subject should be(Symbol("empty"))
 
   }
   test("Empty NumberResourceIntervalTree should not find any match") {
     val subject = NumberResourceIntervalTree.empty[RtrPrefix]
-    subject.findExactAndAllLessSpecific(Range_10_8) should be('empty)
+    subject.findExactAndAllLessSpecific(Range_10_8) should be(Symbol("empty"))
   }
 
   test("Singleton NumberResourceIntervalTree should not be empty") {
     val subject = NumberResourceIntervalTree(RtrPrefix_10_8)
-    subject should not be ('empty)
+    subject should not be (Symbol("empty"))
   }
 
   test("Singleton NumberResourceIntervalTree should find exact match") {
@@ -91,13 +91,13 @@ class NumberResourcesTest extends funsuite.AnyFunSuite with should.Matchers {
 
   test("Singleton NumberResourceIntervalTree should not find range outside") {
     val subject = NumberResourceIntervalTree(RtrPrefix_10_8)
-    subject.findExactAndAllLessSpecific(Range_127_8) should be('empty)
+    subject.findExactAndAllLessSpecific(Range_127_8) should be(Symbol("empty"))
   }
 
 
   test("Multi-entry NumberResourceIntervalTree should not be empty") {
     val subject = NumberResourceIntervalTree(RtrPrefix_10_8, RtrPrefix_10_9)
-    subject should not be ('empty)
+    subject should not be (Symbol("empty"))
   }
 
   test("Multi-entry NumberResourceIntervalTree should find exact match") {
@@ -112,13 +112,13 @@ class NumberResourcesTest extends funsuite.AnyFunSuite with should.Matchers {
 
   test("Multi-entry NumberResourceIntervalTree should not find range outside") {
     val subject = NumberResourceIntervalTree(RtrPrefix_10_8, RtrPrefix_10_9)
-    subject.findExactAndAllLessSpecific(Range_127_8) should be('empty)
+    subject.findExactAndAllLessSpecific(Range_127_8) should be(Symbol("empty"))
   }
 
 
   test("Many distinct entry NumberResourceIntervalTree should find exact matches") {
     val prefixes = (1 to 100) map { i =>
-      RtrPrefix(i, IpRange.parse(i + "/8"), None)
+      RtrPrefix(i, IpRange.parse(s"$i/8"), None)
     }
     val subject = NumberResourceIntervalTree(prefixes: _*)
 
@@ -128,7 +128,7 @@ class NumberResourcesTest extends funsuite.AnyFunSuite with should.Matchers {
   }
   test("Many distinct entry NumberResourceIntervalTree should find containing match") {
     val prefixes = (1 to 100) map { i =>
-      RtrPrefix(i, IpRange.parse(i + "/8"), None)
+      RtrPrefix(i, IpRange.parse(s"$i/8"), None)
     }
     val subject = NumberResourceIntervalTree(prefixes: _*)
 

@@ -33,7 +33,7 @@ import java.io.File
 import org.scalatest._
 import matchers._
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 @org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
 class CertifiedResourceParserTest extends funsuite.AnyFunSuite with should.Matchers {

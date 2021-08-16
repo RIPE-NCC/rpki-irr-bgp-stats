@@ -101,6 +101,7 @@ object Main extends App with Logging{
           case RirMode => ReportRir.report(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
           case RirAdoptionMode => ReportRir.reportAdoption(announcements, authorisations, rirHoldings, config.quiet, config.date, config.rir)
           case RipeCountryRoaMode => ReportCountry.reportRIPECountryRoas(ripeCountryHolding, authorisations)
+          case x => panic(s"Unhandled adoption analysis: $x")
         }
       }
       (announcementTime, roaParseTime, reportTime)
@@ -134,6 +135,7 @@ object Main extends App with Logging{
           case RirActivationMode => ReportNROStatsPage.reportActivation(entityRIRHOldings, certifiedResourcesMap)
           case CountryActivationMode => ReportNROStatsPage.reportActivation(entityCountryHoldings, certifiedResourcesMap)
           case NROStatsMode => ReportNROStatsPage.report(announcements, authorisations, countryHolding, rirHoldings, entityCountryHoldings, entityRIRHOldings, certifiedResourcesMap)
+          case x => panic(s"Unhandled activation analysis: $x")
         }
       }
       (announcementTime, roaParseTime, reportTime,  certParseTime)
@@ -145,4 +147,9 @@ object Main extends App with Logging{
     System.exit(0) // We're done here
   }
 
+
+  def panic(msg: String): Unit = {
+    println(msg)
+    System.exit(2)
+  }
 }

@@ -249,11 +249,13 @@
                             <useZincServer>true</useZincServer>
                             <args>
                                 <arg>-deprecation</arg>
-                                <arg>-unchecked</arg>
-                                <arg>-feature</arg>
-                                <arg>-Xlint</arg>
                                 <arg>-encoding</arg>
                                 <arg>UTF-8</arg>
+                                <arg>-language:higherKinds</arg>
+                                <arg>-language:postfixOps</arg>
+                                <arg>-feature</arg>
+                                <arg>-Xfatal-warnings</arg>
+                                <arg>-Xlint:_</arg>
                             </args>
                         </configuration>
                     </execution>

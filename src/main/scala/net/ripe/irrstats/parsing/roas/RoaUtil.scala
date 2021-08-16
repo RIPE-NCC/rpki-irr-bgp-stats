@@ -37,7 +37,7 @@ import scala.io.Source
 
 object RoaUtil {
 
-  def parse(roaCsvFile: File): List[RtrPrefix] = Source.fromFile(roaCsvFile, "iso-8859-1").getLines.flatMap { line =>
+  def parse(roaCsvFile: File): List[RtrPrefix] = Source.fromFile(roaCsvFile, "iso-8859-1").getLines().flatMap { line =>
     if (!line.startsWith("#") && !line.startsWith("ASN,") && !line.startsWith("\"ASN\",")) {
       val tokens = line.replaceAll("\"", "").split(',')
       if (tokens.length >= 3) {
@@ -53,4 +53,3 @@ object RoaUtil {
   }.toList
 
 }
-

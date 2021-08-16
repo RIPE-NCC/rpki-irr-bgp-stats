@@ -77,12 +77,12 @@ object NumberResources {
       builder.result()
     }
 
-    private[this] final def traverseTree[A](tree: FingerTree[NumberResourceInterval, A], pred: NumberResourceInterval => Boolean, collect: A => Unit) {
-      def traverseFinger(finger: Finger[NumberResourceInterval, A]) = if (pred(finger.measure)) finger.foreach(collect)
-      def traverseNode(node: Node[NumberResourceInterval, A]) = if (pred(node.measure)) node.foreach(collect)
+    private[this] final def traverseTree[N](tree: FingerTree[NumberResourceInterval, N], pred: NumberResourceInterval => Boolean, collect: N => Unit): Unit = {
+      def traverseFinger(finger: Finger[NumberResourceInterval, N]) = if (pred(finger.measure)) finger.foreach(collect)
+      def traverseNode(node: Node[NumberResourceInterval, N]) = if (pred(node.measure)) node.foreach(collect)
 
       tree.fold(
-        empty = (_: A) => (),
+        empty = (),
         single = (measure, value) => if (pred(measure)) collect(value),
         deep = (measure, prefix, middle, suffix) => if (pred(measure)) {
           traverseFinger(prefix)

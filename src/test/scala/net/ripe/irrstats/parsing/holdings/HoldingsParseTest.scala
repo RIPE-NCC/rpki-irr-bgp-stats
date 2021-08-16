@@ -67,6 +67,7 @@ class HoldingsParseTest extends funsuite.AnyFunSuite with should.Matchers {
     val countryHoldings = CountryHoldings.parse(Holdings.read(file))
 
     val entityCountryCombined = entityCountryHoldings.groupBy { case ((_, country), _) => country }
+      .view
       .mapValues { entry =>
         val combined = new IpResourceSet()
         entry.values.foreach(combined.addAll)

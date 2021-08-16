@@ -49,7 +49,7 @@ object RouteParser {
 
     val keyValueRegex = """^([\w\-]+):\s*(\S*).*$""".r
 
-    Source.fromFile(routeFile, "iso-8859-1").getLines.foreach {
+    Source.fromFile(routeFile, "iso-8859-1").getLines().foreach {
       case keyValueRegex(key, value) => key match {
         case "route" | "route6" =>
           if (asn != null && prefix != null) {

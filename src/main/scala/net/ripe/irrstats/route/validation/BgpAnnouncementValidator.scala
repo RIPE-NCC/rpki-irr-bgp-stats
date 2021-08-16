@@ -37,7 +37,6 @@ import net.ripe.irrstats.Time
 
 import scala.collection.parallel.CollectionConverters._
 import scala.concurrent.stm.Ref
-import scalaz.Reducer
 
 case class BgpAnnouncementSet(url: String, lastModified: Option[DateTime] = None, entries: Seq[BgpAnnouncement] = Seq.empty)
 

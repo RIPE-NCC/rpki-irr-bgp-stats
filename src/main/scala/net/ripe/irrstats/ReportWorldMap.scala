@@ -31,7 +31,7 @@ package net.ripe.irrstats
 import net.ripe.irrstats.analysis.RegionStats
 import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.WorldMapPage
-import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix, StalenessStat}
+import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
 object ReportWorldMap {
 

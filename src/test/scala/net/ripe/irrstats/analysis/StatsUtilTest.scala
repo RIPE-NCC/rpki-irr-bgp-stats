@@ -30,7 +30,7 @@ package net.ripe.irrstats.analysis
 
 import java.math.BigInteger
 
-import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet}
+import net.ripe.ipresource.{IpResource, IpResourceSet}
 import StatsUtil._
 import org.scalatest._
 import matchers._
