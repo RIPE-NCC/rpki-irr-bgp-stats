@@ -13,8 +13,8 @@
         <jodatime.version>2.10.10</jodatime.version>
         <slf4j.version>1.7.32</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
-        <scala.version>2.10.6</scala.version>
-        <scala.binary.version>2.10</scala.binary.version>
+        <scala.version>2.11.12</scala.version>
+        <scala.binary.version>2.11</scala.binary.version>
         <main.class>net.ripe.irrstats.Main</main.class>
     </properties>
 
