@@ -28,10 +28,11 @@
  */
 package net.ripe.irrstats.reporting
 
-import org.scalatest.{Matchers, FunSuite}
+import org.scalatest._
+import matchers._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class WorldMapPageTest extends FunSuite with Matchers {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class WorldMapPageTest extends funsuite.AnyFunSuite with should.Matchers {
 
   test("Should render page") {
 

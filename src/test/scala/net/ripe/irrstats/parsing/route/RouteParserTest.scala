@@ -30,16 +30,17 @@ package net.ripe.irrstats.parsing.route
 
 import java.io.File
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest._
+import matchers._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class RouteParserTest extends FunSuite with Matchers {
-  
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class RouteParserTest extends funsuite.AnyFunSuite with should.Matchers {
+
   test("regex should split") {
     val routeLine = "mnt-by:          MNT-SOMETHING # bla"
     val otherLine = "# bla"
     val keyValueRegex = """^([\w\-]+):\s*(\S*).*$""".r
-    
+
     routeLine match {
       case keyValueRegex(key, value) => {
         key should equal("mnt-by")
@@ -47,12 +48,12 @@ class RouteParserTest extends FunSuite with Matchers {
       }
       case _ => fail("Should have matched")
     }
-    
+
     otherLine match {
       case keyValueRegex(k, v) => fail("Should not match")
       case _ => // okay
     }
-    
+
   }
 
   test("should parse routes file") {
@@ -60,10 +61,10 @@ class RouteParserTest extends FunSuite with Matchers {
     val routes = RouteParser.parse(routesFile)
     routes.size should equal(62)
   }
-  
+
   test("should parse routes6 file") {
     val route6sFile = new File(Thread.currentThread().getContextClassLoader().getResource("ripe-db-route6.txt").getFile)
     val route6s = RouteParser.parse(route6sFile)
-	  route6s.size should equal(62)
+          route6s.size should equal(62)
   }
 }

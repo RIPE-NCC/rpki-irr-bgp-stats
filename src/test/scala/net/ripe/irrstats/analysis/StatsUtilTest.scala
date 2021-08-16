@@ -31,11 +31,12 @@ package net.ripe.irrstats.analysis
 import java.math.BigInteger
 
 import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet}
-import org.scalatest.{FunSuite, Matchers}
 import StatsUtil._
+import org.scalatest._
+import matchers._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class StatsUtilTest extends FunSuite with Matchers {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class StatsUtilTest extends funsuite.AnyFunSuite with should.Matchers {
 
   import scala.language.implicitConversions
 

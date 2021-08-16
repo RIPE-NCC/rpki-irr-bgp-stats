@@ -30,12 +30,13 @@ package net.ripe.irrstats.parsing.certifiedresource
 
 import java.io.File
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest._
+import matchers._
 
 import scala.collection.JavaConverters._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class CertifiedResourceParserTest extends FunSuite with Matchers {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class CertifiedResourceParserTest extends funsuite.AnyFunSuite with should.Matchers {
 
   test("Should parse map certified.csv") {
     val roaTestFile = new File(Thread.currentThread().getContextClassLoader().getResource("certified.csv").getFile)

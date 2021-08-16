@@ -31,11 +31,13 @@ package net.ripe.irrstats.parsing.holdings
 import java.io.File
 
 import net.ripe.ipresource.{IpResource, IpResourceSet}
-import org.scalatest.{FunSuite, Matchers}
 import Holdings._
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class HoldingsParseTest extends FunSuite with Matchers {
-  
+import org.scalatest._
+import matchers._
+
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class HoldingsParseTest extends funsuite.AnyFunSuite with should.Matchers {
+
   test("Should parse IPv4") {
     parseIpv4("213.154.64.0", "8192") should equal (IpResourceSet.parse("213.154.64.0/19"))
   }

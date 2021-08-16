@@ -30,7 +30,8 @@ package net.ripe.irrstats.route.validation
 
 import net.ripe.ipresource.{Asn, IpRange}
 import net.ripe.irrstats.route.validation.NumberResources._
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest._
+import matchers._
 
 object NumberResourcesTest {
   import scala.language.implicitConversions
@@ -41,8 +42,8 @@ object NumberResourcesTest {
   implicit def StringToInterval(s: String): NumberResourceInterval = IpRangeToInterval(StringToPrefix(s))
 }
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class NumberResourcesTest extends FunSuite with Matchers {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class NumberResourcesTest extends funsuite.AnyFunSuite with should.Matchers {
   import NumberResourcesTest._
 
   val Prefix_10_8 = IpRange.parse("10/8")
@@ -156,4 +157,3 @@ class NumberResourcesTest extends FunSuite with Matchers {
     subject.findExactAndAllLessSpecific("0/31") should equal(prefixes)
   }
 }
-
