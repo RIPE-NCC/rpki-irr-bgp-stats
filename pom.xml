@@ -120,8 +120,8 @@
 
         <dependency>
             <groupId>com.github.scopt</groupId>
-            <artifactId>scopt_2.10</artifactId>
-            <version>3.4.0</version>
+            <artifactId>scopt_${scala.binary.version}</artifactId>
+            <version>3.7.1</version>
         </dependency>
 
     </dependencies>
