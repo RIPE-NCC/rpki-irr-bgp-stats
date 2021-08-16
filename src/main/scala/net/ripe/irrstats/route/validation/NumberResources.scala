@@ -30,7 +30,8 @@ package net.ripe.irrstats.route.validation
 
 import net.ripe.ipresource._
 
-import scalaz.{Finger, FingerTree, Monoid, Node, Reducer}
+import scalaz.{FingerTree, Monoid, Reducer}
+import FingerTree.{Finger, Node}
 
 object NumberResources {
   implicit object AsnOrdering extends Ordering[Asn] {
@@ -81,7 +82,7 @@ object NumberResources {
       def traverseNode(node: Node[NumberResourceInterval, A]) = if (pred(node.measure)) node.foreach(collect)
 
       tree.fold(
-        empty = _ => (),
+        empty = (_: A) => (),
         single = (measure, value) => if (pred(measure)) collect(value),
         deep = (measure, prefix, middle, suffix) => if (pred(measure)) {
           traverseFinger(prefix)
@@ -102,4 +103,3 @@ object NumberResources {
   }
 
 }
-
