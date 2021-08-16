@@ -130,26 +130,29 @@
 
         <plugins>
             <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.9.0</version>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.1</version>
                 <configuration>
                     <strictCheck>true</strictCheck>
                     <header>LICENSE.txt</header>
                     <excludes>
-                        <exclude>**/.*</exclude>
                         <exclude>**/*.conf</exclude>
-                        <exclude>**/*.txt</exclude>
+                        <exclude>**/*.csv</exclude>
                         <exclude>**/*.md</exclude>
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/.*</exclude>
+                        <exclude>.idea/**</exclude>
+                        <exclude>.metals/**</exclude>
+                        <exclude>.worksheet/**</exclude>
                         <exclude>bin/**</exclude>
                         <exclude>data/**</exclude>
                         <exclude>lib/**</exclude>
                         <exclude>log/**</exclude>
+                        <exclude>pom.xml</exclude>
                         <exclude>repo/**</exclude>
-                        <exclude>target/**</exclude>
                         <exclude>scalastyle-output.xml</exclude>
-                        <exclude>.idea/**</exclude>
-                        <exclude>.worksheet/**</exclude>
+                        <exclude>target/**</exclude>
                     </excludes>
                 </configuration>
                 <executions>
