@@ -1,42 +1,42 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>net.ripe.irrstats</groupId>
-	<artifactId>irrstats</artifactId>
-	<version>0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
-	<name>IRR Statistics - Data quality and all..</name>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.ripe.irrstats</groupId>
+    <artifactId>irrstats</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>IRR Statistics - Data quality and all..</name>
 
-	<properties>
-		<rpki.validator.version>2.23</rpki.validator.version>
-		<rpki.commons.version>1.2</rpki.commons.version>
-		<jodatime.version>2.3</jodatime.version>
-		<slf4j.version>1.7.6</slf4j.version>
-		<log4j.version>1.2.17</log4j.version>
-		<scala.version>2.10.6</scala.version>
-		<scala.binary.version>2.10</scala.binary.version>
-		<main.class>net.ripe.irrstats.Main</main.class>
-	</properties>
+    <properties>
+        <rpki.validator.version>2.23</rpki.validator.version>
+        <rpki.commons.version>1.2</rpki.commons.version>
+        <jodatime.version>2.3</jodatime.version>
+        <slf4j.version>1.7.6</slf4j.version>
+        <log4j.version>1.2.17</log4j.version>
+        <scala.version>2.10.6</scala.version>
+        <scala.binary.version>2.10</scala.binary.version>
+        <main.class>net.ripe.irrstats.Main</main.class>
+    </properties>
 
-	<repositories>
-		<repository>
-			<id>Typesafe</id>
-			<name>Typesafe Repository</name>
-			<url>http://repo.typesafe.com/typesafe/releases/</url>
-		</repository>
-	</repositories>
+    <repositories>
+        <repository>
+            <id>Typesafe</id>
+            <name>Typesafe Repository</name>
+            <url>http://repo.typesafe.com/typesafe/releases/</url>
+        </repository>
+    </repositories>
 
-	<!-- ====================================================================== -->
-	<!-- Dependencies -->
-	<!-- ====================================================================== -->
+    <!-- ====================================================================== -->
+    <!-- Dependencies -->
+    <!-- ====================================================================== -->
 
-	<dependencies>
+    <dependencies>
 
-		<dependency>
-			<groupId>net.ripe.rpki</groupId>
-			<artifactId>rpki-commons</artifactId>
-			<version>${rpki.commons.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>net.ripe.rpki</groupId>
+            <artifactId>rpki-commons</artifactId>
+            <version>${rpki.commons.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.scalaz</groupId>
@@ -56,220 +56,223 @@
             <version>2.1.4</version>
         </dependency>
 
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>${jodatime.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${jodatime.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.joda</groupId>
-			<artifactId>joda-convert</artifactId>
-			<version>1.6</version>
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-convert</artifactId>
+            <version>1.6</version>
+            <scope>compile</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>${scala.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.scalatest</groupId>
-			<artifactId>scalatest_${scala.binary.version}</artifactId>
-			<version>2.1.5</version>
-		</dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.binary.version}</artifactId>
+            <version>2.1.5</version>
+        </dependency>
 
-		<!-- Logging -->
-		<dependency>
-			<!-- http://software.clapper.org/grizzled-slf4j/ -->
-			<groupId>org.clapper</groupId>
-			<artifactId>grizzled-slf4j_${scala.binary.version}</artifactId>
-			<version>1.0.2</version>
-		</dependency>
+        <!-- Logging -->
+        <dependency>
+            <!-- http://software.clapper.org/grizzled-slf4j/ -->
+            <groupId>org.clapper</groupId>
+            <artifactId>grizzled-slf4j_${scala.binary.version}</artifactId>
+            <version>1.0.2</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>com.github.scopt</groupId>
-			<artifactId>scopt_2.10</artifactId>
-			<version>3.4.0</version>
-		</dependency>
+        <dependency>
+            <groupId>com.github.scopt</groupId>
+            <artifactId>scopt_2.10</artifactId>
+            <version>3.4.0</version>
+        </dependency>
 
-	</dependencies>
+    </dependencies>
 
-	<build>
-		<finalName>${project.artifactId}-${project.version}</finalName>
+    <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
 
-		<sourceDirectory>src/main/scala</sourceDirectory>
-		<testSourceDirectory>src/test/scala</testSourceDirectory>
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <testSourceDirectory>src/test/scala</testSourceDirectory>
 
-		<plugins>
-		  <plugin>
-        <groupId>com.mycila.maven-license-plugin</groupId>
-        <artifactId>maven-license-plugin</artifactId>
-        <version>1.9.0</version>
-        <configuration>
-          <strictCheck>true</strictCheck>
-          <header>LICENSE.txt</header>
-          <excludes>
-            <exclude>**/.*</exclude>
-            <exclude>**/*.conf</exclude>
-            <exclude>**/*.txt</exclude>
-            <exclude>**/*.md</exclude>
-            <exclude>bin/**</exclude>
-            <exclude>data/**</exclude>
-            <exclude>lib/**</exclude>
-            <exclude>log/**</exclude>
-            <exclude>repo/**</exclude>
-            <exclude>target/**</exclude>
-            <exclude>scalastyle-output.xml</exclude>
-            <exclude>.idea/**</exclude>
-            <exclude>.worksheet/**</exclude>
-          </excludes>
-        </configuration>
-        <executions>
-          <execution>
-            <id>license-check</id>
-            <phase>verify</phase>
-            <goals>
-            <goal>check</goal>
-          </goals>
-        </execution>
-      </executions>
-      </plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>src/main/assembly/distribution.xml</descriptor>
-					</descriptors>
-					<archive>
-						<manifest>
-							<mainClass>${main.class}</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+        <plugins>
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>4.1</version>
+                <configuration>
+                    <strictCheck>true</strictCheck>
+                    <header>LICENSE.txt</header>
+                    <excludes>
+                        <exclude>**/*.conf</exclude>
+                        <exclude>**/*.csv</exclude>
+                        <exclude>**/*.md</exclude>
+                        <exclude>**/*.txt</exclude>
+                        <exclude>**/.*</exclude>
+                        <exclude>.idea/**</exclude>
+                        <exclude>.metals/**</exclude>
+                        <exclude>.worksheet/**</exclude>
+                        <exclude>bin/**</exclude>
+                        <exclude>data/**</exclude>
+                        <exclude>lib/**</exclude>
+                        <exclude>log/**</exclude>
+                        <exclude>pom.xml</exclude>
+                        <exclude>repo/**</exclude>
+                        <exclude>scalastyle-output.xml</exclude>
+                        <exclude>target/**</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>license-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/distribution.xml</descriptor>
+                    </descriptors>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<configuration>
-					<includes>
-						<include>**/*Test.class</include>
-						<include>**/*Spec.class</include>
-					</includes>
-				</configuration>
-			</plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.class</include>
+                        <include>**/*Spec.class</include>
+                    </includes>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<configuration>
-					<mainClass>${main.class}</mainClass>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>${main.class}</mainClass>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
 
-			<plugin>
-				<groupId>net.alchim31.maven</groupId>
-				<artifactId>scala-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>compile</goal>
-							<goal>testCompile</goal>
-						</goals>
-						<configuration>
-							<checkMultipleScalaVersions>true</checkMultipleScalaVersions>
-							<jvmArgs>
-								<arg>-XX:+TieredCompilation</arg> <!-- Much faster Scala compilation -->
-								<arg>-XX:CICompilerCount=1</arg> <!-- Number of HotSpot background compiler threads -->
-							</jvmArgs>
-							<recompileMode>incremental</recompileMode>
-							<useZincServer>true</useZincServer>
-							<args>
-								<arg>-deprecation</arg>
-								<arg>-unchecked</arg>
-								<arg>-feature</arg>
-								<arg>-Xlint</arg>
-								<arg>-Xmax-classfile-name</arg>
-								<arg>130</arg>
-								<arg>-encoding</arg>
-								<arg>UTF-8</arg>
-							</args>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <checkMultipleScalaVersions>true</checkMultipleScalaVersions>
+                            <jvmArgs>
+                                <arg>-XX:+TieredCompilation</arg> <!-- Much faster Scala compilation -->
+                                <arg>-XX:CICompilerCount=1</arg> <!-- Number of HotSpot background compiler threads -->
+                            </jvmArgs>
+                            <recompileMode>incremental</recompileMode>
+                            <useZincServer>true</useZincServer>
+                            <args>
+                                <arg>-deprecation</arg>
+                                <arg>-unchecked</arg>
+                                <arg>-feature</arg>
+                                <arg>-Xlint</arg>
+                                <arg>-Xmax-classfile-name</arg>
+                                <arg>130</arg>
+                                <arg>-encoding</arg>
+                                <arg>UTF-8</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
-			<plugin>
-				<groupId>org.scalastyle</groupId>
-				<artifactId>scalastyle-maven-plugin</artifactId>
-				<version>0.5.0</version>
-				<configuration>
-					<verbose>false</verbose>
-					<failOnViolation>true</failOnViolation>
-					<includeTestSourceDirectory>true</includeTestSourceDirectory>
-					<failOnWarning>false</failOnWarning>
-					<sourceDirectory>${basedir}/src/main/scala</sourceDirectory>
-					<testSourceDirectory>${basedir}/src/test/scala</testSourceDirectory>
-					<configLocation>${basedir}/lib/scalastyle_config.xml</configLocation>
-					<outputFile>${project.basedir}/scalastyle-output.xml</outputFile>
-					<outputEncoding>UTF-8</outputEncoding>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.scalastyle</groupId>
+                <artifactId>scalastyle-maven-plugin</artifactId>
+                <version>0.5.0</version>
+                <configuration>
+                    <verbose>false</verbose>
+                    <failOnViolation>true</failOnViolation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <failOnWarning>false</failOnWarning>
+                    <sourceDirectory>${basedir}/src/main/scala</sourceDirectory>
+                    <testSourceDirectory>${basedir}/src/test/scala</testSourceDirectory>
+                    <configLocation>${basedir}/lib/scalastyle_config.xml</configLocation>
+                    <outputFile>${project.basedir}/scalastyle-output.xml</outputFile>
+                    <outputEncoding>UTF-8</outputEncoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
 
-	</build>
+    </build>
 </project>

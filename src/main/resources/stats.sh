@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2015-2107 RIPE NCC
+# Copyright (c) 2015-2021 RIPE NCC
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
