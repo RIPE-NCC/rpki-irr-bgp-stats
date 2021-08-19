@@ -109,7 +109,7 @@ object StatsUtil {
       // Same logic as in IpResourceSet.retainAll, we just terminate successfully if there is any intersection.
       while (thatResource != null && thisResource != null) {
 
-        if (thatResource.intersect(thisResource) != null) return true
+        if (thatResource.overlaps(thisResource)) return true
 
         val compareTo = thisResource.getEnd.compareTo(thatResource.getEnd)
 
