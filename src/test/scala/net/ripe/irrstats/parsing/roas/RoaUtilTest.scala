@@ -32,10 +32,11 @@ import java.io.File
 
 import net.ripe.ipresource.{Asn, IpRange}
 import net.ripe.irrstats.route.validation.RtrPrefix
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest._
+import matchers._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class RoaUtilTest extends FunSuite with Matchers {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class RoaUtilTest extends funsuite.AnyFunSuite with should.Matchers {
 
   test("Should parse roas.csv") {
     val roaTestFile = new File(Thread.currentThread().getContextClassLoader().getResource("roas.csv").getFile)

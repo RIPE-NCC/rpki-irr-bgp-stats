@@ -52,7 +52,7 @@ object Holdings {
 
   type CertificateResources = Map[Subject, IpResourceSet]
 
-  def read(statsFile: File): Seq[String] = Source.fromFile(statsFile, "ASCII").getLines.toSeq
+  def read(statsFile: File): Seq[String] = Source.fromFile(statsFile, "ASCII").getLines().toSeq
 
   def parseIpv4(base: String, addresses: String): IpResourceSet = {
     val baseAddress = Ipv4Address.parse(base)

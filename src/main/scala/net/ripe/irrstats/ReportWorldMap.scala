@@ -31,7 +31,7 @@ package net.ripe.irrstats
 import net.ripe.irrstats.analysis.RegionStats
 import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.WorldMapPage
-import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix, StalenessStat}
+import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
 object ReportWorldMap {
 
@@ -40,14 +40,14 @@ object ReportWorldMap {
     val countryStats = regionStats.worldMapStats
     val staleness = regionStats.worldStaleness
 
-    val prefixesAdoptionValues = countryStats.withFilter(cs => cs.prefixesAdoption.isDefined).map { cs => cs.countryCode -> cs.prefixesAdoption.get }.toMap
-    val prefixesValidValues = countryStats.withFilter(cs => cs.prefixesValid.isDefined).map { cs => cs.countryCode -> cs.prefixesValid.get }.toMap
-    val prefixesMatchingValues = countryStats.withFilter(cs => cs.prefixesMatching.isDefined).map { cs => cs.countryCode -> cs.prefixesMatching.get }.toMap
-    val adoptionValues = countryStats.withFilter(cs => cs.adoption.isDefined).map { cs => cs.countryCode -> cs.adoption.get }.toMap
-    val validValues = countryStats.withFilter(cs => cs.valid.isDefined).map { cs => cs.countryCode -> cs.valid.get }.toMap
-    val matchingValues = countryStats.withFilter(cs => cs.matching.isDefined).map { cs => cs.countryCode -> cs.matching.get }.toMap
+    val prefixesAdoptionValues = countryStats.withFilter(cs => cs.prefixesAdoption.isDefined).map { cs => cs.countryCode -> cs.prefixesAdoption.get }.toMap.view
+    val prefixesValidValues = countryStats.withFilter(cs => cs.prefixesValid.isDefined).map { cs => cs.countryCode -> cs.prefixesValid.get }.toMap.view
+    val prefixesMatchingValues = countryStats.withFilter(cs => cs.prefixesMatching.isDefined).map { cs => cs.countryCode -> cs.prefixesMatching.get }.toMap.view
+    val adoptionValues = countryStats.withFilter(cs => cs.adoption.isDefined).map { cs => cs.countryCode -> cs.adoption.get }.toMap.view
+    val validValues = countryStats.withFilter(cs => cs.valid.isDefined).map { cs => cs.countryCode -> cs.valid.get }.toMap.view
+    val matchingValues = countryStats.withFilter(cs => cs.matching.isDefined).map { cs => cs.countryCode -> cs.matching.get }.toMap.view
 
-    val stalenessValues = staleness.withFilter(_._2.authorisations.nonEmpty).map { case (region, stat) => region -> stat.fraction }
+    val stalenessValues = staleness.withFilter(_._2.authorisations.nonEmpty).map { case (region, stat) => region -> stat.fraction }.view
 
     print(WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues, stalenessValues))
   }

@@ -57,11 +57,9 @@
 package net.ripe.irrstats.analysis
 
 import java.math.BigInteger
-import java.util
-
 import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet, IpResourceType}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 object StatsUtil {
 
@@ -116,7 +114,7 @@ object StatsUtil {
 
     // Calculate size of unique IPv6 Addresses contained in this Set
     def ipv6AddressSize(): BigInteger = accumulateSize(ipv6Resources)
-    
+
     private def accumulateSize(resources: Iterator[IpResource]): BigInteger =
       resources.foldLeft(BigInteger.ZERO)((r, c) => {
         r.add(c.getEnd.getValue.subtract(c.getStart.getValue).add(BigInteger.ONE))
@@ -125,7 +123,7 @@ object StatsUtil {
 
     def hasCommonResourceWith(thatSet: IpResourceSet): Boolean = {
 
-      def nextOrNull(iter : Iterator[IpResource]) = if (iter.hasNext) iter.next else null
+      def nextOrNull(iter : Iterator[IpResource]) = if (iter.hasNext) iter.next() else null
 
       // These iterators are sorter by IpResource range end.
       val thatIter: Iterator[IpResource] = thatSet.resources()
@@ -153,4 +151,3 @@ object StatsUtil {
     }
 
 }
-

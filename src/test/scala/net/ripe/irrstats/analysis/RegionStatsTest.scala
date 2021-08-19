@@ -61,10 +61,11 @@ import java.math.BigInteger
 import net.ripe.ipresource.{Asn, IpRange, IpResourceSet}
 import net.ripe.irrstats.parsing.holdings.Holdings.Holdings
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest._
+import matchers._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class RegionStatsTest extends FunSuite with Matchers {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class RegionStatsTest extends funsuite.AnyFunSuite with should.Matchers {
 
   import scala.language.implicitConversions
   implicit def stringToIpRange(s: String): IpRange = IpRange.parse(s)

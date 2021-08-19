@@ -30,6 +30,8 @@ package net.ripe.irrstats.reporting
 
 import java.math.BigInteger
 
+import scala.collection.MapView
+
 object MapUtils {
 
   val ShowMatchingThreshold = 0.001 // 0.1%
@@ -45,15 +47,15 @@ object MapUtils {
     "lacnic" -> List(5, 13)
   )
 
-  def findMatchingValuesAboveAdoptionThreshold(adoptionValues: Map[String, Double], matchingValues: Map[String, Double]): Map[String, Double] = {
+  def findMatchingValuesAboveAdoptionThreshold(adoptionValues: MapView[String, Double], matchingValues: MapView[String, Double]): MapView[String, Double] = {
     matchingValues.filter { case (k, _) => adoptionValues.isDefinedAt(k) && adoptionValues(k) > ShowMatchingThreshold }
   }
 
-  def convertValuesToArrayData(countryValues: Map[String, Double]): String = {
+  def convertValuesToArrayData(countryValues: MapView[String, Double]): String = {
     countryValues.map { case (k, v) => "['" + k + "', " + f"${v * 100}%3.2f]" }.mkString(",\n          ")
   }
 
-  def convertValuesToRIRArrayData(rirValues: Map[String, Double]): String = {
+  def convertValuesToRIRArrayData(rirValues: MapView[String, Double]): String = {
     rirValues.flatMap { case (rirRegion, fraction) =>
       subcontinents(rirRegion).flatMap { subContinentCode =>
         val scode = "%03d" format subContinentCode
@@ -63,7 +65,7 @@ object MapUtils {
     }.mkString(",\n          ")
   }
 
-  def convertValuesToBubbleArrayData(countriesData: Map[String, (Double, Int, Int, BigInteger)]): String = {
+  def convertValuesToBubbleArrayData(countriesData: MapView[String, (Double, Int, Int, BigInteger)]): String = {
     countriesData.map { case (country, (adoption, activation, count, size)) =>
       val fract = "%3.2f" format (adoption * 100)
       s"['$country', $activation, $fract, $size, $count]"

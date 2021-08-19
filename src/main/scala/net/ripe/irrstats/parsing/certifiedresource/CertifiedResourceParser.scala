@@ -31,7 +31,7 @@ package net.ripe.irrstats.parsing.certifiedresource
 import java.io.File
 
 import grizzled.slf4j.Logging
-import net.ripe.ipresource.{IpRange, IpResource, IpResourceSet}
+import net.ripe.ipresource.IpResourceSet
 
 import scala.collection.mutable
 import scala.io.Source
@@ -51,7 +51,8 @@ object CertifiedResourceParser extends Logging {
     logger.info("Start parsing Certificates")
     Source
       .fromFile(certifiedResourceFile, "iso-8859-1")
-      .getLines.drop(1)
+      .getLines()
+      .drop(1)
       .foreach(line => {
         val skiResource: Array[String] = line.split("\",\"")
         val ski = skiResource(0).replaceAll("\"","")

@@ -32,10 +32,11 @@ import java.io.File
 
 import net.ripe.irrstats.parsing.ris.RisDumpUtil
 import net.ripe.irrstats.route.validation.BgpAnnouncement
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest._
+import matchers._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class RisDumpUtilTest extends FunSuite with Matchers {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class RisDumpUtilTest extends funsuite.AnyFunSuite with should.Matchers {
 
   test("Should parse ipv4 dump file") {
     val dumpFile = new File(Thread.currentThread().getContextClassLoader().getResource("ris-ipv4.txt").getFile)

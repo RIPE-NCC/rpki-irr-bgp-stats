@@ -33,6 +33,8 @@ import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.RegionCsv
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
+import scala.collection.parallel.CollectionConverters._
+
 object ReportRir {
 
   def report(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], holdings: Holdings, quiet: Boolean, dateString: String, rirString: String) = {
@@ -61,7 +63,7 @@ object ReportRir {
     if (!quiet) {
       RegionCsv.printAdoptionHeader("RIR")
     }
-    
+
     val (rirStats, t) = Time.timed(new RegionStats(holdings, announcements, authorisations))
 
     val rirs = if (rirString == "all") {

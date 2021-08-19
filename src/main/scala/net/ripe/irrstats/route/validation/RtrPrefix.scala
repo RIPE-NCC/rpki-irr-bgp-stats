@@ -33,6 +33,7 @@ import java.math.BigInteger
 import net.ripe.ipresource.{Asn, IpRange}
 import NumberResources._
 import scalaz.Reducer
+import Reducer._
 
 case class RtrPrefix(asn: Asn, prefix: IpRange, maxPrefixLength: Option[Int] = None) {
   def interval = NumberResourceInterval(prefix.getStart, prefix.getEnd)
@@ -45,11 +46,10 @@ object RtrPrefix {
   /**
     * Takes an RtrPrefix and returns the associated IP range.
     */
-  implicit object RtrPrefixReducer extends Reducer[RtrPrefix, NumberResourceInterval] {
-    override def unit(prefix: RtrPrefix) = prefix.interval
+  implicit def RtrPrefixReducer: Reducer[RtrPrefix, NumberResourceInterval] = {
+    unitReducer(prefix => prefix.interval)
   }
 
   def accumulateSize(prefixes : Seq[RtrPrefix]) =
     prefixes.map(_.size).foldLeft(BigInteger.ZERO)((res, next) => res.add(next))
 }
-

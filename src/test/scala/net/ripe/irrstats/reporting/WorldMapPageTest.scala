@@ -28,20 +28,21 @@
  */
 package net.ripe.irrstats.reporting
 
-import org.scalatest.{Matchers, FunSuite}
+import org.scalatest._
+import matchers._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class WorldMapPageTest extends FunSuite with Matchers {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class WorldMapPageTest extends funsuite.AnyFunSuite with should.Matchers {
 
   test("Should render page") {
 
-    val prefixesAdoptionValues = Map("NL" -> 0.861, "BE" -> 0.46)
-    val prefixesValidValues = Map("NL" -> 0.8512, "BE" -> 0.45)
-    val prefixesMatchingValues = Map("NL" -> 0.8400, "BE" -> 0.44)
-    val adoptionValues = Map("NL" -> 0.83, "BE" -> 0.43)
-    val validValues = Map("NL" -> 0.82, "BE" -> 0.42)
-    val matchingValues = Map("NL" -> 0.81, "BE" -> 0.41)
-    val stalenessValues = Map("NL" -> 0.80, "BE" -> 0.40)
+    val prefixesAdoptionValues = Map("NL" -> 0.861, "BE" -> 0.46).view
+    val prefixesValidValues = Map("NL" -> 0.8512, "BE" -> 0.45).view
+    val prefixesMatchingValues = Map("NL" -> 0.8400, "BE" -> 0.44).view
+    val adoptionValues = Map("NL" -> 0.83, "BE" -> 0.43).view
+    val validValues = Map("NL" -> 0.82, "BE" -> 0.42).view
+    val matchingValues = Map("NL" -> 0.81, "BE" -> 0.41).view
+    val stalenessValues = Map("NL" -> 0.80, "BE" -> 0.40).view
 
     val page = WorldMapPage.printWorldMapHtmlPage(prefixesAdoptionValues, prefixesValidValues, prefixesMatchingValues, adoptionValues, validValues, matchingValues, stalenessValues)
 

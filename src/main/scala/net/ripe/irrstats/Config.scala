@@ -40,73 +40,73 @@ object Config {
   private val cliOptionParser = new scopt.OptionParser[Config](ApplicationName) {
     head(ApplicationName, ApplicationVersion)
 
-    opt[File]('b', "bgp-announcements") required() valueName "<file>" action { (x, c) =>
+    opt[File]('b', "bgp-announcements").required() valueName "<file>" action { (x, c) =>
       c.copy(risDumpFile = x)
     } text {
       "Location of a RIS Dump style file with BGP announcements "
     }
-    opt[File]('s', "extended-delegated-stats") required() valueName "<file>" action { (x, c) =>
+    opt[File]('s', "extended-delegated-stats").required() valueName "<file>" action { (x, c) =>
       c.copy(statsFile = x)
     } text {
       "Location of a copy of the NRO extended delegated stats"
     }
-    opt[File]('r', "route-authorisations") required() valueName "<file>" action { (x, c) =>
+    opt[File]('r', "route-authorisations").required() valueName "<file>" action { (x, c) =>
       c.copy(routeAuthorisationFile = x)
     } text {
       "Location of a file with either ROA export from the RIPE NCC RPKI Validator (.csv) or route[6] objects (.txt)"
     }
-    opt[File]('f', "certified-resources") optional() valueName "<file>" action { (x, c) =>
+    opt[File]('f', "certified-resources").optional() valueName "<file>" action { (x, c) =>
       c.copy(certifiedResourceFile = x)
     } text {
       "Location of a file with dump of certified resources from RIPE NCC Validator (.csv) file. Needed for activation" +
         " related analyis"
     }
-    opt[Unit]('q', "quiet") optional() action { (x, c) => c.copy(quiet = true) } text {
+    opt[Unit]('q', "quiet").optional() action { (x, c) => c.copy(quiet = true) } text {
       "Quiet output, just (real) numbers"
     }
-    opt[String]('d', "date") optional() action { (x, c) => c.copy(date = x) } text {
+    opt[String]('d', "date").optional() action { (x, c) => c.copy(date = x) } text {
       "Override date string, defaults to today"
     }
-    opt[String]('r', "rir") optional() action { (x, c) => c.copy(rir = x) } text {
+    opt[String]('r', "rir").optional() action { (x, c) => c.copy(rir = x) } text {
       "Only show results for specified rir, defaults to all"
     }
 
-    opt[String]('x', "country-details") optional() action { (x, c) => c.copy(analysisMode = CountryDetailsMode, countryDetails = Some(x)) } text {
+    opt[String]('x', "country-details").optional() action { (x, c) => c.copy(analysisMode = CountryDetailsMode, countryDetails = Some(x)) } text {
       "Do a detailed announcement report for country code"
     }
-    opt[Unit]('c', "countries") optional() action { (x, c) => c.copy(analysisMode = CountryMode) } text {
+    opt[Unit]('c', "countries").optional() action { (x, c) => c.copy(analysisMode = CountryMode) } text {
       "Do a report per country instead of per RIR"
     }
-    opt[Unit]('w', "worldmap") optional() action { (x, c) => c.copy(analysisMode = WorldMapMode) } text {
+    opt[Unit]('w', "worldmap").optional() action { (x, c) => c.copy(analysisMode = WorldMapMode) } text {
       "Produce an HTML page with country stats projected on a number of world maps"
     }
-    opt[Unit]('n', "nro-stats") optional() action { (x, c) => c.copy(analysisMode = NROStatsMode) } text {
+    opt[Unit]('n', "nro-stats").optional() action { (x, c) => c.copy(analysisMode = NROStatsMode) } text {
       "Produce an HTML page with country adoption projected on world maps"
     }
-    opt[Unit]('a', "asn") optional() action { (x, c) => c.copy(analysisMode = AsnMode) } text {
+    opt[Unit]('a', "asn").optional() action { (x, c) => c.copy(analysisMode = AsnMode) } text {
       "Find and report top ASNs"
     }
-    opt[Unit]('l', "loose") optional() action { (x, c) => c.copy(looseRouteObjectValidation = true) } text {
+    opt[Unit]('l', "loose").optional() action { (x, c) => c.copy(looseRouteObjectValidation = true) } text {
       "Accept all more specific announcements for ROUTE ojects (defaults to strict)"
     }
 
-    opt[Unit]("country-adoption") optional() action { (x,c) => c.copy(analysisMode = CountryAdoptionMode)} text {
+    opt[Unit]("country-adoption").optional() action { (x,c) => c.copy(analysisMode = CountryAdoptionMode)} text {
       "Do report country adoptions "
     }
 
-    opt[Unit]("rir-adoption") optional() action { (x,c) => c.copy(analysisMode = RirAdoptionMode)} text {
+    opt[Unit]("rir-adoption").optional() action { (x,c) => c.copy(analysisMode = RirAdoptionMode)} text {
       "Do report rir adoptions "
     }
 
-    opt[Unit]("country-activation") optional() action { (x,c) => c.copy(analysisMode = CountryActivationMode)} text {
+    opt[Unit]("country-activation").optional() action { (x,c) => c.copy(analysisMode = CountryActivationMode)} text {
       "Do report country activation "
     }
 
-    opt[Unit]("rir-activation") optional() action { (x,c) => c.copy(analysisMode = RirActivationMode)} text {
+    opt[Unit]("rir-activation").optional() action { (x,c) => c.copy(analysisMode = RirActivationMode)} text {
       "Do report rir activation "
     }
 
-    opt[Unit]("ripe-country-roa") optional() action { (x, c) => c.copy(analysisMode = RipeCountryRoaMode) } text {
+    opt[Unit]("ripe-country-roa").optional() action { (x, c) => c.copy(analysisMode = RipeCountryRoaMode) } text {
       "Do a report of roa counts for RIPE region only"
     }
 

@@ -30,16 +30,17 @@ package net.ripe.irrstats.reporting
 import java.math.BigInteger
 
 import MapUtils._
+import scala.collection.MapView
 
 object NROStatsPage {
 
   // Returns an HTML page as a String with a Google Geomap world map and embedded data
-  def printNROStatsPage(ipv4CountryAdoptionValues: Map[String, Double],
-                        ipv6CountryAdoptionValues: Map[String, Double],
-                        ipv4CountryBubbleData: Map[String, (Double, Int, Int, BigInteger)],
-                        ipv6CountryBubbleData: Map[String, (Double, Int, Int, BigInteger)],
-                        ipv4RIRAdoptionValues: Map[String, Double],
-                        ipv6RIRAdoptionValues: Map[String, Double]
+  def printNROStatsPage(ipv4CountryAdoptionValues: MapView[String, Double],
+                        ipv6CountryAdoptionValues: MapView[String, Double],
+                        ipv4CountryBubbleData: MapView[String, (Double, Int, Int, BigInteger)],
+                        ipv6CountryBubbleData: MapView[String, (Double, Int, Int, BigInteger)],
+                        ipv4RIRAdoptionValues: MapView[String, Double],
+                        ipv6RIRAdoptionValues: MapView[String, Double]
                        ): String = {
 
     // Yes, I am aware that better template frameworks exist, but I just have one simple thing to do, and prefer no deps. --Tim, 2016

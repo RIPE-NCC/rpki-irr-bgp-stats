@@ -33,6 +33,8 @@ import net.ripe.irrstats.parsing.holdings.Holdings._
 import net.ripe.irrstats.reporting.{CountryDetails, RegionCsv}
 import net.ripe.irrstats.route.validation.{BgpAnnouncement, RtrPrefix}
 
+import scala.collection.parallel.CollectionConverters._
+
 object ReportCountry {
 
   def reportCountryDetails(announcements: Seq[BgpAnnouncement], authorisations: Seq[RtrPrefix], countryHolding: Holdings, countryCode: String) = {
@@ -52,8 +54,8 @@ object ReportCountry {
 
   def reportRIPECountryRoas(ripeHoldings: Holdings, authorisations:Seq[RtrPrefix]) = {
 
-    val roaCountsPerCountryAll: collection.Map[String, Int] =
-      authorisations.par.groupBy(pfx => regionFor(pfx.prefix, ripeHoldings)).mapValues(_.seq).seq.mapValues(_.size)
+    val roaCountsPerCountryAll =
+      authorisations.par.groupBy(pfx => regionFor(pfx.prefix, ripeHoldings)).mapValues(_.seq).seq.view.mapValues(_.size).to(Map)
 
     println("Economy, #Roas")
 

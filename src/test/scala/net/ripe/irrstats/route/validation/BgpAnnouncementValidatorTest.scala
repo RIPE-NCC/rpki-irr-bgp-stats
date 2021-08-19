@@ -28,15 +28,14 @@
  */
 package net.ripe.irrstats.route.validation
 
-import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 import RouteValidity._
 import net.ripe.ipresource.{Asn, IpRange}
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
+import org.scalatest._
+import matchers._
 
 
-@RunWith(classOf[JUnitRunner])
-class BgpAnnouncementValidatorTest extends FunSuite with Matchers with BeforeAndAfterAll {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class BgpAnnouncementValidatorTest extends funsuite.AnyFunSuite with should.Matchers with BeforeAndAfterAll {
 
   import scala.language.implicitConversions
   implicit def IntToAsn(asn: Int): Asn = new Asn(asn)

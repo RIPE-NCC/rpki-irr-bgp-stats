@@ -58,10 +58,11 @@ package net.ripe.irrstats.analysis
 
 import net.ripe.ipresource.{IpRange, IpResourceSet}
 import net.ripe.irrstats.parsing.holdings.Holdings.EntityRegionHoldings
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest._
+import matchers._
 
-@org.junit.runner.RunWith(classOf[org.scalatest.junit.JUnitRunner])
-class ActivationStatsTest extends FunSuite with Matchers {
+@org.junit.runner.RunWith(classOf[org.scalatestplus.junit.JUnitRunner])
+class ActivationStatsTest extends funsuite.AnyFunSuite with should.Matchers {
 
   import scala.language.implicitConversions
   implicit def stringToIpRange(s: String): IpRange = IpRange.parse(s)
