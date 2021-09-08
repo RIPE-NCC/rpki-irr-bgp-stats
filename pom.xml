@@ -126,7 +126,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}-${project.version}</finalName>
+        <finalName>rpki-irr-bgp-stats</finalName>
 
         <sourceDirectory>src/main/scala</sourceDirectory>
         <testSourceDirectory>src/test/scala</testSourceDirectory>
@@ -153,6 +153,7 @@
                         <exclude>lib/**</exclude>
                         <exclude>log/**</exclude>
                         <exclude>pom.xml</exclude>
+                        <exclude>Dockerfile</exclude>
                         <exclude>repo/**</exclude>
                         <exclude>scalastyle-output.xml</exclude>
                         <exclude>target/**</exclude>
