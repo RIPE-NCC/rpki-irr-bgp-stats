@@ -1,0 +1,39 @@
+name: Scala build and test
+on: [push, pull_request]
+
+jobs:
+  # Label of the container job
+  mvn-build-test:
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+    # Docker Hub image that `container-job` executes in
+    container: maven:3.8-openjdk-11
+
+    steps:
+      # Downloads a copy of the code in your repository before running CI tests
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Cache mvn cache
+        id: mvn-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+          key: ${{ runner.os }}--${{ hashFiles('pom.xml') }}
+
+      - name: Verify
+        run: mvn verify
+
+      - name: Upload dist
+        uses: actions/upload-artifact@v2
+        with:
+          name: rpki-irr-bgp-stats-dist
+          path: target/irrstats-*-dist.tar.gz
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: reports
+          path: |
+            target/surefire-reports/**/*
