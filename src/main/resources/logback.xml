@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Copyright (c) 2015-2021 RIPE NCC
@@ -29,24 +28,14 @@
     POSSIBILITY OF SUCH DAMAGE.
 
 -->
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
 
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
-
-    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-        <param name="Target" value="System.out" />
-        <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p %c{2}: %m%n" />
-        </layout>
-    </appender>
-    
-    <logger name="net.ripe">
-        <level value="ERROR" />
-    </logger>
-
-    <root>
-        <priority value="ERROR" />
-        <appender-ref ref="CONSOLE" />
-    </root>
-
-</log4j:configuration>
+  <root level="error">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>
