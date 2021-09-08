@@ -12,7 +12,6 @@
         <rpki.commons.version>1.21</rpki.commons.version>
         <jodatime.version>2.10.10</jodatime.version>
         <slf4j.version>1.7.32</slf4j.version>
-        <log4j.version>1.2.17</log4j.version>
         <scala.version>2.13.6</scala.version>
         <scala.binary.version>2.13</scala.binary.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -111,17 +110,11 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.5</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
