@@ -70,7 +70,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ripencc/rpki-irr-bgp-stats:latest
+          tags: ghcr.io/ripe-ncc/rpki-irr-bgp-stats:latest
           labels: "org.label-schema.vcs-ref=${{ github.sha }}"
           build-args: |
             RPKI_IRR_BGP_STATS_DIST=./rpki-irr-bgp-stats-dist.tar.gz
