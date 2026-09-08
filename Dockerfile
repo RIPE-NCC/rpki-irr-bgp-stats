@@ -1,4 +1,4 @@
-FROM openjdk:17-bullseye
+FROM eclipse-temurin:17-resolute
 
 ARG RPKI_IRR_BGP_STATS_DIST=target/rpki-irr-bgp-stats-dist.tar.gz
 
